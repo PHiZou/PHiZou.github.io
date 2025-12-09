@@ -8,7 +8,7 @@ set -e
 TODAY=$(date +"%Y%m%d")
 GENERATOR_BASE="/Users/peterhagen/Desktop/poem-short-generator-2/output"
 # Find the most recently modified video from today
-GENERATOR_OUTPUT=$(find "$GENERATOR_BASE" -name "video.mp4" -type f -path "*/${TODAY}*" | xargs ls -t | head -1)
+GENERATOR_OUTPUT=$(find "$GENERATOR_BASE" -name "video.mp4" -type f -path "*/${TODAY}*" | xargs ls -t 2>/dev/null | head -1)
 DATE=$(date +"%Y-%m-%d")
 
 REPO="/Users/peterhagen/Documents/GitHub/PHiZou.github.io"
