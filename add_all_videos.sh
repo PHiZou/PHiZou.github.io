@@ -25,15 +25,16 @@ VIDEO_COUNT=0
 
 for DIR in $VIDEO_DIRS; do
     FOLDER_NAME=$(basename "$DIR")
-    VIDEO_FILE="$DIR/video.mp4"
+    # Find the MP4 file in this directory (could be video.mp4 or a descriptive name)
+    VIDEO_FILE=$(find "$DIR" -maxdepth 1 -name "*.mp4" -type f | head -1)
     
     if [ -f "$VIDEO_FILE" ]; then
         # Convert folder name format (20251209_082141) to date format (2025-12-09)
-        # Extract date part (first 8 digits: YYYYMMDD) using string slicing
-        if [ ${#FOLDER_NAME} -ge 8 ]; then
-            YEAR="${FOLDER_NAME:0:4}"
-            MONTH="${FOLDER_NAME:4:2}"
-            DAY="${FOLDER_NAME:6:2}"
+        # Extract date part (first 8 digits: YYYYMMDD)
+        if [[ $FOLDER_NAME =~ ^([0-9]{4})([0-9]{2})([0-9]{2}) ]]; then
+            YEAR=${BASH_REMATCH[1]}
+            MONTH=${BASH_REMATCH[2]}
+            DAY=${BASH_REMATCH[3]}
             DATE="$YEAR-$MONTH-$DAY"
         else
             # Fallback: use folder name as-is
