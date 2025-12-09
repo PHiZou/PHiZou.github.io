@@ -7,6 +7,11 @@ import tailwindcss from '@tailwindcss/vite';
 export default defineConfig({
   site: "https://phizou.github.io",
   base: "/",
+  markdown: {
+    shikiConfig: {
+      theme: 'github-dark',
+    },
+  },
   vite: {
     plugins: [tailwindcss()]
   }
