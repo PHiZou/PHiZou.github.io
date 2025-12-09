@@ -31,3 +31,5 @@ Under this header, we will append new video entries daily.
   <source src="/projects/poem-generator/videos/2025-12-09.mp4" type="video/mp4">
   Your browser does not support the video tag.
 </video>
+
+
