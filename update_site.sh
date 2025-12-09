@@ -3,8 +3,13 @@
 # Fail on any error
 set -e
 
+# Get today's date in the format used by the generator (YYYYMMDD_HHMMSS)
+# We'll find the most recent video from today
+TODAY=$(date +"%Y%m%d")
+GENERATOR_BASE="/Users/peterhagen/Desktop/poem-short-generator-2/output"
+# Find the most recent video from today
+GENERATOR_OUTPUT=$(find "$GENERATOR_BASE" -type d -name "${TODAY}*" | sort -r | head -1)/video.mp4
 DATE=$(date +"%Y-%m-%d")
-GENERATOR_OUTPUT="/Users/peterhagen/Desktop/poem-short-generator2/output/$DATE/video.mp4"
 
 REPO="/Users/peterhagen/Documents/GitHub/PHiZou.github.io"
 TARGET="$REPO/public/projects/poem-generator/videos/$DATE.mp4"
@@ -21,7 +26,7 @@ mkdir -p "$REPO/public/projects/poem-generator/videos"
 cp "$GENERATOR_OUTPUT" "$TARGET"
 echo "✓ Copied video to $TARGET"
 
-# 2. Append entry to project page
+# 2. Prepend entry to project page (newest videos on top)
 # Create a temporary file with the new video entry
 TEMP_FILE=$(mktemp)
 cat > "$TEMP_FILE" << EOF
@@ -34,15 +39,19 @@ cat > "$TEMP_FILE" << EOF
 </video>
 EOF
 
-# Append the new entry after the insertion point
+# Insert the new entry right after the insertion point (newest first)
 if grep -q "Under this header, we will append new video entries daily." "$PAGE"; then
-    # Use awk to insert after the line
+    # Use awk to insert right after the line (newest videos appear first)
     awk -v insert="$(cat $TEMP_FILE)" '/Under this header, we will append new video entries daily./ {print; print insert; next}1' "$PAGE" > "${PAGE}.tmp" && mv "${PAGE}.tmp" "$PAGE"
-    echo "✓ Added video entry to project page"
+    echo "✓ Added video entry to project page (newest first)"
 else
-    # Fallback: append to end of file
-    cat "$TEMP_FILE" >> "$PAGE"
-    echo "✓ Appended video entry to end of project page"
+    # Fallback: prepend to end of file
+    {
+        head -n -1 "$PAGE"
+        cat "$TEMP_FILE"
+        tail -n 1 "$PAGE"
+    } > "${PAGE}.tmp" && mv "${PAGE}.tmp" "$PAGE"
+    echo "✓ Prepended video entry to project page"
 fi
 rm "$TEMP_FILE"
 
