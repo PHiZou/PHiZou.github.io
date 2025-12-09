@@ -4,11 +4,11 @@
 set -e
 
 # Get today's date in the format used by the generator (YYYYMMDD_HHMMSS)
-# We'll find the most recent video from today
+# We'll find the most recent video from today (handles both video.mp4 and descriptive names)
 TODAY=$(date +"%Y%m%d")
 GENERATOR_BASE="/Users/peterhagen/Desktop/poem-short-generator-2/output"
-# Find the most recent video from today
-GENERATOR_OUTPUT=$(find "$GENERATOR_BASE" -type d -name "${TODAY}*" | sort -r | head -1)/video.mp4
+# Find the most recently modified MP4 file from today
+GENERATOR_OUTPUT=$(find "$GENERATOR_BASE" -name "*.mp4" -type f -path "*/${TODAY}*" | xargs ls -t 2>/dev/null | head -1)
 DATE=$(date +"%Y-%m-%d")
 
 REPO="/Users/peterhagen/Documents/GitHub/PHiZou.github.io"
