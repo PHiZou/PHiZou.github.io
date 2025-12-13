@@ -12,19 +12,12 @@ impact: Demonstrates end-to-end AI automation pipeline for daily content generat
 
 An autonomous AI pipeline that transforms daily world news into engaging vertical video poems, running unattended every morning at 8:00 AM EST.
 
-## Latest Output (2025-12-12)
+## Latest Output
 
-<div class="not-prose">
-  <a
-    href="https://daily-poem-xi.vercel.app/20251212_175550"
-    target="_blank"
-    rel="noopener noreferrer"
-    class="inline-flex items-center gap-2 rounded-full bg-teal-400 px-5 py-2 text-sm font-semibold text-slate-950 shadow-sm transition-colors hover:bg-teal-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-400 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-950"
-  >
-    Watch the latest daily poem
-    <span aria-hidden="true">↗</span>
-  </a>
-</div>
+<video width="320" controls>
+  <source src="/projects/poem-generator/videos/2025-12-09.mp4" type="video/mp4">
+  Your browser does not support the video tag.
+</video>
 
 ## Archive
 
