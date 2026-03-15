@@ -6,6 +6,7 @@ import QuantModelProject from "../../components/projects/QuantModelProject.astro
 import AwsDataPipelineProject from "../../components/projects/AwsDataPipelineProject.astro";
 import GovconAnalyticsProject from "../../components/projects/GovconAnalyticsProject.astro";
 import D3VisualizationProject from "../../components/projects/D3VisualizationProject.astro";
+import GameProject from "../../components/projects/GameProject.astro";
 
 export async function getStaticPaths() {
   const { getCollection } = await import("astro:content");
@@ -26,6 +27,7 @@ const { data } = project;
   {data.template === "aws-data-pipeline" && <AwsDataPipelineProject project={project} />}
   {data.template === "govcon-analytics" && <GovconAnalyticsProject project={project} />}
   {data.template === "d3-visualization" && <D3VisualizationProject project={project} />}
+  {data.template === "game" && <GameProject project={project} />}
 </BaseLayout>
 
 

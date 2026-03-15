@@ -14,7 +14,8 @@
             "Quant Model",
             "AWS Data Pipeline",
             "GovCon Analytics Dashboard",
-            "D3 Visualization"
+            "D3 Visualization",
+            "Game"
           ]
         },
         "template": {
@@ -24,7 +25,8 @@
             "quant-model",
             "aws-data-pipeline",
             "govcon-analytics",
-            "d3-visualization"
+            "d3-visualization",
+            "game"
           ]
         },
         "summary": {

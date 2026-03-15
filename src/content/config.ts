@@ -10,6 +10,7 @@ const projects = defineCollection({
       "AWS Data Pipeline",
       "GovCon Analytics Dashboard",
       "D3 Visualization",
+      "Game",
     ]),
     template: z.enum([
       "ai-pipeline",
@@ -17,6 +18,7 @@ const projects = defineCollection({
       "aws-data-pipeline",
       "govcon-analytics",
       "d3-visualization",
+      "game",
     ]),
     summary: z.string(),
     tags: z.array(z.string()).default([]),
