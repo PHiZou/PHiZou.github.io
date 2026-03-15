@@ -6,6 +6,7 @@ summary: Interactive D3.js map tracking key events, military operations, economi
 tags: ["D3.js", "Visualization", "Geospatial", "Timeline", "Data Journalism"]
 stack: ["D3.js", "TypeScript", "Vite", "TopoJSON"]
 impact: Turns complex conflict data into an explorable atlas — zoom from macro (global oil disruption) to micro (individual strikes, ship attacks) with source-cited, journalism-grade visualization.
+legacyUrl: "https://iran-us-conflict-map.vercel.app"
 ---
 
 An interactive D3.js map visualization tracking the key events, military operations, economic disruptions, and humanitarian impacts of the 2026 Iran–US conflict. Think of it as a living, layered atlas — zoom from the macro (global oil disruption) down to the micro (individual strikes, ship attacks, base locations) with a scrollable timeline that animates the war day by day.
