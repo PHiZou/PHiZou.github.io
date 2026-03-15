@@ -6,9 +6,17 @@ summary: A FUTBin-style searchable card database for Beltway Realms — 700 card
 tags: ["React", "TypeScript", "SQLite", "Hono", "Node.js", "Full-Stack", "Game"]
 stack: ["React 19", "TypeScript", "Vite", "SQLite (FTS5)", "Hono.js", "better-sqlite3", "React Router 7"]
 impact: Full-stack companion hub for Beltway Realms — browse, filter, compare, and theory-craft loadouts across 700 cards with live synergy feedback.
+liveUrl: https://beltway-realms-card-db-production.up.railway.app
 ---
 
 # Beltway Realms Card Database
+
+<div class="my-6">
+  <a href="https://beltway-realms-card-db-production.up.railway.app" target="_blank" rel="noopener noreferrer"
+     class="inline-flex items-center gap-2 rounded-full bg-teal-400 px-6 py-3 text-sm font-semibold text-slate-950 shadow-sm transition-colors hover:bg-teal-300">
+    Launch Live Demo ↗
+  </a>
+</div>
 
 A full-stack **FUTBin-style card database** for the Beltway Realms universe — 700 unique cards spanning 6 DC-metro regions, with full-text search, multi-card comparison, a synergy-aware loadout builder, community ratings, and win-rate analytics.
 
