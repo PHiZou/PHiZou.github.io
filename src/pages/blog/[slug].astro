@@ -3,18 +3,20 @@ import { getEntryBySlug, getCollection } from "astro:content";
 import BaseLayout from "../../layouts/BaseLayout.astro";
 
 export async function getStaticPaths() {
-  const notes = await getCollection("notes");
-  return notes.map((note) => ({
-    params: { slug: note.slug },
-    props: { note },
-  }));
+  const posts = await getCollection("blog");
+  return posts
+    .filter((post) => !post.data.externalUrl)
+    .map((post) => ({
+      params: { slug: post.slug },
+      props: { post },
+    }));
 }
 
-const { note } = Astro.props;
-const { data, body } = note;
+const { post } = Astro.props;
+const { data, body } = post;
 ---
 
-<BaseLayout title={`${data.title} – Notes – Peter Hagen`}>
+<BaseLayout title={`${data.title} – Blog – Peter Hagen`}>
   <article class="mx-auto max-w-3xl px-4 py-10 sm:px-6 sm:py-14 lg:px-8">
     <header class="mb-6 space-y-2">
       <h1 class="text-2xl font-semibold tracking-tight text-slate-50 sm:text-3xl">
@@ -31,5 +33,3 @@ const { data, body } = note;
     </section>
   </article>
 </BaseLayout>
-
-
