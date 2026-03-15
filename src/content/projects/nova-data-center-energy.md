@@ -6,6 +6,7 @@ summary: Interactive D3.js visualization analyzing energy consumption, environme
 tags: ["D3.js", "Visualization", "Energy", "Scrollytelling", "Data Journalism"]
 stack: ["D3.js", "TypeScript", "Vite", "TopoJSON", "d3-sankey"]
 impact: Turns utility filings and environmental reports into a visceral, interactive experience — demand timelines, facility maps, grid stress gauges, water heatmaps, and tax revenue analysis.
+legacyUrl: "https://nova-data-center-energy.vercel.app"
 ---
 
 An interactive D3.js data visualization analyzing the energy consumption, environmental impact, and infrastructure strain caused by the explosive growth of data centers in Northern Virginia — the largest data center market on Earth. Northern Virginia hosts **13% of all global data center capacity** and **25% of capacity in the Americas**.
