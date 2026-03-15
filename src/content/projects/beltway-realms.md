@@ -6,7 +6,7 @@ summary: A game-inspired portfolio set in a parchment-style fantasy / cyberpunk 
 tags: ["React", "TypeScript", "Vite", "Game", "Interactive"]
 stack: ["React", "TypeScript", "Vite", "React Router", "localStorage"]
 impact: Turns a professional portfolio into an explorable, playful experience that showcases systems thinking and creative front-end engineering.
-legacyUrl: "https://beltway-realms.vercel.app"
+legacyUrl: "https://beltway-realms-game.vercel.app"
 ---
 
 **Beltway Realms** is a small, local-only web app that reimagines a data engineer's portfolio as a fantasy RPG overworld. Northern Virginia and Washington, D.C. become a parchment-style map of realms, quests, and encounters.
