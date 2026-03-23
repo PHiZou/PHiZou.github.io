@@ -34,3 +34,7 @@ The point is not a flashy model demo. It is showing how AI/data workflows become
 ## Current status
 
 This is an in-progress portfolio build, not a polished production tool yet. But it now has real repo structure, a working CLI flow, and a viewable dashboard instead of being just a placeholder concept.
+
+## Source Code
+
+[View Source Code on GitHub](https://github.com/PHiZou/ai-pipeline-operational-insights)
