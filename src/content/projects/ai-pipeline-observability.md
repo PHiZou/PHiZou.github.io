@@ -1,4 +1,5 @@
 ---
+slug: ai-pipeline-operational-insights
 title: End-to-end AI pipeline for operational insights
 type: AI Pipeline
 template: ai-pipeline
