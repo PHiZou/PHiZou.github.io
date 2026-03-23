@@ -55,6 +55,9 @@
         "impact": {
           "type": "string"
         },
+        "liveUrl": {
+          "type": "string"
+        },
         "legacyUrl": {
           "type": "string"
         },

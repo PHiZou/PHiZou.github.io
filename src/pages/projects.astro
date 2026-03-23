@@ -3,415 +3,189 @@ import BaseLayout from "../layouts/BaseLayout.astro";
 import { getCollection } from "astro:content";
 
 const projects = await getCollection("projects");
+
+const byTemplate = (template: string) => projects.filter((p) => p.data.template === template);
+const bySlug = (slug: string) => projects.find((p) => p.slug === slug);
+
+const featuredCareerProjects = [
+  bySlug("obsidian-rag-chat"),
+  bySlug("ai-pipeline-operational-insights"),
+  bySlug("govcon-analytics-dashboard"),
+  bySlug("nova-data-center-energy"),
+  bySlug("beltway-realms-card-db"),
+].filter(Boolean);
 ---
 
 <BaseLayout title="Projects – Peter Hagen">
   <section class="border-b border-slate-800 bg-slate-950">
     <div class="mx-auto max-w-5xl px-4 py-14 sm:px-6 lg:px-8">
-      <header class="mb-6 space-y-2">
+      <header class="mb-8 space-y-3">
         <h1 class="text-2xl font-semibold tracking-tight text-slate-50 sm:text-3xl">
           Projects
         </h1>
-        <p class="max-w-2xl text-sm text-slate-300 sm:text-base">
-          A structured view of AI/ML pipelines, quantitative models, data engineering work on AWS,
-          GovCon analytics dashboards, and D3 visualizations.
+        <p class="max-w-3xl text-sm text-slate-300 sm:text-base">
+          This portfolio spans pipelines, analytics systems, AI workflows, D3-based storytelling, and a few more playful product builds. If you are evaluating me for a data-engineering or analytics role, start with the highlighted projects below.
         </p>
       </header>
+
+      <div class="mb-10 rounded-2xl border border-slate-800 bg-slate-900/50 p-6">
+        <h2 class="mb-4 text-sm font-semibold uppercase tracking-[0.2em] text-teal-300">
+          Start here
+        </h2>
+        <div class="grid gap-4 md:grid-cols-2">
+          {featuredCareerProjects.map((p) => (
+            <a
+              href={`/projects/${p.slug}`}
+              class="group rounded-xl border border-slate-800 bg-slate-950/60 p-4 transition hover:border-teal-400"
+            >
+              <div class="text-sm font-semibold text-slate-50 group-hover:text-teal-200">{p.data.title}</div>
+              <div class="mt-1 text-[0.7rem] uppercase tracking-[0.18em] text-slate-500">{p.data.type}</div>
+              <p class="mt-2 text-xs text-slate-300">{p.data.summary}</p>
+            </a>
+          ))}
+        </div>
+      </div>
+
       <div class="space-y-8 text-sm text-slate-200 sm:text-base">
         <div>
           <h2 class="mb-3 text-xs font-semibold uppercase tracking-[0.2em] text-teal-300">
-            AI &amp; ML Pipelines
+            Data Engineering &amp; AI Workflows
           </h2>
-          {projects.filter((p) => p.data.template === "ai-pipeline").length > 0 ? (
-            <ul class="space-y-2">
-              {projects
-                .filter((p) => p.data.template === "ai-pipeline")
-                .map((p) => (
-                  <li>
-                    <a href={`/projects/${p.slug}`} class="text-slate-100 hover:text-teal-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-400 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-950 rounded">
-                      {p.data.title}
-                    </a>
-                    {p.data.summary && (
-                      <p class="text-xs text-slate-400">
-                        {p.data.summary}
-                      </p>
-                    )}
-                  </li>
-                ))}
-            </ul>
-          ) : (
-            <p class="text-xs text-slate-500 italic">No projects in this category yet.</p>
-          )}
+          <p class="mb-3 max-w-2xl text-xs text-slate-400">
+            Projects that best reflect my fit for data engineering, analytics engineering, and AI/data workflow roles.
+          </p>
+          <ul class="space-y-2">
+            {[...byTemplate("ai-pipeline"), ...byTemplate("aws-data-pipeline")].map((p) => (
+              <li>
+                <a href={`/projects/${p.slug}`} class="text-slate-100 hover:text-teal-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-400 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-950 rounded">
+                  {p.data.title}
+                </a>
+                {p.data.summary && <p class="text-xs text-slate-400">{p.data.summary}</p>}
+              </li>
+            ))}
+          </ul>
         </div>
+
         <div>
           <h2 class="mb-3 text-xs font-semibold uppercase tracking-[0.2em] text-teal-300">
-            Quant &amp; Financial Models
+            Analytics &amp; Decision Support
           </h2>
-          {projects.filter((p) => p.data.template === "quant-model").length > 0 ? (
-            <ul class="space-y-2">
-              {projects
-                .filter((p) => p.data.template === "quant-model")
-                .map((p) => (
-                  <li>
-                    <a href={`/projects/${p.slug}`} class="text-slate-100 hover:text-teal-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-400 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-950 rounded">
-                      {p.data.title}
-                    </a>
-                    {p.data.summary && (
-                      <p class="text-xs text-slate-400">
-                        {p.data.summary}
-                      </p>
-                    )}
-                  </li>
-                ))}
-            </ul>
-          ) : (
-            <p class="text-xs text-slate-500 italic">No projects in this category yet.</p>
-          )}
+          <p class="mb-3 max-w-2xl text-xs text-slate-400">
+            Dashboard, KPI, and reporting-system work with a stronger stakeholder and operational focus.
+          </p>
+          <ul class="space-y-2">
+            {byTemplate("govcon-analytics").map((p) => (
+              <li>
+                <a href={`/projects/${p.slug}`} class="text-slate-100 hover:text-teal-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-400 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-950 rounded">
+                  {p.data.title}
+                </a>
+                {p.data.summary && <p class="text-xs text-slate-400">{p.data.summary}</p>}
+              </li>
+            ))}
+          </ul>
         </div>
+
         <div>
           <h2 class="mb-3 text-xs font-semibold uppercase tracking-[0.2em] text-teal-300">
-            Data Engineering &amp; AWS Pipelines
+            Quant &amp; Modeling
           </h2>
-          {projects.filter((p) => p.data.template === "aws-data-pipeline").length > 0 ? (
-            <ul class="space-y-2">
-              {projects
-                .filter((p) => p.data.template === "aws-data-pipeline")
-                .map((p) => (
-                  <li>
-                    <a href={`/projects/${p.slug}`} class="text-slate-100 hover:text-teal-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-400 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-950 rounded">
-                      {p.data.title}
-                    </a>
-                    {p.data.summary && (
-                      <p class="text-xs text-slate-400">
-                        {p.data.summary}
-                      </p>
-                    )}
-                  </li>
-                ))}
-            </ul>
-          ) : (
-            <p class="text-xs text-slate-500 italic">No projects in this category yet.</p>
-          )}
+          <p class="mb-3 max-w-2xl text-xs text-slate-400">
+            Quantitative and modeling projects that show analytical depth, even when they are not the main hiring signal.
+          </p>
+          <ul class="space-y-2">
+            {byTemplate("quant-model").map((p) => (
+              <li>
+                <a href={`/projects/${p.slug}`} class="text-slate-100 hover:text-teal-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-400 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-950 rounded">
+                  {p.data.title}
+                </a>
+                {p.data.summary && <p class="text-xs text-slate-400">{p.data.summary}</p>}
+              </li>
+            ))}
+          </ul>
         </div>
+
         <div>
           <h2 class="mb-3 text-xs font-semibold uppercase tracking-[0.2em] text-teal-300">
-            GovCon Analytics Dashboards
+            D3 &amp; Interactive Storytelling
           </h2>
-          {projects.filter((p) => p.data.template === "govcon-analytics").length > 0 ? (
-            <ul class="space-y-2">
-              {projects
-                .filter((p) => p.data.template === "govcon-analytics")
-                .map((p) => (
-                  <li>
-                    <a href={`/projects/${p.slug}`} class="text-slate-100 hover:text-teal-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-400 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-950 rounded">
-                      {p.data.title}
-                    </a>
-                    {p.data.summary && (
-                      <p class="text-xs text-slate-400">
-                        {p.data.summary}
-                      </p>
-                    )}
-                  </li>
-                ))}
-            </ul>
-          ) : (
-            <p class="text-xs text-slate-500 italic">No projects in this category yet.</p>
-          )}
+          <p class="mb-3 max-w-2xl text-xs text-slate-400">
+            Visualization-heavy work that shows my interest in explanation, systems thinking, and turning complex topics into clear interactive experiences.
+          </p>
+          <ul class="space-y-2">
+            {byTemplate("d3-visualization").map((p) => (
+              <li>
+                <a href={`/projects/${p.slug}`} class="text-slate-100 hover:text-teal-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-400 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-950 rounded">
+                  {p.data.title}
+                </a>
+                {p.data.summary && <p class="text-xs text-slate-400">{p.data.summary}</p>}
+              </li>
+            ))}
+          </ul>
         </div>
+
         <div>
           <h2 class="mb-3 text-xs font-semibold uppercase tracking-[0.2em] text-teal-300">
-            D3.js Visualizations
+            Creative / Product Experiments
           </h2>
-          {projects.filter((p) => p.data.template === "d3-visualization").length > 0 ? (
-            <ul class="space-y-2">
-              {projects
-                .filter((p) => p.data.template === "d3-visualization")
-                .map((p) => (
-                  <li>
-                    <a href={`/projects/${p.slug}`} class="text-slate-100 hover:text-teal-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-400 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-950 rounded">
-                      {p.data.title}
-                    </a>
-                    {p.data.summary && (
-                      <p class="text-xs text-slate-400">
-                        {p.data.summary}
-                      </p>
-                    )}
-                  </li>
-                ))}
-            </ul>
-          ) : (
-            <p class="text-xs text-slate-500 italic">No projects in this category yet.</p>
-          )}
+          <p class="mb-3 max-w-2xl text-xs text-slate-400">
+            Projects that show range, product instinct, and personality. These are part of the story, but not the first place I would point a recruiter.
+          </p>
+          <ul class="space-y-2">
+            {byTemplate("game").map((p) => (
+              <li>
+                <a href={`/projects/${p.slug}`} class="text-slate-100 hover:text-teal-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-400 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-950 rounded">
+                  {p.data.title}
+                </a>
+                {p.data.summary && <p class="text-xs text-slate-400">{p.data.summary}</p>}
+              </li>
+            ))}
+          </ul>
         </div>
-        <div>
-          <h2 class="mb-3 text-xs font-semibold uppercase tracking-[0.2em] text-teal-300">
-            Games
-          </h2>
-          {projects.filter((p) => p.data.template === "game").length > 0 ? (
-            <ul class="space-y-2">
-              {projects
-                .filter((p) => p.data.template === "game")
-                .map((p) => (
-                  <li>
-                    <a href={`/projects/${p.slug}`} class="text-slate-100 hover:text-teal-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-400 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-950 rounded">
-                      {p.data.title}
-                    </a>
-                    {p.data.summary && (
-                      <p class="text-xs text-slate-400">
-                        {p.data.summary}
-                      </p>
-                    )}
-                  </li>
-                ))}
-            </ul>
-          ) : (
-            <p class="text-xs text-slate-500 italic">No projects in this category yet.</p>
-          )}
-        </div>
+
         <div id="live-projects">
           <h2 class="mb-4 text-xs font-semibold uppercase tracking-[0.2em] text-teal-300">
             Live Projects
           </h2>
           <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
-            <a
-              href="https://obsidian-rag-7fzsf7xqbrkgxqw3c7xh2g.streamlit.app/"
-              target="_blank"
-              rel="noopener noreferrer"
-              class="group block rounded-lg border border-slate-800 bg-slate-900/50 p-5 transition-all duration-200 hover:-translate-y-1 hover:border-teal-400 hover:bg-slate-900/80 hover:shadow-lg hover:shadow-teal-500/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-400 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-950"
-            >
-              <div class="mb-3 flex items-start justify-between gap-2">
-                <h3 class="text-base font-medium leading-snug text-slate-100 transition-colors group-hover:text-teal-300">
-                  Obsidian RAG Chat
-                </h3>
-                <span class="flex-shrink-0 text-slate-400 transition-colors group-hover:text-teal-300">↗</span>
-              </div>
-              <p class="mb-4 text-sm leading-relaxed text-slate-300">
-                Chat with a personal knowledge base — RAG pipeline with OpenAI embeddings, ChromaDB, and streaming citations
-              </p>
-              <ul class="space-y-1.5 border-t border-slate-800/50 pt-3 text-xs text-slate-400">
-                <li class="flex items-start">
-                  <span class="mr-2 text-teal-400">•</span>
-                  <span>Heading-aware chunking + sliding window overlap</span>
-                </li>
-                <li class="flex items-start">
-                  <span class="mr-2 text-teal-400">•</span>
-                  <span>Cosine similarity retrieval with source note citations</span>
-                </li>
-                <li class="flex items-start">
-                  <span class="mr-2 text-teal-400">•</span>
-                  <span>Python · OpenAI · ChromaDB · Streamlit</span>
-                </li>
-              </ul>
+            <a href="https://obsidian-rag-7fzsf7xqbrkgxqw3c7xh2g.streamlit.app/" target="_blank" rel="noopener noreferrer" class="group block rounded-lg border border-slate-800 bg-slate-900/50 p-5 transition-all duration-200 hover:-translate-y-1 hover:border-teal-400 hover:bg-slate-900/80 hover:shadow-lg hover:shadow-teal-500/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-400 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-950">
+              <div class="mb-3 flex items-start justify-between gap-2"><h3 class="text-base font-medium leading-snug text-slate-100 transition-colors group-hover:text-teal-300">Obsidian RAG Chat</h3><span class="flex-shrink-0 text-slate-400 transition-colors group-hover:text-teal-300">↗</span></div>
+              <p class="mb-4 text-sm leading-relaxed text-slate-300">Chat with a personal knowledge base — RAG pipeline with OpenAI embeddings, ChromaDB, and streaming citations</p>
+              <ul class="space-y-1.5 border-t border-slate-800/50 pt-3 text-xs text-slate-400"><li class="flex items-start"><span class="mr-2 text-teal-400">•</span><span>Heading-aware chunking + sliding window overlap</span></li><li class="flex items-start"><span class="mr-2 text-teal-400">•</span><span>Cosine similarity retrieval with source note citations</span></li><li class="flex items-start"><span class="mr-2 text-teal-400">•</span><span>Python · OpenAI · ChromaDB · Streamlit</span></li></ul>
             </a>
-            <a
-              href="https://beltway-realms-card-db-production.up.railway.app"
-              target="_blank"
-              rel="noopener noreferrer"
-              class="group block rounded-lg border border-slate-800 bg-slate-900/50 p-5 transition-all duration-200 hover:-translate-y-1 hover:border-teal-400 hover:bg-slate-900/80 hover:shadow-lg hover:shadow-teal-500/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-400 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-950"
-            >
-              <div class="mb-3 flex items-start justify-between gap-2">
-                <h3 class="text-base font-medium leading-snug text-slate-100 transition-colors group-hover:text-teal-300">
-                  Beltway Realms Card Database
-                </h3>
-                <span class="flex-shrink-0 text-slate-400 transition-colors group-hover:text-teal-300">↗</span>
-              </div>
-              <p class="mb-4 text-sm leading-relaxed text-slate-300">
-                FUTBin-style card database — 700 cards, FTS5 search, synergy-aware loadout builder, community ratings
-              </p>
-              <ul class="space-y-1.5 border-t border-slate-800/50 pt-3 text-xs text-slate-400">
-                <li class="flex items-start">
-                  <span class="mr-2 text-teal-400">•</span>
-                  <span>SQLite FTS5 full-text search + recommendation engine</span>
-                </li>
-                <li class="flex items-start">
-                  <span class="mr-2 text-teal-400">•</span>
-                  <span>Loadout builder with real-time synergy calculation</span>
-                </li>
-                <li class="flex items-start">
-                  <span class="mr-2 text-teal-400">•</span>
-                  <span>React · TypeScript · Hono · SQLite · Railway</span>
-                </li>
-              </ul>
+            <a href="https://beltway-realms-card-db-production.up.railway.app" target="_blank" rel="noopener noreferrer" class="group block rounded-lg border border-slate-800 bg-slate-900/50 p-5 transition-all duration-200 hover:-translate-y-1 hover:border-teal-400 hover:bg-slate-900/80 hover:shadow-lg hover:shadow-teal-500/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-400 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-950">
+              <div class="mb-3 flex items-start justify-between gap-2"><h3 class="text-base font-medium leading-snug text-slate-100 transition-colors group-hover:text-teal-300">Beltway Realms Card Database</h3><span class="flex-shrink-0 text-slate-400 transition-colors group-hover:text-teal-300">↗</span></div>
+              <p class="mb-4 text-sm leading-relaxed text-slate-300">FUTBin-style card database — 700 cards, FTS5 search, synergy-aware loadout builder, community ratings</p>
+              <ul class="space-y-1.5 border-t border-slate-800/50 pt-3 text-xs text-slate-400"><li class="flex items-start"><span class="mr-2 text-teal-400">•</span><span>SQLite FTS5 full-text search + recommendation engine</span></li><li class="flex items-start"><span class="mr-2 text-teal-400">•</span><span>Loadout builder with real-time synergy calculation</span></li><li class="flex items-start"><span class="mr-2 text-teal-400">•</span><span>React · TypeScript · Hono · SQLite · Railway</span></li></ul>
             </a>
-            <a
-              href="https://ai-job-market-dashboard.vercel.app/projects/job-market-dashboard"
-              target="_blank"
-              rel="noopener noreferrer"
-              class="group block rounded-lg border border-slate-800 bg-slate-900/50 p-5 transition-all duration-200 hover:-translate-y-1 hover:border-teal-400 hover:bg-slate-900/80 hover:shadow-lg hover:shadow-teal-500/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-400 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-950"
-            >
-              <div class="mb-3 flex items-start justify-between gap-2">
-                <h3 class="text-base font-medium leading-snug text-slate-100 transition-colors group-hover:text-teal-300">
-                  AI Job Market Intelligence Dashboard
-                </h3>
-                <span class="flex-shrink-0 text-slate-400 transition-colors group-hover:text-teal-300">↗</span>
-              </div>
-              <p class="mb-4 text-sm leading-relaxed text-slate-300">
-                Live analytics of AI hiring trends, skill demand, and market momentum
-              </p>
-              <ul class="space-y-1.5 border-t border-slate-800/50 pt-3 text-xs text-slate-400">
-                <li class="flex items-start">
-                  <span class="mr-2 text-teal-400">•</span>
-                  <span>Real-time job market data aggregation and trend analysis</span>
-                </li>
-                <li class="flex items-start">
-                  <span class="mr-2 text-teal-400">•</span>
-                  <span>Interactive visualizations of skill demand patterns</span>
-                </li>
-                <li class="flex items-start">
-                  <span class="mr-2 text-teal-400">•</span>
-                  <span>Market momentum tracking for AI/ML roles</span>
-                </li>
-              </ul>
+            <a href="https://ai-job-market-dashboard.vercel.app/projects/job-market-dashboard" target="_blank" rel="noopener noreferrer" class="group block rounded-lg border border-slate-800 bg-slate-900/50 p-5 transition-all duration-200 hover:-translate-y-1 hover:border-teal-400 hover:bg-slate-900/80 hover:shadow-lg hover:shadow-teal-500/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-400 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-950">
+              <div class="mb-3 flex items-start justify-between gap-2"><h3 class="text-base font-medium leading-snug text-slate-100 transition-colors group-hover:text-teal-300">AI Job Market Intelligence Dashboard</h3><span class="flex-shrink-0 text-slate-400 transition-colors group-hover:text-teal-300">↗</span></div>
+              <p class="mb-4 text-sm leading-relaxed text-slate-300">Live analytics of AI hiring trends, skill demand, and market momentum</p>
+              <ul class="space-y-1.5 border-t border-slate-800/50 pt-3 text-xs text-slate-400"><li class="flex items-start"><span class="mr-2 text-teal-400">•</span><span>Real-time job market data aggregation and trend analysis</span></li><li class="flex items-start"><span class="mr-2 text-teal-400">•</span><span>Interactive visualizations of skill demand patterns</span></li><li class="flex items-start"><span class="mr-2 text-teal-400">•</span><span>Market momentum tracking for AI/ML roles</span></li></ul>
             </a>
-            <a
-              href="https://daily-poem-xi.vercel.app/20251212_175550"
-              target="_blank"
-              rel="noopener noreferrer"
-              class="group block rounded-lg border border-slate-800 bg-slate-900/50 p-5 transition-all duration-200 hover:-translate-y-1 hover:border-teal-400 hover:bg-slate-900/80 hover:shadow-lg hover:shadow-teal-500/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-400 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-950"
-            >
-              <div class="mb-3 flex items-start justify-between gap-2">
-                <h3 class="text-base font-medium leading-snug text-slate-100 transition-colors group-hover:text-teal-300">
-                  AI Writing &amp; Content Experiment
-                </h3>
-                <span class="flex-shrink-0 text-slate-400 transition-colors group-hover:text-teal-300">↗</span>
-              </div>
-              <p class="mb-4 text-sm leading-relaxed text-slate-300">
-                Experimental AI-generated writing system exploring creative content workflows
-              </p>
-              <ul class="space-y-1.5 border-t border-slate-800/50 pt-3 text-xs text-slate-400">
-                <li class="flex items-start">
-                  <span class="mr-2 text-teal-400">•</span>
-                  <span>LLM-driven content generation pipeline</span>
-                </li>
-                <li class="flex items-start">
-                  <span class="mr-2 text-teal-400">•</span>
-                  <span>Experimental prompt engineering workflows</span>
-                </li>
-                <li class="flex items-start">
-                  <span class="mr-2 text-teal-400">•</span>
-                  <span>Creative AI application research</span>
-                </li>
-              </ul>
+            <a href="https://daily-poem-xi.vercel.app/20251212_175550" target="_blank" rel="noopener noreferrer" class="group block rounded-lg border border-slate-800 bg-slate-900/50 p-5 transition-all duration-200 hover:-translate-y-1 hover:border-teal-400 hover:bg-slate-900/80 hover:shadow-lg hover:shadow-teal-500/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-400 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-950">
+              <div class="mb-3 flex items-start justify-between gap-2"><h3 class="text-base font-medium leading-snug text-slate-100 transition-colors group-hover:text-teal-300">AI Writing &amp; Content Experiment</h3><span class="flex-shrink-0 text-slate-400 transition-colors group-hover:text-teal-300">↗</span></div>
+              <p class="mb-4 text-sm leading-relaxed text-slate-300">Experimental AI-generated writing system exploring creative content workflows</p>
+              <ul class="space-y-1.5 border-t border-slate-800/50 pt-3 text-xs text-slate-400"><li class="flex items-start"><span class="mr-2 text-teal-400">•</span><span>LLM-driven content generation pipeline</span></li><li class="flex items-start"><span class="mr-2 text-teal-400">•</span><span>Experimental prompt engineering workflows</span></li><li class="flex items-start"><span class="mr-2 text-teal-400">•</span><span>Creative AI application research</span></li></ul>
             </a>
-            <a
-              href="https://phizou.github.io/DMV-Company-Research-Vault/"
-              target="_blank"
-              rel="noopener noreferrer"
-              class="group block rounded-lg border border-slate-800 bg-slate-900/50 p-5 transition-all duration-200 hover:-translate-y-1 hover:border-teal-400 hover:bg-slate-900/80 hover:shadow-lg hover:shadow-teal-500/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-400 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-950"
-            >
-              <div class="mb-3 flex items-start justify-between gap-2">
-                <h3 class="text-base font-medium leading-snug text-slate-100 transition-colors group-hover:text-teal-300">
-                  DMV Company Research Vault
-                </h3>
-                <span class="flex-shrink-0 text-slate-400 transition-colors group-hover:text-teal-300">↗</span>
-              </div>
-              <p class="mb-4 text-sm leading-relaxed text-slate-300">
-                Public Obsidian-based research vault mapping DMV tech, GovCon, and infrastructure companies
-              </p>
-              <ul class="space-y-1.5 border-t border-slate-800/50 pt-3 text-xs text-slate-400">
-                <li class="flex items-start">
-                  <span class="mr-2 text-teal-400">•</span>
-                  <span>Structured knowledge graph of regional companies</span>
-                </li>
-                <li class="flex items-start">
-                  <span class="mr-2 text-teal-400">•</span>
-                  <span>GovCon and tech ecosystem mapping</span>
-                </li>
-                <li class="flex items-start">
-                  <span class="mr-2 text-teal-400">•</span>
-                  <span>Open-source research methodology</span>
-                </li>
-              </ul>
+            <a href="https://phizou.github.io/DMV-Company-Research-Vault/" target="_blank" rel="noopener noreferrer" class="group block rounded-lg border border-slate-800 bg-slate-900/50 p-5 transition-all duration-200 hover:-translate-y-1 hover:border-teal-400 hover:bg-slate-900/80 hover:shadow-lg hover:shadow-teal-500/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-400 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-950">
+              <div class="mb-3 flex items-start justify-between gap-2"><h3 class="text-base font-medium leading-snug text-slate-100 transition-colors group-hover:text-teal-300">DMV Company Research Vault</h3><span class="flex-shrink-0 text-slate-400 transition-colors group-hover:text-teal-300">↗</span></div>
+              <p class="mb-4 text-sm leading-relaxed text-slate-300">Public Obsidian-based research vault mapping DMV tech, GovCon, and infrastructure companies</p>
+              <ul class="space-y-1.5 border-t border-slate-800/50 pt-3 text-xs text-slate-400"><li class="flex items-start"><span class="mr-2 text-teal-400">•</span><span>Structured knowledge graph of regional companies</span></li><li class="flex items-start"><span class="mr-2 text-teal-400">•</span><span>GovCon and tech ecosystem mapping</span></li><li class="flex items-start"><span class="mr-2 text-teal-400">•</span><span>Open-source research methodology</span></li></ul>
             </a>
-            <a
-              href="https://nova-data-center-energy.vercel.app"
-              target="_blank"
-              rel="noopener noreferrer"
-              class="group block rounded-lg border border-slate-800 bg-slate-900/50 p-5 transition-all duration-200 hover:-translate-y-1 hover:border-teal-400 hover:bg-slate-900/80 hover:shadow-lg hover:shadow-teal-500/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-400 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-950"
-            >
-              <div class="mb-3 flex items-start justify-between gap-2">
-                <h3 class="text-base font-medium leading-snug text-slate-100 transition-colors group-hover:text-teal-300">
-                  NOVA Data Center Energy
-                </h3>
-                <span class="flex-shrink-0 text-slate-400 transition-colors group-hover:text-teal-300">↗</span>
-              </div>
-              <p class="mb-4 text-sm leading-relaxed text-slate-300">
-                Interactive D3 visualization of data center energy consumption, grid stress, and water use in Northern Virginia
-              </p>
-              <ul class="space-y-1.5 border-t border-slate-800/50 pt-3 text-xs text-slate-400">
-                <li class="flex items-start">
-                  <span class="mr-2 text-teal-400">•</span>
-                  <span>Demand timeline, facility map, Sankey, water heatmap</span>
-                </li>
-                <li class="flex items-start">
-                  <span class="mr-2 text-teal-400">•</span>
-                  <span>Scrollytelling narrative with source-cited data</span>
-                </li>
-                <li class="flex items-start">
-                  <span class="mr-2 text-teal-400">•</span>
-                  <span>D3.js + TypeScript + Vite</span>
-                </li>
-              </ul>
+            <a href="https://nova-data-center-energy.vercel.app" target="_blank" rel="noopener noreferrer" class="group block rounded-lg border border-slate-800 bg-slate-900/50 p-5 transition-all duration-200 hover:-translate-y-1 hover:border-teal-400 hover:bg-slate-900/80 hover:shadow-lg hover:shadow-teal-500/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-400 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-950">
+              <div class="mb-3 flex items-start justify-between gap-2"><h3 class="text-base font-medium leading-snug text-slate-100 transition-colors group-hover:text-teal-300">NOVA Data Center Energy</h3><span class="flex-shrink-0 text-slate-400 transition-colors group-hover:text-teal-300">↗</span></div>
+              <p class="mb-4 text-sm leading-relaxed text-slate-300">Interactive D3 visualization of data center energy consumption, grid stress, and water use in Northern Virginia</p>
+              <ul class="space-y-1.5 border-t border-slate-800/50 pt-3 text-xs text-slate-400"><li class="flex items-start"><span class="mr-2 text-teal-400">•</span><span>Demand timeline, facility map, Sankey, water heatmap</span></li><li class="flex items-start"><span class="mr-2 text-teal-400">•</span><span>Scrollytelling narrative with source-cited data</span></li><li class="flex items-start"><span class="mr-2 text-teal-400">•</span><span>D3.js + TypeScript + Vite</span></li></ul>
             </a>
-            <a
-              href="https://iran-us-conflict-map.vercel.app"
-              target="_blank"
-              rel="noopener noreferrer"
-              class="group block rounded-lg border border-slate-800 bg-slate-900/50 p-5 transition-all duration-200 hover:-translate-y-1 hover:border-teal-400 hover:bg-slate-900/80 hover:shadow-lg hover:shadow-teal-500/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-400 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-950"
-            >
-              <div class="mb-3 flex items-start justify-between gap-2">
-                <h3 class="text-base font-medium leading-snug text-slate-100 transition-colors group-hover:text-teal-300">
-                  Iran–US Conflict Map
-                </h3>
-                <span class="flex-shrink-0 text-slate-400 transition-colors group-hover:text-teal-300">↗</span>
-              </div>
-              <p class="mb-4 text-sm leading-relaxed text-slate-300">
-                Interactive D3 map tracking strikes, naval engagements, oil disruption, and humanitarian impact
-              </p>
-              <ul class="space-y-1.5 border-t border-slate-800/50 pt-3 text-xs text-slate-400">
-                <li class="flex items-start">
-                  <span class="mr-2 text-teal-400">•</span>
-                  <span>Day-by-day timeline scrubber</span>
-                </li>
-                <li class="flex items-start">
-                  <span class="mr-2 text-teal-400">•</span>
-                  <span>Strike, naval, oil, humanitarian layers</span>
-                </li>
-                <li class="flex items-start">
-                  <span class="mr-2 text-teal-400">•</span>
-                  <span>D3.js + TypeScript + Vite</span>
-                </li>
-              </ul>
+            <a href="https://iran-us-conflict-map.vercel.app" target="_blank" rel="noopener noreferrer" class="group block rounded-lg border border-slate-800 bg-slate-900/50 p-5 transition-all duration-200 hover:-translate-y-1 hover:border-teal-400 hover:bg-slate-900/80 hover:shadow-lg hover:shadow-teal-500/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-400 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-950">
+              <div class="mb-3 flex items-start justify-between gap-2"><h3 class="text-base font-medium leading-snug text-slate-100 transition-colors group-hover:text-teal-300">Iran–US Conflict Map</h3><span class="flex-shrink-0 text-slate-400 transition-colors group-hover:text-teal-300">↗</span></div>
+              <p class="mb-4 text-sm leading-relaxed text-slate-300">Interactive D3 map tracking strikes, naval engagements, oil disruption, and humanitarian impact</p>
+              <ul class="space-y-1.5 border-t border-slate-800/50 pt-3 text-xs text-slate-400"><li class="flex items-start"><span class="mr-2 text-teal-400">•</span><span>Day-by-day timeline scrubber</span></li><li class="flex items-start"><span class="mr-2 text-teal-400">•</span><span>Strike, naval, oil, humanitarian layers</span></li><li class="flex items-start"><span class="mr-2 text-teal-400">•</span><span>D3.js + TypeScript + Vite</span></li></ul>
             </a>
-            <a
-              href="https://beltway-realms-game.vercel.app"
-              target="_blank"
-              rel="noopener noreferrer"
-              class="group block rounded-lg border border-slate-800 bg-slate-900/50 p-5 transition-all duration-200 hover:-translate-y-1 hover:border-teal-400 hover:bg-slate-900/80 hover:shadow-lg hover:shadow-teal-500/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-400 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-950"
-            >
-              <div class="mb-3 flex items-start justify-between gap-2">
-                <h3 class="text-base font-medium leading-snug text-slate-100 transition-colors group-hover:text-teal-300">
-                  Beltway Realms
-                </h3>
-                <span class="flex-shrink-0 text-slate-400 transition-colors group-hover:text-teal-300">↗</span>
-              </div>
-              <p class="mb-4 text-sm leading-relaxed text-slate-300">
-                Game-inspired portfolio: explore a parchment-style fantasy map of Northern Virginia and DC
-              </p>
-              <ul class="space-y-1.5 border-t border-slate-800/50 pt-3 text-xs text-slate-400">
-                <li class="flex items-start">
-                  <span class="mr-2 text-teal-400">•</span>
-                  <span>Interactive world map with clickable regions</span>
-                </li>
-                <li class="flex items-start">
-                  <span class="mr-2 text-teal-400">•</span>
-                  <span>Quests, card encounters, and d20 roller</span>
-                </li>
-                <li class="flex items-start">
-                  <span class="mr-2 text-teal-400">•</span>
-                  <span>React + TypeScript + Vite</span>
-                </li>
-              </ul>
+            <a href="https://beltway-realms-game.vercel.app" target="_blank" rel="noopener noreferrer" class="group block rounded-lg border border-slate-800 bg-slate-900/50 p-5 transition-all duration-200 hover:-translate-y-1 hover:border-teal-400 hover:bg-slate-900/80 hover:shadow-lg hover:shadow-teal-500/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-400 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-950">
+              <div class="mb-3 flex items-start justify-between gap-2"><h3 class="text-base font-medium leading-snug text-slate-100 transition-colors group-hover:text-teal-300">Beltway Realms</h3><span class="flex-shrink-0 text-slate-400 transition-colors group-hover:text-teal-300">↗</span></div>
+              <p class="mb-4 text-sm leading-relaxed text-slate-300">Game-inspired portfolio: explore a parchment-style fantasy map of Northern Virginia and DC</p>
+              <ul class="space-y-1.5 border-t border-slate-800/50 pt-3 text-xs text-slate-400"><li class="flex items-start"><span class="mr-2 text-teal-400">•</span><span>Interactive world map with clickable regions</span></li><li class="flex items-start"><span class="mr-2 text-teal-400">•</span><span>Quests, card encounters, and d20 roller</span></li><li class="flex items-start"><span class="mr-2 text-teal-400">•</span><span>React + TypeScript + Vite</span></li></ul>
             </a>
           </div>
         </div>
@@ -419,5 +193,3 @@ const projects = await getCollection("projects");
     </div>
   </section>
 </BaseLayout>
-
-

@@ -7,16 +7,16 @@ import { getCollection } from "astro:content";
 
 const allProjects = await getCollection("projects");
 
-// Feature a mix of real projects, prioritizing ones with actual content
+// Feature the projects with the clearest hiring signal first
 const featuredSlugs = [
   "obsidian-rag-chat",
-  "beltway-realms",
+  "ai-pipeline-operational-insights",
+  "govcon-analytics-dashboard",
+  "nova-data-center-energy",
   "beltway-realms-card-db",
   "iran-us-conflict-map",
-  "nova-data-center-energy",
   "text-prediction-ml",
   "d3-visualizations-portfolio",
-  "poem-generator",
 ];
 
 const featuredProjects = featuredSlugs
@@ -33,6 +33,30 @@ const featuredProjects = featuredSlugs
 
 <BaseLayout>
   <Hero />
+
+  <section class="border-b border-slate-800 bg-slate-950">
+    <div class="mx-auto max-w-5xl px-4 py-10 sm:px-6 lg:px-8">
+      <div class="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
+        <div class="rounded-xl border border-slate-800 bg-slate-900/50 p-4">
+          <h2 class="text-xs font-semibold uppercase tracking-[0.18em] text-teal-300">What I build</h2>
+          <p class="mt-2 text-sm text-slate-300">Data pipelines and reporting layers that make messy operational data more usable.</p>
+        </div>
+        <div class="rounded-xl border border-slate-800 bg-slate-900/50 p-4">
+          <h2 class="text-xs font-semibold uppercase tracking-[0.18em] text-teal-300">How I work</h2>
+          <p class="mt-2 text-sm text-slate-300">Systems-minded, SQL/Python-heavy, and focused on clear decision support rather than dashboard theater.</p>
+        </div>
+        <div class="rounded-xl border border-slate-800 bg-slate-900/50 p-4">
+          <h2 class="text-xs font-semibold uppercase tracking-[0.18em] text-teal-300">Best fit</h2>
+          <p class="mt-2 text-sm text-slate-300">Data Engineer, Analytics Engineer, BI Engineer, and adjacent AI/data workflow roles.</p>
+        </div>
+        <div class="rounded-xl border border-slate-800 bg-slate-900/50 p-4">
+          <h2 class="text-xs font-semibold uppercase tracking-[0.18em] text-teal-300">What stands out</h2>
+          <p class="mt-2 text-sm text-slate-300">RAG workflows, stakeholder-facing analytics, D3 storytelling, and project work with real personality.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
   <SkillsOverview />
   <ProjectGrid projects={featuredProjects} />
 
@@ -61,7 +85,7 @@ const featuredProjects = featuredSlugs
             <span class="text-slate-400 group-hover:text-teal-300">↗</span>
           </a>
           <p class="mt-0.5 text-xs text-slate-400">
-            Chat with a personal knowledge base — full RAG pipeline with OpenAI embeddings, ChromaDB vector search, and streaming citations
+            Search and chat with an Obsidian vault through a citation-grounded RAG pipeline built on semantic chunking, embeddings, and vector retrieval
           </p>
         </div>
         <div>
@@ -75,7 +99,7 @@ const featuredProjects = featuredSlugs
             <span class="text-slate-400 group-hover:text-teal-300">↗</span>
           </a>
           <p class="mt-0.5 text-xs text-slate-400">
-            FUTBin-style card database — 700 cards, FTS5 search, loadout builder with synergy engine, community ratings
+            Full-stack card database with SQLite FTS5 search, comparison flows, recommendation logic, and a synergy-aware loadout builder
           </p>
         </div>
         <div>
@@ -89,7 +113,7 @@ const featuredProjects = featuredSlugs
             <span class="text-slate-400 group-hover:text-teal-300">↗</span>
           </a>
           <p class="mt-0.5 text-xs text-slate-400">
-            Real-time aggregation and trend analysis of AI/ML job postings and skill demand
+            Job-market analytics project tracking AI hiring trends, skill demand, and market momentum through aggregated posting data
           </p>
         </div>
         <div>
@@ -117,7 +141,7 @@ const featuredProjects = featuredSlugs
             <span class="text-slate-400 group-hover:text-teal-300">↗</span>
           </a>
           <p class="mt-0.5 text-xs text-slate-400">
-            Graph-structured research database mapping DC metro tech and GovCon ecosystem
+            Public research vault mapping DMV tech, GovCon, and infrastructure companies through a structured Obsidian knowledge base
           </p>
         </div>
         <div>
@@ -131,7 +155,7 @@ const featuredProjects = featuredSlugs
             <span class="text-slate-400 group-hover:text-teal-300">↗</span>
           </a>
           <p class="mt-0.5 text-xs text-slate-400">
-            Interactive D3 visualization of data center energy consumption, grid stress, and water use in Northern Virginia
+            D3 scrollytelling project translating public infrastructure data into a clearer view of Northern Virginia's data center boom
           </p>
         </div>
         <div>
@@ -159,11 +183,10 @@ const featuredProjects = featuredSlugs
             <span class="text-slate-400 group-hover:text-teal-300">↗</span>
           </a>
           <p class="mt-0.5 text-xs text-slate-400">
-            Game-inspired portfolio: explore a parchment-style fantasy map of Northern Virginia and DC
+            Experimental portfolio world that turns regional identity, projects, and storytelling into a game-like front-end experience
           </p>
         </div>
       </div>
     </div>
   </section>
 </BaseLayout>
-

@@ -10,175 +10,67 @@ import BaseLayout from "../layouts/BaseLayout.astro";
           Resume
         </h1>
         <p class="max-w-2xl text-sm text-slate-300 sm:text-base">
-          Snapshot of my experience across data engineering, AI/ML, quantitative methods, and
-          GovCon analytics. A full, printable PDF is embedded below.
+          A quick recruiter-facing snapshot of where I fit best, what I build, and where to go next before opening the full PDF.
         </p>
       </header>
-      <div class="mb-8 grid gap-4 text-xs text-slate-200 sm:grid-cols-2 lg:grid-cols-3 sm:text-sm">
+
+      <div class="mb-8 grid gap-4 lg:grid-cols-[1.4fr,1fr]">
         <div class="rounded-xl border border-slate-800 bg-slate-900/60 p-5">
           <h2 class="mb-3 text-xs font-semibold uppercase tracking-[0.18em] text-teal-300">
-            Data Engineering
+            Best-fit roles
           </h2>
-          <ul class="space-y-2 text-slate-300">
-            <li class="flex items-start gap-2">
-              <span class="mt-1.5 h-1.5 w-1.5 flex-shrink-0 rounded-full bg-teal-400"></span>
-              <span>Designed and maintained end-to-end data pipelines using Python, SQL, and AWS (S3, Glue, Redshift).</span>
-            </li>
-            <li class="flex items-start gap-2">
-              <span class="mt-1.5 h-1.5 w-1.5 flex-shrink-0 rounded-full bg-teal-400"></span>
-              <span>Built automated ETL workflows for large membership datasets (100k+ entities, 700+ associations).</span>
-            </li>
-            <li class="flex items-start gap-2">
-              <span class="mt-1.5 h-1.5 w-1.5 flex-shrink-0 rounded-full bg-teal-400"></span>
-              <span>Created scalable data models for segmentation, cohort retention, and operational analytics.</span>
-            </li>
-            <li class="flex items-start gap-2">
-              <span class="mt-1.5 h-1.5 w-1.5 flex-shrink-0 rounded-full bg-teal-400"></span>
-              <span>Implemented data quality checks, pipeline monitoring, and performance optimizations.</span>
-            </li>
+          <ul class="space-y-2 text-sm text-slate-300">
+            <li class="flex items-start gap-2"><span class="mt-1.5 h-1.5 w-1.5 rounded-full bg-teal-400"></span><span>Data Engineer</span></li>
+            <li class="flex items-start gap-2"><span class="mt-1.5 h-1.5 w-1.5 rounded-full bg-teal-400"></span><span>Analytics Engineer</span></li>
+            <li class="flex items-start gap-2"><span class="mt-1.5 h-1.5 w-1.5 rounded-full bg-teal-400"></span><span>Business Intelligence Engineer</span></li>
+            <li class="flex items-start gap-2"><span class="mt-1.5 h-1.5 w-1.5 rounded-full bg-teal-400"></span><span>AI / data workflow roles with a strong pipeline or decision-support component</span></li>
           </ul>
         </div>
         <div class="rounded-xl border border-slate-800 bg-slate-900/60 p-5">
           <h2 class="mb-3 text-xs font-semibold uppercase tracking-[0.18em] text-teal-300">
-            AI / Machine Learning
+            Good starting points
           </h2>
-          <ul class="space-y-2 text-slate-300">
-            <li class="flex items-start gap-2">
-              <span class="mt-1.5 h-1.5 w-1.5 flex-shrink-0 rounded-full bg-teal-400"></span>
-              <span>Developed AI-driven automation pipelines, including multi-stage text, image, and video generation workflows.</span>
-            </li>
-            <li class="flex items-start gap-2">
-              <span class="mt-1.5 h-1.5 w-1.5 flex-shrink-0 rounded-full bg-teal-400"></span>
-              <span>Built and deployed predictive models for text analysis, forecasting, classification, and anomaly detection.</span>
-            </li>
-            <li class="flex items-start gap-2">
-              <span class="mt-1.5 h-1.5 w-1.5 flex-shrink-0 rounded-full bg-teal-400"></span>
-              <span>Implemented Monte Carlo simulations, embedding-based search, and LLM-assisted retrieval systems.</span>
-            </li>
-            <li class="flex items-start gap-2">
-              <span class="mt-1.5 h-1.5 w-1.5 flex-shrink-0 rounded-full bg-teal-400"></span>
-              <span>Integrated modern AI models into production-like environments using Python, APIs, and cloud services.</span>
-            </li>
-          </ul>
-        </div>
-        <div class="rounded-xl border border-slate-800 bg-slate-900/60 p-5">
-          <h2 class="mb-3 text-xs font-semibold uppercase tracking-[0.18em] text-teal-300">
-            Quantitative Modeling
-          </h2>
-          <ul class="space-y-2 text-slate-300">
-            <li class="flex items-start gap-2">
-              <span class="mt-1.5 h-1.5 w-1.5 flex-shrink-0 rounded-full bg-teal-400"></span>
-              <span>Applied Monte Carlo, stochastic simulation, and optimization methods for risk and scenario analysis.</span>
-            </li>
-            <li class="flex items-start gap-2">
-              <span class="mt-1.5 h-1.5 w-1.5 flex-shrink-0 rounded-full bg-teal-400"></span>
-              <span>Conducted time-series modeling, forecasting, and data-driven scenario planning.</span>
-            </li>
-            <li class="flex items-start gap-2">
-              <span class="mt-1.5 h-1.5 w-1.5 flex-shrink-0 rounded-full bg-teal-400"></span>
-              <span>Used derivatives concepts and financial engineering methods in analytical tooling.</span>
-            </li>
-            <li class="flex items-start gap-2">
-              <span class="mt-1.5 h-1.5 w-1.5 flex-shrink-0 rounded-full bg-teal-400"></span>
-              <span>Built quant-style research pipelines for exploration of systematic trading signals and model validation.</span>
-            </li>
-          </ul>
-        </div>
-        <div class="rounded-xl border border-slate-800 bg-slate-900/60 p-5">
-          <h2 class="mb-3 text-xs font-semibold uppercase tracking-[0.18em] text-teal-300">
-            Systems Engineering
-          </h2>
-          <ul class="space-y-2 text-slate-300">
-            <li class="flex items-start gap-2">
-              <span class="mt-1.5 h-1.5 w-1.5 flex-shrink-0 rounded-full bg-teal-400"></span>
-              <span>Master's-level training in systems architecture, modeling, decision analysis, and requirements engineering.</span>
-            </li>
-            <li class="flex items-start gap-2">
-              <span class="mt-1.5 h-1.5 w-1.5 flex-shrink-0 rounded-full bg-teal-400"></span>
-              <span>Designed process flows, feedback systems, and multi-criteria decision frameworks for complex operations.</span>
-            </li>
-            <li class="flex items-start gap-2">
-              <span class="mt-1.5 h-1.5 w-1.5 flex-shrink-0 rounded-full bg-teal-400"></span>
-              <span>Experience decomposing large, ambiguous problems into structured, solvable components.</span>
-            </li>
-            <li class="flex items-start gap-2">
-              <span class="mt-1.5 h-1.5 w-1.5 flex-shrink-0 rounded-full bg-teal-400"></span>
-              <span>Strong alignment with DoD, GovCon, and mission-critical analytic environments.</span>
-            </li>
-          </ul>
-        </div>
-        <div class="rounded-xl border border-slate-800 bg-slate-900/60 p-5">
-          <h2 class="mb-3 text-xs font-semibold uppercase tracking-[0.18em] text-teal-300">
-            Analytics &amp; Visualization
-          </h2>
-          <ul class="space-y-2 text-slate-300">
-            <li class="flex items-start gap-2">
-              <span class="mt-1.5 h-1.5 w-1.5 flex-shrink-0 rounded-full bg-teal-400"></span>
-              <span>Built dashboards and analytics products for 114,000+ members across 700+ local organizations.</span>
-            </li>
-            <li class="flex items-start gap-2">
-              <span class="mt-1.5 h-1.5 w-1.5 flex-shrink-0 rounded-full bg-teal-400"></span>
-              <span>Designed D3.js visualizations, interactive data tools, and custom analytics interfaces from scratch.</span>
-            </li>
-            <li class="flex items-start gap-2">
-              <span class="mt-1.5 h-1.5 w-1.5 flex-shrink-0 rounded-full bg-teal-400"></span>
-              <span>Led monthly reporting cycles, retention modeling, segmentation, and membership health analysis.</span>
-            </li>
-            <li class="flex items-start gap-2">
-              <span class="mt-1.5 h-1.5 w-1.5 flex-shrink-0 rounded-full bg-teal-400"></span>
-              <span>Advanced experience in Tableau, D3.js, Python visualization libraries, and Astro/JS-based interfaces.</span>
-            </li>
-          </ul>
-        </div>
-        <div class="rounded-xl border border-slate-800 bg-slate-900/60 p-5">
-          <h2 class="mb-3 text-xs font-semibold uppercase tracking-[0.18em] text-teal-300">
-            Cloud &amp; Infrastructure
-          </h2>
-          <ul class="space-y-2 text-slate-300">
-            <li class="flex items-start gap-2">
-              <span class="mt-1.5 h-1.5 w-1.5 flex-shrink-0 rounded-full bg-teal-400"></span>
-              <span>Built cloud-native data workflows using AWS S3, Glue, Redshift, Lambda, IAM, and CloudWatch.</span>
-            </li>
-            <li class="flex items-start gap-2">
-              <span class="mt-1.5 h-1.5 w-1.5 flex-shrink-0 rounded-full bg-teal-400"></span>
-              <span>Implemented containerized development environments and automated CI/CD workflows.</span>
-            </li>
-            <li class="flex items-start gap-2">
-              <span class="mt-1.5 h-1.5 w-1.5 flex-shrink-0 rounded-full bg-teal-400"></span>
-              <span>Experience with GitHub Pages, GitHub Actions, and Astro-based static deployment architectures.</span>
-            </li>
-            <li class="flex items-start gap-2">
-              <span class="mt-1.5 h-1.5 w-1.5 flex-shrink-0 rounded-full bg-teal-400"></span>
-              <span>Understanding of modern data-center and AI infrastructure ecosystems, especially in Northern Virginia.</span>
-            </li>
-          </ul>
-        </div>
-        <div class="rounded-xl border border-slate-800 bg-slate-900/60 p-5 sm:col-span-2 lg:col-span-1">
-          <h2 class="mb-3 text-xs font-semibold uppercase tracking-[0.18em] text-teal-300">
-            Technical Leadership &amp; Execution
-          </h2>
-          <ul class="space-y-2 text-slate-300">
-            <li class="flex items-start gap-2">
-              <span class="mt-1.5 h-1.5 w-1.5 flex-shrink-0 rounded-full bg-teal-400"></span>
-              <span>Known for clean architecture, clear documentation, and consistent delivery.</span>
-            </li>
-            <li class="flex items-start gap-2">
-              <span class="mt-1.5 h-1.5 w-1.5 flex-shrink-0 rounded-full bg-teal-400"></span>
-              <span>Regularly bridge data, engineering, and product perspectives to create usable, scalable systems.</span>
-            </li>
-            <li class="flex items-start gap-2">
-              <span class="mt-1.5 h-1.5 w-1.5 flex-shrink-0 rounded-full bg-teal-400"></span>
-              <span>Experience working cross-functionally with engineering, analytics, and operations teams.</span>
-            </li>
-            <li class="flex items-start gap-2">
-              <span class="mt-1.5 h-1.5 w-1.5 flex-shrink-0 rounded-full bg-teal-400"></span>
-              <span>Skilled at rapidly building MVPs, iterating with LLM tools, and deploying production-quality artifacts.</span>
-            </li>
+          <ul class="space-y-2 text-sm text-slate-300">
+            <li><a href="/projects/obsidian-rag-chat" class="text-teal-300 hover:text-teal-200">Obsidian RAG Chat</a></li>
+            <li><a href="/projects/ai-pipeline-operational-insights" class="text-teal-300 hover:text-teal-200">End-to-end AI pipeline for operational insights</a></li>
+            <li><a href="/projects/govcon-analytics-dashboard" class="text-teal-300 hover:text-teal-200">GovCon analytics dashboard for mission KPIs</a></li>
+            <li><a href="/projects/nova-data-center-energy" class="text-teal-300 hover:text-teal-200">NOVA Data Center Energy</a></li>
           </ul>
         </div>
       </div>
+
+      <div class="mb-8 grid gap-4 text-xs text-slate-200 sm:grid-cols-2 lg:grid-cols-3 sm:text-sm">
+        <div class="rounded-xl border border-slate-800 bg-slate-900/60 p-5">
+          <h2 class="mb-3 text-xs font-semibold uppercase tracking-[0.18em] text-teal-300">Data Engineering</h2>
+          <ul class="space-y-2 text-slate-300">
+            <li class="flex items-start gap-2"><span class="mt-1.5 h-1.5 w-1.5 rounded-full bg-teal-400"></span><span>Designed and maintained data pipelines using Python, SQL, and AWS-flavored tooling.</span></li>
+            <li class="flex items-start gap-2"><span class="mt-1.5 h-1.5 w-1.5 rounded-full bg-teal-400"></span><span>Built automated workflows and reporting layers for large operational and membership datasets.</span></li>
+            <li class="flex items-start gap-2"><span class="mt-1.5 h-1.5 w-1.5 rounded-full bg-teal-400"></span><span>Created data models for segmentation, retention, KPI tracking, and recurring decision support.</span></li>
+            <li class="flex items-start gap-2"><span class="mt-1.5 h-1.5 w-1.5 rounded-full bg-teal-400"></span><span>Focused on reliability, metric consistency, and reducing manual reporting friction.</span></li>
+          </ul>
+        </div>
+        <div class="rounded-xl border border-slate-800 bg-slate-900/60 p-5">
+          <h2 class="mb-3 text-xs font-semibold uppercase tracking-[0.18em] text-teal-300">Analytics &amp; Decision Support</h2>
+          <ul class="space-y-2 text-slate-300">
+            <li class="flex items-start gap-2"><span class="mt-1.5 h-1.5 w-1.5 rounded-full bg-teal-400"></span><span>Built dashboards and analytics products used to monitor performance, engagement, and operational trends.</span></li>
+            <li class="flex items-start gap-2"><span class="mt-1.5 h-1.5 w-1.5 rounded-full bg-teal-400"></span><span>Translated ambiguous stakeholder questions into clearer KPI systems and reporting structures.</span></li>
+            <li class="flex items-start gap-2"><span class="mt-1.5 h-1.5 w-1.5 rounded-full bg-teal-400"></span><span>Worked comfortably between technical implementation and executive-facing communication.</span></li>
+            <li class="flex items-start gap-2"><span class="mt-1.5 h-1.5 w-1.5 rounded-full bg-teal-400"></span><span>Strong experience with Tableau, SQL reporting, and custom visualization work.</span></li>
+          </ul>
+        </div>
+        <div class="rounded-xl border border-slate-800 bg-slate-900/60 p-5">
+          <h2 class="mb-3 text-xs font-semibold uppercase tracking-[0.18em] text-teal-300">AI / Workflow Systems</h2>
+          <ul class="space-y-2 text-slate-300">
+            <li class="flex items-start gap-2"><span class="mt-1.5 h-1.5 w-1.5 rounded-full bg-teal-400"></span><span>Built RAG-style retrieval systems, text-processing workflows, and AI-assisted automation pipelines.</span></li>
+            <li class="flex items-start gap-2"><span class="mt-1.5 h-1.5 w-1.5 rounded-full bg-teal-400"></span><span>Connected model outputs back to operational questions rather than treating ML as notebook-only work.</span></li>
+            <li class="flex items-start gap-2"><span class="mt-1.5 h-1.5 w-1.5 rounded-full bg-teal-400"></span><span>Comfortable with document workflows, embeddings, monitoring, and end-to-end proof-of-concept systems.</span></li>
+            <li class="flex items-start gap-2"><span class="mt-1.5 h-1.5 w-1.5 rounded-full bg-teal-400"></span><span>Interested in the overlap between data engineering, applied AI, and decision-support tooling.</span></li>
+          </ul>
+        </div>
+      </div>
+
       <div class="mb-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between sm:gap-4 text-xs text-slate-300">
-        <p class="flex-1">For the latest details, download the PDF version of my resume.</p>
+        <p class="flex-1">For the full chronology and latest details, download the PDF version of my resume.</p>
         <a
           href="/pdf/Peter-Hagen-Resume.pdf"
           download
@@ -201,5 +93,3 @@ import BaseLayout from "../layouts/BaseLayout.astro";
     </div>
   </section>
 </BaseLayout>
-
-
