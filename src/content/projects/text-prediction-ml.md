@@ -6,40 +6,25 @@ summary: Built an end-to-end NLP application that turned a large text corpus int
 tags: ["AI/ML", "NLP", "Shiny", "R", "Language Modeling"]
 stack: ["R", "Shiny", "NLP", "Machine Learning"]
 impact: "Shows early end-to-end ML product thinking: data preparation, model design, evaluation, and a user-facing interface for real-time interaction."
+liveUrl: "https://ph13.shinyapps.io/shiny/"
 legacyUrl: "https://ph13.shinyapps.io/shiny/"
 ---
 
 # Text prediction application with machine learning
 
-This project started with a classic machine-learning question — how do you predict the next word in a sequence — but the more important part for me was building the full system around that question.
-
-Instead of stopping at model experimentation, I wanted to turn the work into a usable application: something that takes text input, produces predictions in real time, and lets a user interact with the model through a simple interface.
+This project focused on building a usable NLP application, not just training a model. I developed a text-prediction workflow that cleaned a large corpus, engineered n-gram features, and turned the result into an interactive **Shiny** app for real-time next-word suggestions.
 
 ## What I built
 
-- A text-processing workflow for preparing and cleaning a large language corpus
-- Feature engineering around n-gram language patterns
-- A predictive model for next-word suggestion
-- An interactive **Shiny** application that exposed the model through a live interface
+- Text cleaning and preparation for a large language corpus
+- N-gram feature engineering for next-word prediction
+- A predictive language model
+- A live **Shiny** interface for real-time interaction
 
 ## Why it matters
 
-This project is one of the earlier examples in my portfolio of thinking beyond pure analysis. It combines:
-
-- data preparation
-- applied NLP
-- model evaluation
-- deployment into a user-facing tool
-
-That end-to-end shape is still how I like to think about ML work now: not just whether a model can be trained, but whether the full workflow is understandable, repeatable, and useful.
-
-## What this project shows
-
-- practical NLP and language-modeling foundations
-- experience moving from raw text data to an interactive application
-- willingness to ship a usable interface rather than keep the work stuck in notebooks
-- an early throughline toward the AI workflow and RAG-style systems work in my more recent projects
+This project shows an early version of how I like to work: taking a machine-learning problem all the way from data preparation to a user-facing application. It highlights practical NLP foundations, model development, and a willingness to ship something interactive instead of leaving the work in notebooks.
 
 ## Takeaway
 
-This project is less about cutting-edge LLM work and more about a pattern that still matters in my portfolio: building complete systems that move from data to model to interface in a way a real user can actually touch.
+More than a standalone NLP demo, this project reflects a pattern that still runs through my work: building complete systems that move from data to model to interface in a way a real user can actually use.

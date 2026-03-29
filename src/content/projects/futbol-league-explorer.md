@@ -6,6 +6,7 @@ summary: Interactive Shiny application for exploring and analyzing futbol league
 tags: ["Shiny", "R", "Data Visualization", "Sports Analytics"]
 stack: ["R", "Shiny", "Data Visualization"]
 impact: Enabled interactive exploration of league data with intuitive filtering and visualization capabilities.
+liveUrl: "https://ph13.shinyapps.io/Futbol_Players_2/"
 legacyUrl: "https://ph13.shinyapps.io/Futbol_Players_2/"
 ---
 

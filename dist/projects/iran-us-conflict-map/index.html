@@ -2,52 +2,48 @@
 Skip to main content
 </a> <div class="flex min-h-screen flex-col"> <header class="border-b border-slate-800 bg-slate-950/80 backdrop-blur"> <div class="mx-auto flex max-w-5xl items-center justify-between px-4 py-4 sm:px-6 lg:px-8"> <a href="/" class="text-sm font-semibold tracking-tight text-slate-50">
 Peter Hagen
-<span class="ml-1 text-xs font-normal text-slate-400">Data / AI / Quant</span> </a> <nav aria-label="Main navigation" class="relative"> <button id="mobile-menu-button" aria-label="Toggle navigation menu" aria-expanded="false" class="sm:hidden rounded p-1 text-slate-300 hover:text-teal-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-400 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-950"> <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"> <path id="menu-icon" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path> <path id="close-icon" class="hidden" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path> </svg> </button> <div id="mobile-menu-backdrop" class="hidden fixed inset-0 z-40 bg-slate-950/50 backdrop-blur-sm sm:hidden"></div> <ul id="nav-menu" class="hidden absolute right-0 top-full z-50 mt-2 flex w-48 flex-col gap-2 rounded-lg border border-slate-800 bg-slate-900 p-3 text-sm text-slate-300 sm:static sm:z-auto sm:flex sm:w-auto sm:flex-row sm:border-0 sm:bg-transparent sm:p-0"> <li><a href="/about" class="block rounded px-3 py-1 hover:bg-slate-800 hover:text-teal-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-400 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-950 sm:px-0 sm:py-0 sm:hover:bg-transparent">About</a></li> <li><a href="/projects" class="block rounded px-3 py-1 hover:bg-slate-800 hover:text-teal-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-400 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-950 sm:px-0 sm:py-0 sm:hover:bg-transparent">Projects</a></li> <li><a href="/resume" class="block rounded px-3 py-1 hover:bg-slate-800 hover:text-teal-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-400 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-950 sm:px-0 sm:py-0 sm:hover:bg-transparent">Resume</a></li> <li><a href="/blog" class="block rounded px-3 py-1 hover:bg-slate-800 hover:text-teal-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-400 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-950 sm:px-0 sm:py-0 sm:hover:bg-transparent">Blog</a></li> </ul> </nav> </div> </header> <script type="module">const t=document.getElementById("mobile-menu-button"),s=document.getElementById("nav-menu"),o=document.getElementById("menu-icon"),a=document.getElementById("close-icon"),i=document.getElementById("mobile-menu-backdrop");function d(e){e?(t.setAttribute("aria-expanded","true"),s.classList.remove("hidden"),i?.classList.remove("hidden"),o.classList.add("hidden"),a.classList.remove("hidden"),document.body.style.overflow="hidden"):(t.setAttribute("aria-expanded","false"),s.classList.add("hidden"),i?.classList.add("hidden"),o.classList.remove("hidden"),a.classList.add("hidden"),document.body.style.overflow="")}t&&s&&(t.addEventListener("click",()=>{const e=t.getAttribute("aria-expanded")==="true";d(!e)}),i?.addEventListener("click",()=>{d(!1)}),document.addEventListener("click",e=>{const n=e.target;n&&!t.contains(n)&&!s.contains(n)&&n!==i&&d(!1)}),document.addEventListener("keydown",e=>{e.key==="Escape"&&t.getAttribute("aria-expanded")==="true"&&d(!1)}));</script> <main id="main-content" class="flex-1"> <article class="mx-auto max-w-3xl px-4 py-10 sm:px-6 sm:py-14 lg:px-8"> <header class="mb-6 space-y-2"> <p class="text-xs font-semibold uppercase tracking-[0.2em] text-teal-300"> D3 Visualization </p> <h1 class="text-2xl font-semibold tracking-tight text-slate-50 sm:text-3xl"> Iran–US Conflict Map </h1> <p class="max-w-2xl text-sm text-slate-300 sm:text-base"> Interactive D3.js map tracking key events, military operations, economic disruptions, and humanitarian impacts of the 2026 Iran–US conflict. Scrollable timeline animates the war day by day. </p> </header> <div class="mb-6 flex flex-wrap gap-3">  <a href="https://iran-us-conflict-map.vercel.app" target="_blank" rel="noopener noreferrer" class="inline-flex items-center justify-center rounded-full bg-teal-400 px-4 py-2 text-xs font-semibold text-slate-950 shadow-sm transition hover:bg-teal-300">
+<span class="ml-1 text-xs font-normal text-slate-400">Data / AI / Quant</span> </a> <nav aria-label="Main navigation" class="relative"> <button id="mobile-menu-button" aria-label="Toggle navigation menu" aria-expanded="false" class="sm:hidden rounded p-1 text-slate-300 hover:text-teal-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-400 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-950"> <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"> <path id="menu-icon" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path> <path id="close-icon" class="hidden" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path> </svg> </button> <div id="mobile-menu-backdrop" class="hidden fixed inset-0 z-40 bg-slate-950/50 backdrop-blur-sm sm:hidden"></div> <ul id="nav-menu" class="hidden absolute right-0 top-full z-50 mt-2 flex w-48 flex-col gap-2 rounded-lg border border-slate-800 bg-slate-900 p-3 text-sm text-slate-300 sm:static sm:z-auto sm:flex sm:w-auto sm:flex-row sm:border-0 sm:bg-transparent sm:p-0"> <li><a href="/about" class="block rounded px-3 py-1 hover:bg-slate-800 hover:text-teal-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-400 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-950 sm:px-0 sm:py-0 sm:hover:bg-transparent">About</a></li> <li><a href="/projects" class="block rounded px-3 py-1 hover:bg-slate-800 hover:text-teal-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-400 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-950 sm:px-0 sm:py-0 sm:hover:bg-transparent">Projects</a></li> <li><a href="/resume" class="block rounded px-3 py-1 hover:bg-slate-800 hover:text-teal-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-400 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-950 sm:px-0 sm:py-0 sm:hover:bg-transparent">Resume</a></li> <li><a href="/blog" class="block rounded px-3 py-1 hover:bg-slate-800 hover:text-teal-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-400 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-950 sm:px-0 sm:py-0 sm:hover:bg-transparent">Blog</a></li> </ul> </nav> </div> </header> <script type="module">const t=document.getElementById("mobile-menu-button"),s=document.getElementById("nav-menu"),o=document.getElementById("menu-icon"),a=document.getElementById("close-icon"),i=document.getElementById("mobile-menu-backdrop");function d(e){e?(t.setAttribute("aria-expanded","true"),s.classList.remove("hidden"),i?.classList.remove("hidden"),o.classList.add("hidden"),a.classList.remove("hidden"),document.body.style.overflow="hidden"):(t.setAttribute("aria-expanded","false"),s.classList.add("hidden"),i?.classList.add("hidden"),o.classList.remove("hidden"),a.classList.add("hidden"),document.body.style.overflow="")}t&&s&&(t.addEventListener("click",()=>{const e=t.getAttribute("aria-expanded")==="true";d(!e)}),i?.addEventListener("click",()=>{d(!1)}),document.addEventListener("click",e=>{const n=e.target;n&&!t.contains(n)&&!s.contains(n)&&n!==i&&d(!1)}),document.addEventListener("keydown",e=>{e.key==="Escape"&&t.getAttribute("aria-expanded")==="true"&&d(!1)}));</script> <main id="main-content" class="flex-1"> <article class="mx-auto max-w-3xl px-4 py-10 sm:px-6 sm:py-14 lg:px-8"> <header class="mb-6 space-y-2"> <p class="text-xs font-semibold uppercase tracking-[0.2em] text-teal-300"> D3 Visualization </p> <h1 class="text-2xl font-semibold tracking-tight text-slate-50 sm:text-3xl"> Iran–US Conflict Map </h1> <p class="max-w-2xl text-sm text-slate-300 sm:text-base"> Interactive D3.js map tracking key events, military operations, economic disruptions, and humanitarian impacts of the 2026 Iran–US conflict. Scrollable timeline animates the war day by day. </p> </header> <div class="mb-6 flex flex-wrap gap-3">  <a href="https://iran-us-conflict-map2.vercel.app/" target="_blank" rel="noopener noreferrer" class="inline-flex items-center justify-center rounded-full bg-teal-400 px-4 py-2 text-xs font-semibold text-slate-950 shadow-sm transition hover:bg-teal-300">
 View live project ↗
 </a> </div> <section class="mb-6 grid gap-4 text-xs text-slate-200 sm:grid-cols-3 sm:text-sm"> <div> <h2 class="text-[0.7rem] font-semibold uppercase tracking-[0.2em] text-slate-400">
 Stack
 </h2> <p class="mt-1 text-slate-200"> D3.js, TypeScript, Vite, TopoJSON </p> </div>  <div> <h2 class="text-[0.7rem] font-semibold uppercase tracking-[0.2em] text-slate-400">
 Impact
-</h2> <p class="mt-1 text-slate-200"> Turns complex conflict data into an explorable atlas — zoom from macro (global oil disruption) to micro (individual strikes, ship attacks) with source-cited, journalism-grade visualization. </p> </div> </section> <section class="prose prose-invert prose-sm max-w-none text-slate-100 prose-headings:text-slate-50 prose-a:text-teal-300 hover:prose-a:text-teal-200"> An interactive D3.js map visualization tracking the key events, military operations, economic disruptions, and humanitarian impacts of the 2026 Iran–US conflict. Think of it as a living, layered atlas — zoom from the macro (global oil disruption) down to the micro (individual strikes, ship attacks, base locations) with a scrollable timeline that animates the war day by day.
+</h2> <p class="mt-1 text-slate-200"> Turns complex conflict data into an explorable atlas — zoom from macro (global oil disruption) to micro (individual strikes, ship attacks) with source-cited, journalism-grade visualization. </p> </div> </section> <section class="prose prose-invert prose-sm max-w-none text-slate-100 prose-headings:text-slate-50 prose-a:text-teal-300 hover:prose-a:text-teal-200"> An interactive D3.js map built to track the 2026 Iran–US conflict through geography, time, and layered context. The project combines military events, shipping disruption, energy impacts, and humanitarian data in a scrollable timeline so users can move from broad regional patterns to specific incidents.
 
-## Data Layers
+## What it includes
 
-| Layer | What It Shows |
-|---|---|
-| **Strike locations** | US/Israeli strikes inside Iran, Iranian retaliatory strikes on bases across the Gulf |
-| **Strait of Hormuz** | Shipping blockade, mine locations, ship attacks, naval engagements |
-| **Oil &amp; energy** | Disrupted infrastructure, global oil price overlay |
-| **Military assets** | US base locations, carrier strike groups, missile/drone launch sites |
-| **Humanitarian** | Displacement flows, casualty counts by country |
-| **Timeline** | Day-by-day progression from pre-war through present |
+- Strike locations and retaliatory events across Iran and the Gulf
+- Strait of Hormuz disruption, ship attacks, and naval activity
+- Oil and energy overlays tied to infrastructure disruption
+- Military assets such as bases, carrier groups, and launch sites
+- Humanitarian indicators including displacement and casualty counts
+- A day-by-day timeline for following the conflict as it evolves
 
 ## Approach
 
-- **Data-first** — every visual element encodes real information; no gratuitous effects
-- **Time as primary axis** — timeline scrubber is the main control; scrub forward to watch the war unfold spatially
-- **Layered complexity** — toggle naval, oil, humanitarian layers as needed
-- **Source everything** — every data point links to a source (ISW, CENTCOM, Reuters, etc.)
-- **Respectful** — muted palette, no gamification of casualties, clear labeling of unconfirmed vs. confirmed events
+- **Data-first:** visual elements are tied to reported events and structured datasets
+- **Time-driven:** the timeline is the main way to explore how the conflict unfolds
+- **Layered:** users can toggle military, economic, and humanitarian views as needed
+- **Source-aware:** events are tied back to reporting and source material
+- **Respectful:** the design avoids sensationalism and treats casualty data carefully
 
-## Technical Details
+## Technical details
 
-- **Map rendering:** D3.js v7 + d3-geo — full control over projections, transitions, custom layers
-- **Geography:** TopoJSON (Natural Earth) — compact vector boundaries
+- **Map rendering:** D3.js + d3-geo
+- **Geography:** TopoJSON / Natural Earth boundaries
 - **Stack:** Vite, TypeScript, vanilla CSS
-- **Data:** Static JSON — no backend; all data curated and versioned
+- **Data:** curated static JSON with no backend
 
-## Features
+## Key features
 
-- Base map with country borders, zoom, pan
-- Strike event markers color-coded by actor (US, Israel, Iran)
-- Play/pause/scrub timeline with day-by-day playback
-- Filter by category (strike, naval, oil, diplomatic, humanitarian, cyber)
-- Oil price line chart synced with timeline
-- Casualty counter by country
-- Tooltips and legend </section> <section class="mt-6 rounded-xl border border-slate-800 bg-slate-900/60 p-4 text-xs text-slate-200"> <h2 class="text-[0.7rem] font-semibold uppercase tracking-[0.2em] text-slate-400">
+- Zoomable base map with country boundaries
+- Timeline playback and scrubbing controls
+- Category filters for military, naval, oil, diplomatic, humanitarian, and cyber events
+- Synchronized overlays including oil-price context and casualty summaries
+- Tooltips and legend for quick interpretation </section> <section class="mt-6 rounded-xl border border-slate-800 bg-slate-900/60 p-4 text-xs text-slate-200"> <h2 class="text-[0.7rem] font-semibold uppercase tracking-[0.2em] text-slate-400">
 Interactive demos
 </h2> <p class="mt-2">
-View the original interactive D3 visualizations on the  <a href="https://iran-us-conflict-map.vercel.app" class="text-teal-300 hover:text-teal-200">
+View the original interactive D3 visualizations on the  <a href="https://iran-us-conflict-map2.vercel.app/" class="text-teal-300 hover:text-teal-200">
 legacy D3 projects page
 </a>.
 </p> </section> </article> </main> <footer class="border-t border-slate-800 bg-slate-950/80"> <div class="mx-auto flex max-w-5xl flex-col gap-2 px-4 py-6 text-xs text-slate-400 sm:flex-row sm:items-center sm:justify-between sm:px-6 lg:px-8"> <p class="leading-relaxed">

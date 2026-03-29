@@ -9,40 +9,36 @@ impact: Turns complex conflict data into an explorable atlas — zoom from macro
 legacyUrl: "https://iran-us-conflict-map2.vercel.app/"
 ---
 
-An interactive D3.js map visualization tracking the key events, military operations, economic disruptions, and humanitarian impacts of the 2026 Iran–US conflict. Think of it as a living, layered atlas — zoom from the macro (global oil disruption) down to the micro (individual strikes, ship attacks, base locations) with a scrollable timeline that animates the war day by day.
+An interactive D3.js map built to track the 2026 Iran–US conflict through geography, time, and layered context. The project combines military events, shipping disruption, energy impacts, and humanitarian data in a scrollable timeline so users can move from broad regional patterns to specific incidents.
 
-## Data Layers
+## What it includes
 
-| Layer | What It Shows |
-|---|---|
-| **Strike locations** | US/Israeli strikes inside Iran, Iranian retaliatory strikes on bases across the Gulf |
-| **Strait of Hormuz** | Shipping blockade, mine locations, ship attacks, naval engagements |
-| **Oil & energy** | Disrupted infrastructure, global oil price overlay |
-| **Military assets** | US base locations, carrier strike groups, missile/drone launch sites |
-| **Humanitarian** | Displacement flows, casualty counts by country |
-| **Timeline** | Day-by-day progression from pre-war through present |
+- Strike locations and retaliatory events across Iran and the Gulf
+- Strait of Hormuz disruption, ship attacks, and naval activity
+- Oil and energy overlays tied to infrastructure disruption
+- Military assets such as bases, carrier groups, and launch sites
+- Humanitarian indicators including displacement and casualty counts
+- A day-by-day timeline for following the conflict as it evolves
 
 ## Approach
 
-- **Data-first** — every visual element encodes real information; no gratuitous effects
-- **Time as primary axis** — timeline scrubber is the main control; scrub forward to watch the war unfold spatially
-- **Layered complexity** — toggle naval, oil, humanitarian layers as needed
-- **Source everything** — every data point links to a source (ISW, CENTCOM, Reuters, etc.)
-- **Respectful** — muted palette, no gamification of casualties, clear labeling of unconfirmed vs. confirmed events
+- **Data-first:** visual elements are tied to reported events and structured datasets
+- **Time-driven:** the timeline is the main way to explore how the conflict unfolds
+- **Layered:** users can toggle military, economic, and humanitarian views as needed
+- **Source-aware:** events are tied back to reporting and source material
+- **Respectful:** the design avoids sensationalism and treats casualty data carefully
 
-## Technical Details
+## Technical details
 
-- **Map rendering:** D3.js v7 + d3-geo — full control over projections, transitions, custom layers
-- **Geography:** TopoJSON (Natural Earth) — compact vector boundaries
+- **Map rendering:** D3.js + d3-geo
+- **Geography:** TopoJSON / Natural Earth boundaries
 - **Stack:** Vite, TypeScript, vanilla CSS
-- **Data:** Static JSON — no backend; all data curated and versioned
+- **Data:** curated static JSON with no backend
 
-## Features
+## Key features
 
-- Base map with country borders, zoom, pan
-- Strike event markers color-coded by actor (US, Israel, Iran)
-- Play/pause/scrub timeline with day-by-day playback
-- Filter by category (strike, naval, oil, diplomatic, humanitarian, cyber)
-- Oil price line chart synced with timeline
-- Casualty counter by country
-- Tooltips and legend
+- Zoomable base map with country boundaries
+- Timeline playback and scrubbing controls
+- Category filters for military, naval, oil, diplomatic, humanitarian, and cyber events
+- Synchronized overlays including oil-price context and casualty summaries
+- Tooltips and legend for quick interpretation
