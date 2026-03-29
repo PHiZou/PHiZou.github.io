@@ -32,7 +32,7 @@ const { Content } = await project.render();
     )}
   </div>
   {(data.stack && data.stack.length > 0) || data.timeline || data.impact ? (
-    <section class="mb-6 grid gap-4 text-xs text-slate-200 sm:grid-cols-3 sm:text-sm">
+    <section class="mb-8 rounded-xl border border-slate-800 bg-slate-900/60 p-4 grid gap-4 text-xs text-slate-200 sm:grid-cols-3 sm:text-sm">
       {data.stack && data.stack.length > 0 && (
         <div>
           <h2 class="text-[0.7rem] font-semibold uppercase tracking-[0.2em] text-slate-400">
@@ -65,7 +65,7 @@ const { Content } = await project.render();
       )}
     </section>
   ) : null}
-  <section class="prose prose-invert prose-sm max-w-none text-slate-100 prose-headings:text-slate-50 prose-a:text-teal-300 hover:prose-a:text-teal-200">
+  <section class="prose prose-invert prose-sm max-w-none text-slate-100 prose-headings:text-slate-50 prose-a:text-teal-300 hover:prose-a:text-teal-200 prose-ul:pl-5 prose-ol:pl-5 prose-li:my-1 prose-li:text-slate-200 prose-h2:mt-8 prose-h2:mb-3 prose-h3:mt-6 prose-h3:mb-2 prose-p:leading-relaxed prose-strong:text-slate-100">
     <Content />
   </section>
 </article>

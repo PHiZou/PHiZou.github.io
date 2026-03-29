@@ -9,31 +9,29 @@ impact: "Shows the full shape of a useful RAG system: ingestion, chunking strate
 liveUrl: https://obsidian-rag-7fzsf7xqbrkgxqw3c7xh2g.streamlit.app/
 ---
 
-# Obsidian RAG Chat
+This project turns a personal Obsidian vault into a live question-answering tool. Instead of searching notes manually, a user types a question and gets a grounded answer — with citations pointing back to the exact source notes the response is built from.
 
-This project turns a folder of Obsidian notes into a conversational knowledge system. A user asks a question, the app retrieves the most relevant note chunks, and the interface returns a grounded answer with visible source citations.
+## How it works
 
-## What I built
+The pipeline runs in four stages:
 
-- Markdown vault ingestion and note cleanup
-- Heading-aware chunking with overlap
-- ChromaDB vector storage and top-k retrieval
-- Streamlit chat interface with source citations
+- **Ingestion** — Markdown files are loaded from the vault and cleaned of Obsidian-specific syntax
+- **Chunking** — Notes are split using heading-aware boundaries with overlap, so retrieved chunks retain their structural context
+- **Retrieval** — Chunks are embedded with `text-embedding-3-small` and stored in ChromaDB; at query time, top-k semantic matches are fetched
+- **Response** — GPT-4o-mini generates an answer from the retrieved context, and the Streamlit interface surfaces the source notes so the output is always inspectable
 
-## Why it matters
+## Design decisions
 
-What makes this project valuable is that it treats retrieval as a real systems problem, not just an LLM demo. The key questions were:
-- how to preserve enough note structure for better retrieval
-- how to keep answers inspectable
-- how to build the full loop from ingestion to interface
+Retrieval quality was the central design challenge. Splitting notes naively on character count discards the heading hierarchy that gives a note its meaning. Heading-aware chunking keeps related content together, which meaningfully improves what gets surfaced for a given query.
 
-## What this project shows
+Citation grounding was equally deliberate. The goal was an answer you can verify, not just one that sounds right — so every response links back to its source chunks in the UI.
 
-- practical RAG system design
-- document-structure and retrieval-quality thinking
-- ability to build a usable AI workflow end to end
-- interest in grounded, inspectable AI systems rather than black-box output
+## What this demonstrates
+
+Building this end-to-end — from ingestion through a deployed Streamlit interface — shows how the components of a RAG system interact in practice: chunking strategy affects retrieval, retrieval quality constrains what the LLM can do, and the interface determines whether the output is actually trustworthy.
 
 ## Source Code
 
-[View Source Code on GitHub](https://github.com/PHiZou/obsidian-rag)
+<a href="https://github.com/PHiZou/obsidian-rag" target="_blank" rel="noopener noreferrer" class="inline-flex items-center justify-center rounded-full bg-teal-400 px-4 py-2 text-xs font-semibold text-slate-950 shadow-sm transition hover:bg-teal-300 no-underline">
+  View source code on GitHub ↗
+</a>

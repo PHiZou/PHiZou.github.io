@@ -38,4 +38,6 @@ This is an in-progress portfolio build, not a polished production tool yet. But 
 
 ## Source Code
 
-[View Source Code on GitHub](https://github.com/PHiZou/ai-pipeline-operational-insights)
+<a href="https://github.com/PHiZou/ai-pipeline-operational-insights" target="_blank" rel="noopener noreferrer" class="inline-flex items-center justify-center rounded-full bg-teal-400 px-4 py-2 text-xs font-semibold text-slate-950 shadow-sm transition hover:bg-teal-300 no-underline">
+  View source code on GitHub ↗
+</a>
