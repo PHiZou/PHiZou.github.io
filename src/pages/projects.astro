@@ -93,7 +93,7 @@ const featuredCareerProjects = [
             Quantitative and modeling projects that show analytical depth, even when they are not the main hiring signal.
           </p>
           <ul class="space-y-2">
-            {byTemplate("quant-model").map((p) => (
+            {byTemplate("quant-model").filter((p) => p.slug !== "low-fodmap-scientific-review").map((p) => (
               <li>
                 <a href={`/projects/${p.slug}`} class="text-slate-100 hover:text-teal-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-400 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-950 rounded">
                   {p.data.title}
@@ -101,6 +101,23 @@ const featuredCareerProjects = [
                 {p.data.summary && <p class="text-xs text-slate-400">{p.data.summary}</p>}
               </li>
             ))}
+          </ul>
+        </div>
+
+        <div>
+          <h2 class="mb-3 text-xs font-semibold uppercase tracking-[0.2em] text-teal-300">
+            Research &amp; Scientific Reviews
+          </h2>
+          <p class="mb-3 max-w-2xl text-xs text-slate-400">
+            Longer-form analytical writing and reproducible reports that show evidence synthesis, technical communication, and subject-matter curiosity.
+          </p>
+          <ul class="space-y-2">
+            <li>
+              <a href="/projects/low-fodmap-scientific-review" class="text-slate-100 hover:text-teal-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-400 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-950 rounded">
+                Low FODMAP Diet — Scientific Review
+              </a>
+              <p class="text-xs text-slate-400">Evidence-based R Markdown review of the low FODMAP diet, covering mechanism, efficacy, risks, and practical guidance.</p>
+            </li>
           </ul>
         </div>
 
