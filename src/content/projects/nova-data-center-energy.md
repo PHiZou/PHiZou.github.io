@@ -6,7 +6,7 @@ summary: "Interactive D3 project translating utility filings, environmental data
 tags: ["D3.js", "Visualization", "Energy", "Scrollytelling", "Infrastructure", "Data Journalism"]
 stack: ["D3.js", "TypeScript", "Vite", "TopoJSON", "d3-sankey"]
 impact: Turned fragmented public-source reporting into a clear, source-cited narrative about one of the most important infrastructure stories in Northern Virginia.
-liveUrl: https://nova-data-center-energy.vercel.app
+liveUrl: https://nova-data-center-v3.vercel.app
 legacyUrl: "https://nova-data-center-energy.vercel.app"
 ---
 
