@@ -48,10 +48,11 @@ That makes it useful as a **thinking tool** for geopolitical and market uncertai
 
 This is a **research and educational tool only**. It is meant for scenario analysis, not operational planning and not investment advice.
 
+## Live demo
+
+- App: <https://t6x2tnpzu5rtxedqdcvgfh.streamlit.app/>
+- Code: <https://github.com/PHiZou/monte-iran>
+
 ## Current status
 
-The project currently runs as a local Streamlit application. The code is now available publicly here:
-
-- <https://github.com/PHiZou/monte-iran>
-
-A separate hosted app path is the next deployment step.
+The project is now live as a public Streamlit application, with the GitHub repo available for review and extension.
