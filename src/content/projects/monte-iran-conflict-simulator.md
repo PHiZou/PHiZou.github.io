@@ -13,6 +13,8 @@ stack:
   - Geopolitical Risk Modeling
 timeline: Near-term conflict path and market-spillover scenarios
 impact: Turns a messy geopolitical question into interpretable scenario cards, distributions, and plain-English takeaways without pretending to predict the future.
+liveUrl: https://t6x2tnpzu5rtxedqdcvgfh.streamlit.app/
+repoUrl: https://github.com/PHiZou/monte-iran
 ---
 ## What this project is
 
@@ -47,11 +49,6 @@ That makes it useful as a **thinking tool** for geopolitical and market uncertai
 ## Research framing
 
 This is a **research and educational tool only**. It is meant for scenario analysis, not operational planning and not investment advice.
-
-## Live demo
-
-- App: <https://t6x2tnpzu5rtxedqdcvgfh.streamlit.app/>
-- Code: <https://github.com/PHiZou/monte-iran>
 
 ## Current status
 

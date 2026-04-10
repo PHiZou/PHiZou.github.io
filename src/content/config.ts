@@ -27,6 +27,7 @@ const projects = defineCollection({
     timeline: z.string().optional(),
     impact: z.string().optional(),
     liveUrl: z.string().optional(),
+    repoUrl: z.string().optional(),
     legacyUrl: z.string().optional(),
   }),
 });
