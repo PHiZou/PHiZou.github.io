@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<style>
+
+
+</style>
+<head>
+    <title>Blank map</title>
+    <link rel="stylesheet" href="styleDC.css" type="text/css" media="screen" />
+</head>
+
+<div id="main-wrapper">
+  <div id="metrics">
+        <div id="motor">
+            <h3>DC Demographics Visualization</h3>
+            <div>Click a button below to remove respective race from visualization</div>
+            <ul>
+            <li data-metric="White" class="selected White">White</li>
+            <li data-metric="Black" class="selected Black">Black or African American</li>
+            <li data-metric="American_Indian_and_Alaska_Native" class="selected American_Indian_and_Alaska_Native">American Indian or Alaskan Native</li>
+            <li data-metric="Asian" class="selected Asian">Asian</li>
+            <li data-metric="Hispanic_or_Latino" class="selected Hispanic_or_Latino">Hispanic or Latino</li>
+            </ul>  
+            <div>Mouse over visualization to compare percentages</div>
+              <div>Only the highest percentage race is shown</div>
+        </div>
+        <div class="clr"></div>
+  </div><!-- @end #metrics -->
+
+
+    <div id="tooltip" class="tooltip">
+        <h3 class="name"></h3>
+        <div data-metric="White" class="line">
+            <div class="White symbol"></div> White 
+            <div class="White val"></div>
+        </div>
+        <div data-metric="Black" class="line">
+            <div class="Black symbol"></div> Black
+            <div class="Black val"></div>
+        </div>
+        <div data-metric="Asian" class="line">
+            <div class="Asian symbol"></div> Asian
+            <div class="Asian val"></div>
+        </div>
+        <div data-metric="American_Indian_and_Alaska_Native" class="line">
+            <div class="American_Indian_and_Alaska_Native symbol"></div> Indian/Alaskan
+            <div class="American_Indian_and_Alaska_Native val"></div>
+        </div>
+        <div data-metric="Hispanic_or_Latino" class="line">
+            <div class="Hispanic_or_Latino symbol"></div> Hispanic or Latino
+            <div class="Hispanic_or_Latino val"></div>
+        </div>
+    </div>
+</div><!-- @end #main-wrapper -->
+
+<script src="https://d3js.org/d3.v3.min.js"></script>
+<script src="https://d3js.org/queue.v1.min.js"></script>
+<script src="https://d3js.org/topojson.v1.min.js"></script>
+
+<script>
+
+var width = 960,
+    height = 500,
+    defaultFill = "#e0e0e0",
+    formatPercent = d3.format(".0%");;
+    
+var commuteById = d3.map();
+
+var projection = d3.geo.albersUsa();
+
+
+var path = d3.geo.path()
+    .projection(projection);
+
+var baseColors = { 
+    "White": d3.scale.linear().domain([0,95]).range(["#ffffff", "#ff0000"]).interpolate(d3.interpolateLab),
+    "Black": d3.scale.linear().domain([0,95]).range(["#ffffff", "#0095c2"]).interpolate(d3.interpolateLab),
+    "American_Indian_and_Alaska_Native": d3.scale.linear().domain([0,10]).range(["#ffffff", "#95c200"]).interpolate(d3.interpolateLab),
+    "Asian": d3.scale.linear().domain([0,20]).range(["#ffffff", "#FF8300"]).interpolate(d3.interpolateLab),
+    "Hispanic_or_Latino": d3.scale.linear().domain([0,40]).range(["#ffffff", "#C512BA"]).interpolate(d3.interpolateLab)
+
+
+};
+
+var svg = d3.select("body #main-wrapper").append("svg")
+    .attr("width", width)
+    .attr("height", height);
+
+var g = svg.append("g");
+
+var tooltip = d3.select("#tooltip")
+ .attr("class", "tooltip")
+ .style("opacity", 0);
+
+var CURR_SELECT = ["White", "Black", "American_Indian_and_Alaska_Native","Asian", "Hispanic_or_Latino"];
+
+
+
+// Load data
+queue()
+    .defer(d3.json, "/data/dc.json")
+    .defer(d3.csv, "/data/DCdata2.csv", typeAndSet)
+    .await(ready);
+
+// After loading the data...
+function ready(error, topo) {
+    if (error) throw error;
+    // Country borders
+ var tracts = topojson.feature(topo, topo.objects.dctracts);
+
+  projection
+    .scale(1)
+    .translate([0, 0]);
+
+ var b = path.bounds(tracts),
+    s = 1.0 / Math.max((b[1][0] - b[0][0]) / width, (b[1][1] - b[0][1]) / height),
+    t = [(width - s * (b[1][0] + b[0][0])) / 2, (height - s * (b[1][1] + b[0][1])) / 2];
+
+  projection
+      .scale(s)
+      .translate(t);
+
+     g.append("g")
+        .attr("class", "tracts")
+        .selectAll("path")
+          .data(topojson.feature(topo, topo.objects.dctracts).features)
+        .enter().append("path")
+          .attr("d", path)
+        .append("title")
+      .text(function(d) { return d.properties.NAMELSAD; });
+
+
+
+        g.attr("class", "tracts")
+        .selectAll("path")
+          .attr("d", path)
+                .on("mouseover", function(d) {
+                 d3.select(this).classed("selected", true);
+                 tooltip.transition().duration(100)
+                   .style("opacity", .85)
+                 if (d3.event.pageX > (width - 200)) {
+                     tooltip.style("left", (d3.event.pageX - 210) + "px");
+                 } else {
+                     tooltip.style("left", (d3.event.pageX + 20) + "px")
+                          .style("top", (d3.event.pageY -30) + "px");
+                 }
+                 if (d3.event.pageY > (height - 150)) {
+                     tooltip.style("top", (d3.event.pageY -140) + "px");
+                 } else {
+                     tooltip.style("top", (d3.event.pageY -30) + "px");
+                 }
+
+                 tooltip.select(".name").text(d.properties.NAMELSAD)
+                 tooltip.select(".White.val").text(d3.round(commuteById.get(d.properties.NAMELSAD)["White"]) + "%")
+                 tooltip.select(".Black.val").text(d3.round(commuteById.get(d.properties.NAMELSAD)["Black"]) + "%")
+                 tooltip.select(".American_Indian_and_Alaska_Native.val").text(d3.round(commuteById.get(d.properties.NAMELSAD)["American_Indian_and_Alaska_Native"]) + "%")
+                 tooltip.select(".Asian.val").text(d3.round(commuteById.get(d.properties.NAMELSAD)["Asian"]) + "%")
+                 tooltip.select(".Hispanic_or_Latino.val").text(d3.round(commuteById.get(d.properties.NAMELSAD)["Hispanic_or_Latino"]) + "%")
+                 tooltip.select(".HC01_EST_VC13_val.val").text(d3.round(commuteById.get(d.properties.NAMELSAD)["HC01_EST_VC13"]) + "%")
+                 tooltip.select(".HC01_EST_VC14_val.val").text(d3.round(commuteById.get(d.properties.NAMELSAD)["HC01_EST_VC14"]) + "%")
+
+               })
+            .on("mouseout", function() {
+                d3.select(this).classed("selected", false);
+                tooltip.transition().duration(300)
+                  .style("opacity", 0);
+                });
+
+
+
+      updateClasses();
+
+          // Make filter buttons interactive
+    d3.selectAll("#metrics li")
+        .on("click", function() {
+            var item = d3.select(this);
+            if (item.classed("selected")) {
+                item.attr("class", "");
+                removeFromArray(CURR_SELECT, item.attr("data-metric"));
+                
+            } else {
+                item.classed("selected " + item.attr("data-metric"), true);
+                CURR_SELECT.push(item.attr("data-metric"));
+            }
+
+            updateClasses();
+        });
+
+
+}
+
+
+
+
+function updateClasses() {
+    svg.selectAll(".tracts path")
+        .attr("fill", function(d) { return colorByGreatest(d.properties.NAMELSAD); });
+}
+
+
+function colorByGreatest(FIPS) {
+    
+    var countyObject = commuteById.get(FIPS);
+
+    if (typeof countyObject !== "undefined") {
+        var values = [];
+        for (var i = 0; i < CURR_SELECT.length; i++) {
+            values.push(countyObject[CURR_SELECT[i]]);
+        }
+        var maxValue = d3.max(values);
+        var maxIndex = values.indexOf(maxValue);
+        var metric = CURR_SELECT[maxIndex];
+        return baseColors[metric](maxValue);
+    } 
+    
+    else {
+        return "#ffffff";
+    }
+    
+}
+
+
+function typeAndSet(d) {
+    d.White = +d.White;
+    d.Black = +d.Black;
+    d.American_Indian_and_Alaska_Native = +d.American_Indian_and_Alaska_Native;
+    d.Asian = +d.Asian;
+    d.Hispanic_or_Latino = +d.Hispanic_or_Latino;
+    commuteById.set(d.FIPS, d);   
+}
+
+function removeFromArray(arr) {
+    var what, a = arguments, L = a.length, ax;
+    while (L > 1 && arr.length) {
+        what = a[--L];
+        while ((ax= arr.indexOf(what)) !== -1) {
+            arr.splice(ax, 1);
+        }
+    }
+    return arr;
+}
+
+
+</script>
+
+<div id="main-wrapper">
+  <div id="metrics">
+        <div id="motor">
+            <div>Data from <a href="http://factfinder.census.gov/faces/nav/jsf/pages/index.xhtml"> American Fact Finder</a></div>
+            <div> <a href="http://rpubs.com/PH13/CL"> R code</a> to clean perpare data</div>
+            <div> Most of the D3 code comes from a tutorial provided by Nathan Yau from <a href="http://flowingdata.com/2015/01/20/how-americans-get-to-work/"> Flowing Data</a>.</div>
+
+            </div>
+            </div>
+              </div><!-- @end 

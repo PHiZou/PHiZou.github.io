@@ -1,0 +1,470 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="utf-8">
+	<title>Wizards PTS</title>
+	<script type="text/javascript" src="d3.js"></script>
+	<style type="text/css">
+
+
+		* {
+			margin: 0;
+			padding: 0;
+		}
+
+
+		body {
+			font-family: Helvetica, Arial, sans-serif;
+			background-color: #eee;
+		}
+
+				#container {
+			width: 1200px;
+			margin: 15px auto 15px auto;
+			padding: 20px 20px 20px 20px;
+			background-color: white;
+			box-shadow: 0 0 20px #ccc;
+		}
+
+				h1 {
+			margin-bottom: 25px;
+			font-size: 24px;
+		}
+
+				h2 {
+			margin-top: 30px;
+			font-size: 17px;
+		}
+
+				p {
+			margin-bottom: 25px;
+			font-size: 14px;
+			line-height: 18px;
+		}
+
+				.chartContainer {
+			display: inline-block;
+			width: 49%;
+		}
+
+				#buttonContainer {
+			margin-bottom: 10px;
+		}
+
+				#buttonContainer2 {
+			margin-bottom: 10px;
+		}
+
+				button {
+			padding: 5px;
+		}
+
+				#footer p {
+			margin-top: 50px;
+			margin-bottom: 0;
+			text-align: right;
+			font-size: 10px;
+			color: gray;
+		}
+
+		svg {
+			background-color: rgb(180,0,0);
+		}
+		
+				g.bar {
+			cursor: pointer;
+		}
+
+
+		g.bar.highlight text {
+			opacity: 1;
+		}
+
+		g.bar.highlight rect {
+/*			fill: SteelBlue;*/
+			stroke: gold;
+			stroke-width: 3px;
+		}
+
+
+
+		.axis text {
+			font-family: sans-serif;
+			font-size: 11px;
+			fill: white;
+		}
+
+		}*/
+	.axis {
+	  font: 10px sans-serif;
+	}
+
+	.axis path,
+	.axis line {
+	  fill: none;
+	  stroke: white;
+	  shape-rendering: crispEdges;
+	}
+
+		#tooltip {
+			position: absolute;
+			top: 0;
+			left: 0;
+			z-index: 10;
+			margin: 0;
+			padding: 10px;
+			width: 130px;
+			height: 75px;
+			color: white;
+			font-family: sans-serif;
+			font-size: 12px;
+			font-weight: bold;
+			text-align: center;
+			background-color: rgba(0, 0, 0, .40);
+			opacity: 0;
+			pointer-events: none;
+		}
+
+
+	</style>
+</head>
+<body>
+	<div align= "center" id="container">
+
+		<h1>The Wizards Scoring: Regular Season vs. Playoffs (2015)</h1>
+		
+		<p>Move mouse pointer over bar chart to get additional player information and interactivity!</p>
+
+		<div align= "center" class="chartContainer" id="RegularSeasonContainer">
+			<h2>Regular Season Scoring Statistics per Game</h2>
+				<div align= "center" id="buttonContainer">
+				<button id="sortAscending">Sort Ascending</button>
+				<button id="sortDescending">Sort Descending</button>
+				</div>
+		</div>
+
+		<div align= "center" class="chartContainer" id="PlayoffsContainer">
+			<h2>Playoff Scoring Statistics per Game</h2>
+				<div align= "center" id="buttonContainer2">
+				<button id="sortAscending2">Sort Ascending</button>
+				<button id="sortDescending2">Sort Descending</button>
+				</div>
+		</div>
+		
+		<div id="footer">
+			<p><strong>Note:</strong> The data for these charts was taken from BasketballReference.com</p>
+		</div>
+
+	</div>
+
+		<div id="tooltip">
+	</div>
+
+
+
+	<script type="text/javascript">
+
+var sortByNameOrValue = false;
+
+		//New, dynamic width value pulled from .chartContainer
+var w = d3.select(".chartContainer").node().clientWidth;
+
+var margin = {top: 20, right: 20, bottom: 100, left: 40},
+    width = 600 - margin.left - margin.right,
+    height = 500 - margin.top - margin.bottom;
+
+
+d3.csv("/data/teams_WAS_2015_per_game.csv", function(error, dataset) {
+// console.log(dataset)
+
+	var x = d3.scale.ordinal().rangeRoundBands([0, width], .05)
+		.domain(dataset.map(function(d) { return d.Player; }));
+
+	var name = function(d) { return d.Player; };
+
+	var xScale = d3.scale.ordinal().rangeRoundBands([0, width], .05)
+		.domain(d3.range(dataset.length))
+
+	var y = d3.scale.linear().rangeRound([height , 0])
+		.domain([0, d3.max(dataset.map(function(d) { return +d.PTS; }))+6.4]);
+
+	var xAxis = d3.svg.axis()
+	    .scale(x)
+	    .orient("bottom");
+
+	var yAxis = d3.svg.axis()
+	    .scale(y)
+	    .orient("left")
+	    .ticks(20);
+
+	var svg = d3.select("#RegularSeasonContainer")
+		.append("svg")
+		.attr("id", "RegularSeason")
+	    .attr("width", width + margin.left + margin.right)
+	    .attr("height", height + margin.top + margin.bottom)
+	  .append("g")
+	    .attr("transform", 
+	          "translate(" + margin.left + "," + margin.top + ")");
+
+	var groups = svg.selectAll("g")
+		.data(dataset)
+		.enter()
+		.append("g")
+		.attr("class", "bar")
+		.attr("transform", function(d, i) {
+			return "translate(" + xScale(i) + ",0)";
+				})
+
+	var rects = groups.append("rect")
+			.attr("x", 10)  //All rects are at zero, relative to their groups
+			.attr("y", function(d) {
+				return height;
+				})
+			.attr("width", x.rangeBand()) // important
+			.attr("height", 0)
+			.attr("fill", "white");
+
+
+//Here's a fuckin Hack
+		groups.append("text")
+			.text( function(d){
+				return name(d);
+			})
+			.style("text-anchor", "end")
+			.attr("font-family", "sans-serif")
+			.attr("fill", "white")
+			.attr("font-size", 11)
+	      	.attr("x", -320) 
+			.attr("y", 220)
+	      	.attr("transform", "rotate(-60)" );
+
+
+	rects.transition()
+		.delay(function(d, i) {
+				return i * 50;
+			})
+			.duration(300)
+			.attr("y", function(d) {
+				return y(d.PTS);
+			})
+			.attr("height", function(d) {
+				return height - y(d.PTS);
+			})
+			.attr("fill", function(d){ return "rgb(0,0,"+260*((d.eFGperc-0.30)*3/0.73)+")"} );
+
+
+
+	 svg.append("g")
+	      .attr("class", "y axis")
+	      .attr("opacity", 0)	
+	      .call(yAxis)
+	      .transition()			//Initialize a new transition
+			.delay(200)			//Set a 2-second delay
+			.duration(800)			//Set a duration of 1.5 seconds
+			.attr("opacity", 1)
+			.attr("transform","translate(10,0)" )
+
+	d3.select("#sortAscending")
+	.on("click", function(d) {
+		
+		groups.sort(function(a, b) {
+					return d3.ascending(+a.PTS, +b.PTS);
+			})
+			.transition()
+			.delay(function(d, i) {
+				return i*40 ;
+			})
+			.duration(500)
+			.attr("transform", function(d, i) {
+		  		return "translate(" + xScale(i) + ",0)";
+			});
+
+		});
+
+	d3.select("#sortDescending")
+	.on("click", function(d) {
+		
+		groups.sort(function(a, b) {
+					return d3.descending(+a.PTS, +b.PTS);
+			})
+			.transition()
+			.delay(function(d, i) {
+				return i*40 ;
+			})
+			.duration(500)
+			.attr("transform", function(d, i) {
+		  		return "translate(" + xScale(i) + ",0)";
+			});
+
+		});
+});
+
+
+
+d3.csv("/data/teams_WAS_2015_playoffs_per_game.csv", function(error, dataset) {
+// console.log(dataset)
+
+	var x = d3.scale.ordinal().rangeRoundBands([0, width], .05)
+		.domain(dataset.map(function(d) { return d.Player; }));
+
+	var name = function(d) { return d.Player; };
+
+	var xScale = d3.scale.ordinal().rangeRoundBands([0, width], .05)
+		.domain(d3.range(dataset.length))
+
+	var y = d3.scale.linear().rangeRound([height , 0])
+		.domain([0, d3.max(dataset.map(function(d) { return +d.PTS; }))+.6]);
+
+	var xAxis = d3.svg.axis()
+	    .scale(x)
+	    .orient("bottom");
+
+	var yAxis = d3.svg.axis()
+	    .scale(y)
+	    .orient("left")
+	    .ticks(20);
+
+	var svg = d3.select("#PlayoffsContainer")
+		.append("svg")
+		.attr("id", "Playoffs")
+	    .attr("width", width + margin.left + margin.right)
+	    .attr("height", height + margin.top + margin.bottom)
+	  .append("g")
+	    .attr("transform", 
+	          "translate(" + margin.left + "," + margin.top + ")");
+
+	var groups = svg.selectAll("g")
+		.data(dataset)
+		.enter()
+		.append("g")
+		.attr("class", "bar")
+		.attr("transform", function(d, i) {
+			return "translate(" + xScale(i) + ",0)";
+				})
+
+
+	var rects = groups.append("rect")
+			.attr("x", 10)  //All rects are at zero, relative to their groups
+			.attr("y", function(d) {
+				return height;
+				})
+			.attr("width", x.rangeBand()) // important
+			.attr("height", 0)
+			.attr("fill", "white");
+
+
+//Here's a fuckin Hack
+		groups.append("text")
+			.text( function(d){
+				return name(d);
+			})
+			.style("text-anchor", "end")
+			.attr("font-family", "sans-serif")
+			.attr("fill", "white")
+			.attr("font-size", 11)
+	      	.attr("x", -320) 
+			.attr("y", 220)
+	      	.attr("transform", "rotate(-60)" );
+
+
+	rects.transition()
+		.delay(function(d, i) {
+				return i * 50;
+			})
+			.duration(300)
+			.attr("y", function(d) {
+				return y(d.PTS);
+			})
+			.attr("height", function(d) {
+				return height - y(d.PTS);
+			})
+			.attr("fill", function(d){ return "rgb(0,0,"+255*((d.eFGperc-0.30)*3/0.73)+")"} );
+
+
+
+	 svg.append("g")
+	      .attr("class", "y axis")
+	      .attr("opacity", 0)	
+	      .call(yAxis)
+	      .transition()			//Initialize a new transition
+			.delay(200)			//Set a 2-second delay
+			.duration(800)			//Set a duration of 1.5 seconds
+			.attr("opacity", 1)
+			.attr("transform","translate(10,0)" )
+
+
+	d3.select("#sortAscending2")
+	.on("click", function(d) {
+		
+		groups.sort(function(a, b) {
+					return d3.ascending(+a.PTS, +b.PTS);
+			})
+			.transition()
+			.delay(function(d, i) {
+				return i*40 ;
+			})
+			.duration(500)
+			.attr("transform", function(d, i) {
+		  		return "translate(" + xScale(i) + ",0)";
+			});
+
+		});
+
+	d3.select("#sortDescending2")
+	.on("click", function(d) {
+		
+		groups.sort(function(a, b) {
+					return d3.descending(+a.PTS, +b.PTS);
+			})
+			.transition()
+			.delay(function(d, i) {
+				return i*40 ;
+			})
+			.duration(500)
+			.attr("transform", function(d, i) {
+		  		return "translate(" + xScale(i) + ",0)";
+			});
+
+		});
+
+
+
+		d3.selectAll("g.bar")
+		.on("mouseover", function(d) {
+
+
+			var thisName = d.Player;
+
+			d3.selectAll("g.bar")
+				.filter(function(d) {
+
+					if (thisName == d.Player) {
+						return true;  //…then it's a match
+					}
+				})
+				.classed("highlight", true);
+
+			var x1 = d3.event.pageX + 30;
+			var y1 = d3.event.pageY - 100;
+
+			d3.select("#tooltip")
+				.style("left", x1 + "px")
+				.style("top", y1 + "px")
+				.style("opacity", 1)
+				.html("Total Points: "+d.PTS+ "<br/>"+" 3 Pointers: "+d.ThreeP+"<br/>"+" 2 Pointers: "+d.TwoP+ "<br/>"+" Free Throws: "+d.FT+ "<br/>"+"Field Goal: "+Math.round((d.eFGperc*100), -1)+"%");
+
+		})
+	.on("mouseout", function() {
+
+			d3.selectAll("g.bar")
+				.classed("highlight", false);
+						//Hide the tooltip
+			d3.select("#tooltip")
+				.style("opacity", 0);
+
+		})
+});
+
+	</script>
+</body>
+</html>

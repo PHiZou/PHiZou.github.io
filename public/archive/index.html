@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="utf-8">
+	<title>Peter Hagen</title>
+
+	<!-- <link rel="stylesheet" type="text/css" media="screen" href="http://alignedleft.com/assets/css/screen.css"> -->
+
+<link rel="stylesheet" type="text/css" media="screen" href="portstyle.css">
+
+<style type="text/css">
+
+
+rect {
+  fill: none;
+  pointer-events: all;
+}
+
+circle {
+	fill:none;
+  stroke-width: 2px;
+}
+
+</style>
+
+</head>
+
+
+<body id="home">
+<script src="//d3js.org/d3.v3.min.js"></script>
+
+<script>
+
+var width = Math.max(960, innerWidth),
+    height = Math.max(960, innerHeight);
+
+var i = 0;
+
+var svg = d3.select("body").append("svg")
+    .attr("width", width)
+    .attr("height", height);
+
+svg.append("rect")
+    .attr("width", width)
+    .attr("height", height)
+    .on("ontouchstart" in document ? "touchmove" : "mousemove", particle);
+
+function particle() {
+  var m = d3.mouse(this);
+
+  svg.insert("circle", "rect")
+      .attr("cx", m[0])
+      .attr("cy", m[1])
+      .attr("r", 4)
+      .style("stroke", d3.hsl((i = (i + 10) % 360), .1, .5))
+      .style("stroke-opacity", 0.15)
+    .transition()
+      .duration(2000)
+      .attr("r", 5)
+      .attr("cy", m[1] + 100)
+      .attr("cx", m[0] + Math.floor((Math.random()*800)+400))
+      .style("stroke-opacity", 1e-6)
+      .remove();
+
+  d3.event.preventDefault();
+}
+
+</script>
+
+<header>
+	<h1>
+		<a href = "index.html"> Peter Hagen </a>
+	</h1>
+
+	<nav>
+		<ul>
+			<li> 
+				<a href = "About.html"> About </a>
+			</li>			
+			<li> 
+				<a href = "Resume.html"> Resume </a>
+			</li>
+			<li> 
+				<a href = "RProjects.html"> R Projects </a>
+			</li>
+			<li> 
+				<a href = "D3Projects.html"> D3 Projects </a>
+			</li>
+			<li> 
+				<a href = "Writing.html"> Writing </a>
+			</li>
+			<li> 
+				<a href = "Contact.html"> Contact </a>
+			</li>
+		</ul>
+	</nav>
+
+</header>
+
+
+
+<footer>
+	<p> 
+	The styling and format for this website are based on <a href = "http://alignedleft.com/"> alignedleft.com</a>, created by Scott Murray.
+
+	D3 element based on <a href = "http://bl.ocks.org/mbostock/1062544"> Mike Bostock's OMG Particles</a>
+	</p>
+</footer>
+
+</body>
+
+
+<html>
+
+
+
+
+
+

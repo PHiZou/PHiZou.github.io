@@ -1,0 +1,84 @@
+/* Normalize */
+body, div, dl, dt, dd, ul, ol, li, h1, h2, h3, h4, h5, h6, pre, form, fieldset, input, p, blockquote, th, td, legend {
+	margin: 0;
+	padding: 0;
+}
+h1,h2,h3,h4,h5,h6 { font-family: Georgia, serif; font-weight: bold; font-size: 100%; }
+address, caption, cite, code, dfn, th, var { font-style: normal; font-weight: normal; }
+table { border-collapse: collapse; border-spacing: 0; }
+fieldset,img { border: 0; }
+caption,th { text-align: left; }
+/* @end */
+
+body {
+    background-color: #fffff7;
+}
+#main-wrapper {
+    width: 960px;
+    margin: 0 auto;
+}
+#metrics { width: 920px; margin: 0 auto 15px 0; font-family: Georgia, serif; }
+#metrics #instruct { 
+    text-align: center; 
+    margin-bottom: 10px;
+    margin-right: 20px; 
+    float: left; 
+    width: 210px; 
+    font-size: 14px; 
+    line-height: 1.4em;
+    font-family: Georgia, serif;
+}
+#metrics h3 { font-size: 25px; font-family: Georgia, serif; text-align: center; margin-bottom: 0; }
+#metrics ul { font-size: 12px; font-family: Georgia, sans-serif; text-align: center; padding: 0; }
+#metrics ul li { 
+    list-style: none; 
+    margin: 10px 10px 0 0; 
+    padding: 4px 0; 
+    display: inline-block;
+    width: 108px;
+    cursor: pointer;
+    text-align: center;
+    font-size: 11px;
+    border: 1px solid #e0e0e0;
+}
+#metrics #motor div { text-align: center;}
+#metrics ul li.bottom { margin-bottom: 0; }
+#metrics #motor { width: 950px; float: center; }
+#metrics .block-button { width: 60px; display: block; float:center; clear:both; }
+div.tooltip {
+    position: absolute;
+    text-align: center;
+    width: 150px;
+    padding: 5px;
+    font-size: 9px;
+    font-family: Georgia, serif;
+    background: #ffffff;
+    pointer-events: none;
+    opacity: 0;
+}
+div.tooltip h3 { 
+  font-size: 12px; margin: 0 0 7px 0; 
+  line-height: 1.2em;
+}
+div.tooltip .line { clear: both; margin-top: 3px; font-size: 11px; }
+div.tooltip .symbol { float: left; width: 6px; height: 6px; margin: 3px 4px 0 0; }
+div.tooltip .val { float: right; width: 25px; text-align: right; margin-right: 4px; }
+div.tooltip .moe { float: right; color: #aaa; width: 30px; text-align: right; }
+.overlay {
+  fill: none;
+  pointer-events: all;
+}
+.button { fill: #000; }
+
+
+
+path.White, #metrics ul li.selected.White, .tooltip .White { fill: #ff0000; background: #ff0000; }
+path.Black, #metrics ul li.selected.Black, .tooltip .Black { fill: #0095c2; background: #0095c2; }
+path.American_Indian_and_Alaska_Native, #metrics ul li.selected.American_Indian_and_Alaska_Native, .tooltip .American_Indian_and_Alaska_Native { fill: #95c200; background: #95c200; }
+path.Asian, #metrics ul li.selected.Asian, .tooltip .Asian { fill: #FF8300; background: #FF8300; }
+path.Hispanic_or_Latino, #metrics ul li.selected.Hispanic_or_Latino, .tooltip .Hispanic_or_Latino { fill: #c20095; background: #c20095; }
+
+
+path.NODATA { fill: #fff; }
+
+.clr { clear: both; }

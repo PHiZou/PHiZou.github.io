@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<style>
+
+
+</style>
+<head>
+    <title>Blank map</title>
+    <link rel="stylesheet" href="style.css" type="text/css" media="screen" />
+</head>
+
+<div id="main-wrapper">
+  <div id="metrics">
+        <div id="motor">
+            <h3>Filter Race</h3>
+            <div>Based on Nathan Yau's <a href = "http://flowingdata.com/2015/01/20/how-americans-get-to-work/"> How America Gets to Work</a>. Data from American Fact finder Demographic Data. This project was simply for learning purposes.</div>
+            <ul>
+            <li data-metric="HD01_VD02A" class="selected HD01_VD02A">White alone</li>
+            <li data-metric="HD01_VD03A" class="selected HD01_VD03A">Black or African American alone</li>
+            <li data-metric="HD01_VD04A" class="selected HD01_VD04A">American Indian or Alaskan Native</li>
+            <li data-metric="HD01_VD05A" class="selected HD01_VD05A">Asian alone</li>
+            <li data-metric="HD01_VD06A" class="selected HD01_VD06A">Native Hawaiian and Other Pacific Islander alone</li>
+            <li data-metric="HD01_VD07A" class="selected HD01_VD07A">Some other race alone</li>
+            <li data-metric="HD01_VD08A" class="selected HD01_VD08A">Two or more races</li>
+            <li data-metric="HD01_VD09A" class="selected HD01_VD09A">Two races including Some other race</li>
+            <li data-metric="HD01_VD10A" class="selected HD01_VD10A">Two races excluding Some other race, and three or more races</li>
+            </ul>
+        </div>
+        <div class="clr"></div>
+  </div><!-- @end #metrics -->
+    
+    
+</div><!-- @end #main-wrapper -->
+
+
+<script src="https://d3js.org/d3.v3.min.js"></script>
+<script src="https://d3js.org/queue.v1.min.js"></script>
+<script src="https://d3js.org/topojson.v1.min.js"></script>
+
+<script>
+
+var width = 960,
+    height = 500,
+    defaultFill = "#e0e0e0";;
+    
+var commuteById = d3.map();
+
+var projection = d3.geo.conicConformal()
+    .parallels([38 + 02 / 60, 39 + 12 / 60])
+    .rotate([78 + 30 / 60, 0])
+    .scale(8000)
+    .translate([0, 0]);
+
+
+var path = d3.geo.path()
+    .projection(projection);
+
+var baseColors = { 
+    "HD01_VD02A": d3.scale.linear().domain([0,70]).range(["#ffffff", "#FA0123"]).interpolate(d3.interpolateLab),
+    "HD01_VD03A": d3.scale.linear().domain([0,70]).range(["#ffffff", "#021A9F"]).interpolate(d3.interpolateLab),
+    "HD01_VD04A": d3.scale.linear().domain([0,70]).range(["#ffffff", "#00FF08"]).interpolate(d3.interpolateLab),
+    "HD01_VD05A": d3.scale.linear().domain([0,70]).range(["#ffffff", "#FF8300"]).interpolate(d3.interpolateLab),
+    "HD01_VD06A": d3.scale.linear().domain([0,70]).range(["#ffffff", "C512BA"]).interpolate(d3.interpolateLab),
+    "HD01_VD07A": d3.scale.linear().domain([0,70]).range(["#ffffff", "#83037C"]).interpolate(d3.interpolateLab),
+    "HD01_VD08A": d3.scale.linear().domain([0,70]).range(["#ffffff", "#FABE03"]).interpolate(d3.interpolateLab),
+    "HD01_VD09A": d3.scale.linear().domain([0,70]).range(["#ffffff", "#C9FC61"]).interpolate(d3.interpolateLab),
+    "HD01_VD10A": d3.scale.linear().domain([0,70]).range(["#ffffff", "#019FFA"]).interpolate(d3.interpolateLab),
+};
+
+var svg = d3.select("body #main-wrapper").append("svg")
+    .attr("width", width)
+    .attr("height", height);
+
+var g = svg.append("g");
+
+var CURR_SELECT = ["HD01_VD02A", "HD01_VD03A", "HD01_VD04A", "HD01_VD05A", "HD01_VD06A", "HD01_VD07A", "HD01_VD08A", "HD01_VD09A", "HD01_VD10A"];
+
+// Load data
+queue()
+    .defer(d3.json, "/data/va-counties.json")
+    .defer(d3.csv, "/data/va_data.csv", typeAndSet)
+    .await(ready);
+
+// After loading the data...
+function ready(error, topo) {
+    if (error) throw error;
+    // Country borders
+ var state = topojson.feature(topo, topo.objects.states),
+      bounds = path.bounds(state);
+
+  projection
+      .translate([width / 2 - (bounds[0][0] + bounds[1][0]) / 2, height / 2 - (bounds[0][1] + bounds[1][1]) / 2]);
+
+     g.append("g")
+        .attr("class", "counties")
+        .selectAll("path")
+          .data(topojson.feature(topo, topo.objects.counties).features)
+        .enter().append("path")
+          .attr("d", path)
+
+    // State borders
+    g.append("path")
+        .datum(topojson.mesh(topo, topo.objects.states, function(a, b) { return a !== b; }))
+        .attr("class", "states")
+        .attr("d", path);
+
+      updateClasses();
+
+          // Make filter buttons interactive
+    d3.selectAll("#metrics li")
+        .on("click", function() {
+            var item = d3.select(this);
+            if (item.classed("selected")) {
+                item.attr("class", "");
+                removeFromArray(CURR_SELECT, item.attr("data-metric"));
+                
+            } else {
+                item.classed("selected " + item.attr("data-metric"), true);
+                CURR_SELECT.push(item.attr("data-metric"));
+            }
+
+            updateClasses();
+        });
+}
+
+function updateClasses() {
+    svg.selectAll(".counties path")
+        .attr("fill", function(d) { return colorByGreatest(d.id); });
+}
+
+
+function colorByGreatest(FIPS) {
+    
+    var countyObject = commuteById.get(FIPS);
+
+    if (typeof countyObject !== "undefined") {
+        var values = [];
+        for (var i = 0; i < CURR_SELECT.length; i++) {
+            values.push(countyObject[CURR_SELECT[i]]);
+        }
+        var maxValue = d3.max(values);
+        var maxIndex = values.indexOf(maxValue);
+        var metric = CURR_SELECT[maxIndex];
+        return baseColors[metric](maxValue);
+    } 
+    
+    else {
+        return "#ffffff";
+    }
+    
+}
+
+
+function typeAndSet(d) {
+    d.HD01_VD02A = +d.HD01_VD02A;
+    d.HD01_VD03A = +d.HD01_VD03A;
+    d.HD01_VD04A = +d.HD01_VD04A;
+    d.HD01_VD05A = +d.HD01_VD05A;
+    d.HD01_VD06A = +d.HD01_VD06A;
+    d.HD01_VD07A = +d.HD01_VD07A;
+    d.HD01_VD08A = +d.HD01_VD08A;
+    d.HD01_VD09A = +d.HD01_VD09A;
+    d.HD01_VD10A = +d.HD01_VD10A;
+    commuteById.set(d.FIPS, d);   
+}
+
+function removeFromArray(arr) {
+    var what, a = arguments, L = a.length, ax;
+    while (L > 1 && arr.length) {
+        what = a[--L];
+        while ((ax= arr.indexOf(what)) !== -1) {
+            arr.splice(ax, 1);
+        }
+    }
+    return arr;
+}
+
+</script>
