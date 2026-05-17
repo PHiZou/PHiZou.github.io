@@ -9,14 +9,14 @@ const allProjects = await getCollection("projects");
 
 // Feature the projects with the clearest hiring signal first
 const featuredSlugs = [
+  "sunlight-recompete-radar",
+  "govcon-procurement-dashboard",
   "obsidian-rag-chat",
   "ai-pipeline-operational-insights",
-  "govcon-analytics-dashboard",
+  "financial-analysis-april",
   "nova-data-center-energy",
-  "low-fodmap-scientific-review",
-  "iran-us-conflict-map",
-  "text-prediction-ml",
-  "d3-visualizations-portfolio",
+  "supply-chain-petri-net",
+  "macro-system-dynamics",
 ];
 
 const featuredProjects = featuredSlugs
@@ -56,6 +56,27 @@ const featuredProjects = featuredSlugs
         <div class="rounded-xl border border-slate-800 bg-slate-900/50 p-4">
           <h2 class="text-xs font-semibold uppercase tracking-[0.18em] text-teal-300">What stands out</h2>
           <p class="mt-2 text-sm text-slate-300">RAG workflows, stakeholder-facing analytics, D3 storytelling, and project work with real personality.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="border-b border-slate-800 bg-slate-900">
+    <div class="mx-auto grid max-w-5xl gap-8 px-4 py-12 sm:px-6 lg:grid-cols-[1.2fr_0.8fr] lg:px-8">
+      <div>
+        <h2 class="text-sm font-semibold uppercase tracking-[0.2em] text-teal-300">Open to</h2>
+        <p class="mt-3 max-w-2xl text-sm leading-relaxed text-slate-300 sm:text-base">
+          Data Engineer, Analytics Engineer, BI Engineer, and AI/data infrastructure roles where the job is to make messy operational data usable. Strongest fit: teams that need someone who can move between SQL/Python implementation, stakeholder-facing analytics, and clear written explanation.
+        </p>
+      </div>
+      <div class="grid gap-3 text-sm text-slate-300">
+        <div class="border-l border-teal-400/60 pl-4">
+          <p class="font-semibold text-slate-100">DMV / DC / Northern Virginia</p>
+          <p class="mt-1 text-xs text-slate-400">GovCon, finance, infrastructure, healthcare, SaaS, and mission-oriented data teams.</p>
+        </div>
+        <div class="border-l border-teal-400/60 pl-4">
+          <p class="font-semibold text-slate-100">Immediate proof points</p>
+          <p class="mt-1 text-xs text-slate-400">Sunlight recompete radar, procurement BI, RAG workflows, market research automation, and D3 infrastructure storytelling.</p>
         </div>
       </div>
     </div>
