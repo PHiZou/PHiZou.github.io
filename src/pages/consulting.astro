@@ -1,0 +1,158 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import HireBridge from "../components/HireBridge.astro";
+
+const offers = [
+  {
+    title: "Data Trust Audit",
+    problem:
+      "Leadership numbers don't match, spreadsheets do the real work, and nobody fully trusts the dashboard.",
+    deliverable:
+      "A written map of where your reporting, CRM, pipeline, and contract data stop being trustworthy — with a prioritized fix list.",
+    tools: "SQL profiling · lineage review · stakeholder interviews",
+    bestFor: "Small/mid GovCon firms and associations with reporting sprawl",
+    proves:
+      "Data quality judgment and stakeholder-facing reporting — the unglamorous work full-time teams need most.",
+  },
+  {
+    title: "GovCon Pipeline Sprint",
+    problem:
+      "Public procurement data is available but unusable — BD teams re-research the same questions weekly.",
+    deliverable:
+      "A usable internal dataset or dashboard from USASpending/SAM.gov data, scoped to your agencies and NAICS codes.",
+    tools: "Python ingestion · Postgres · dbt · a BI surface",
+    bestFor: "BD, capture, and market-intelligence teams",
+    proves: "End-to-end pipeline ability on real public data — the same stack as Sunlight.",
+  },
+  {
+    title: "KPI Layer Buildout",
+    problem: 'Every team computes "revenue" differently and metric debates eat the meeting.',
+    deliverable:
+      "Defined metrics, tested dbt/SQL models, and reporting logic leadership can trust and analysts can maintain.",
+    tools: "dbt-core · SQL · metric definitions · docs",
+    bestFor: "Analytics and RevOps teams standardizing reporting",
+    proves: "SQL/dbt modeling discipline and the ability to make metric definitions stick.",
+  },
+  {
+    title: "RAG / Document Intelligence Prototype",
+    problem: "Contracts, proposals, and policy docs hold answers nobody can find quickly.",
+    deliverable:
+      "A working citation-grounded search prototype over your document set — contract libraries, past performance, vendor research.",
+    tools: "Embeddings · vector retrieval · LLM orchestration",
+    bestFor: "Proposal, contracts, and knowledge-management teams",
+    proves: "AI/RAG workflow design applied to a real business problem, not a demo.",
+  },
+];
+---
+
+<BaseLayout
+  title="Consulting – Peter Hagen"
+  description="Packaged data consulting for GovCon and data-heavy organizations in the DMV market: data trust audits, procurement pipelines, KPI layers, and RAG prototypes."
+>
+  <section class="consulting-hero">
+    <div class="wrap" style="display: flex; flex-direction: column; gap: 20px;">
+      <div style="display: flex;">
+        <span class="hero-badge hero-badge-amber">Consulting · NOVA/DMV GovCon</span>
+      </div>
+      <h1 class="page-title">
+        Packaged data work with<br />
+        <span style="color: var(--amber);">a clear deliverable and a clear price of entry.</span>
+      </h1>
+      <p style="font-size: 0.9375rem; line-height: 1.75; color: var(--ink-3); max-width: 620px;">
+        I take on select consulting engagements for GovCon and data-heavy organizations in the DMV
+        market.
+        <strong style="color: var(--ink-2);">These are also exactly the capabilities I bring into a full-time team</strong>
+        — if you're hiring rather than buying,
+        <a href="/resume" style="color: var(--teal-text); font-weight: 600;">start with the resume</a>.
+      </p>
+      <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+        <a href="mailto:Peter.H.Hagen@gmail.com" class="btn-primary btn-amber">Contact Peter</a>
+        <a href="/resume" class="btn-outline">See role fit</a>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" style="padding-top: 48px; padding-bottom: 48px;">
+    <div class="wrap">
+      <div class="eyebrow" style="margin-bottom: 20px;">Packaged offers</div>
+      <div class="offer-grid">
+        {offers.map((o) => (
+          <div class="card offer-card">
+            <div style="font-size: 0.9rem; font-weight: 700; color: var(--ink);">{o.title}</div>
+            <div class="offer-line"><strong style="color: var(--ink-2);">The problem:</strong> {o.problem}</div>
+            <div class="offer-line"><strong style="color: var(--ink-2);">Deliverable:</strong> {o.deliverable}</div>
+            <div class="mono offer-tools">{o.tools}</div>
+            <div style="font-size: 0.72rem; color: var(--ink-4);"><strong style="color: var(--ink-3);">Best for:</strong> {o.bestFor}</div>
+            <div class="offer-proves">
+              <strong>What this proves as a hire:</strong>
+              <span style="color: var(--ink-3);"> {o.proves}</span>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <section class="section bg-alt" style="padding-top: 48px; padding-bottom: 48px;">
+    <div class="wrap">
+      <div class="eyebrow" style="margin-bottom: 20px;">Grounded in real organizational work</div>
+      <div class="offer-grid">
+        <div class="card" style="padding: 20px;">
+          <div class="ground-label">NAHB — membership data & reporting</div>
+          <p style="font-size: 0.78rem; line-height: 1.7; color: var(--ink-3);">
+            114K+ member records: reporting workflows, CRM/member analytics, segmentation, and the
+            stakeholder reporting that leadership actually used.
+          </p>
+        </div>
+        <div class="card" style="padding: 20px;">
+          <div class="ground-label">DGCI — defense logistics & procurement</div>
+          <p style="font-size: 0.78rem; line-height: 1.7; color: var(--ink-3);">
+            DLA fuel bid support: logistics constraints, procurement and pricing analysis, and
+            executive-ready business recommendations.
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <HireBridge note="Every offer above maps to a capability a full-time data, analytics, or BI team needs. Consulting is selective; hiring conversations come first." />
+</BaseLayout>
+
+<style>
+  .consulting-hero {
+    border-bottom: 1px solid var(--border);
+    padding: 64px 24px;
+    background: oklch(0.94 0.03 75 / 0.4);
+  }
+  .page-title {
+    font-size: clamp(1.75rem, 4vw, 2.5rem);
+    font-weight: 700;
+    line-height: 1.12;
+    letter-spacing: -0.02em;
+    color: var(--ink);
+  }
+  .offer-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; }
+  .offer-card { padding: 22px; display: flex; flex-direction: column; gap: 10px; }
+  .offer-line { font-size: 0.75rem; line-height: 1.65; color: var(--ink-3); }
+  .offer-tools { font-size: 0.65rem; color: var(--ink-4); letter-spacing: 0.04em; }
+  .offer-proves {
+    font-size: 0.72rem;
+    line-height: 1.6;
+    color: var(--teal-text);
+    border-top: 1px solid var(--border);
+    padding-top: 10px;
+    margin-top: 2px;
+  }
+  .ground-label {
+    font-size: 0.65rem;
+    font-weight: 700;
+    color: var(--teal-text);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    margin-bottom: 8px;
+  }
+  @media (max-width: 760px) {
+    .offer-grid { grid-template-columns: 1fr; }
+    .section, .consulting-hero { padding-left: 18px; padding-right: 18px; }
+  }
+</style>

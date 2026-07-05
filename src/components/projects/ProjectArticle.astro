@@ -1,0 +1,157 @@
+---
+import type { CollectionEntry } from "astro:content";
+
+interface Props {
+  project: CollectionEntry<"projects">;
+}
+
+const { project } = Astro.props as Props;
+const { data } = project;
+const { Content } = await project.render();
+
+const isQuant = data.template === "quant-model";
+const isD3 = data.template === "d3-visualization";
+const isGame = data.template === "game";
+
+const launchLabel = isQuant ? "Launch report ↗" : "Launch live project ↗";
+const stackLabel = isQuant ? "Methods" : "Stack";
+const timelineLabel = isQuant ? "Horizon" : "Timeline";
+---
+
+<article class="project-article">
+  <header style="margin-bottom: 24px; display: flex; flex-direction: column; gap: 8px;">
+    <p class="kicker">{data.type}</p>
+    <h1 class="article-title">{data.title}</h1>
+    {data.summary && <p class="article-summary">{data.summary}</p>}
+  </header>
+
+  <div style="margin-bottom: 24px; display: flex; flex-wrap: wrap; gap: 10px;">
+    {data.liveUrl && (
+      <a href={data.liveUrl} target="_blank" rel="noopener noreferrer" class="btn-primary">{launchLabel}</a>
+    )}
+    {!data.liveUrl && data.legacyUrl && (
+      <a href={data.legacyUrl} target="_blank" rel="noopener noreferrer" class="btn-primary">View live project ↗</a>
+    )}
+    {data.repoUrl && (
+      <a href={data.repoUrl} target="_blank" rel="noopener noreferrer" class="btn-outline">View code on GitHub ↗</a>
+    )}
+  </div>
+
+  {((data.stack && data.stack.length > 0) || data.timeline || data.impact) && (
+    <section class="card meta-card">
+      {data.stack && data.stack.length > 0 && (
+        <div>
+          <h2 class="meta-label">{stackLabel}</h2>
+          <p class="meta-value">{data.stack.join(", ")}</p>
+        </div>
+      )}
+      {data.timeline && (
+        <div>
+          <h2 class="meta-label">{timelineLabel}</h2>
+          <p class="meta-value">{data.timeline}</p>
+        </div>
+      )}
+      {data.impact && (
+        <div>
+          <h2 class="meta-label">Impact</h2>
+          <p class="meta-value">{data.impact}</p>
+        </div>
+      )}
+    </section>
+  )}
+
+  <section class="prose prose-sm max-w-none article-prose">
+    <Content />
+  </section>
+
+  {isD3 && data.legacyUrl && (
+    <section class="card legacy-card">
+      <h2 class="meta-label">Interactive demos</h2>
+      <p style="margin-top: 8px;">
+        View the original interactive D3 visualizations on the
+        <a href={data.legacyUrl} class="legacy-link">legacy D3 projects page</a>.
+      </p>
+    </section>
+  )}
+  {isGame && data.legacyUrl && (
+    <section class="card legacy-card">
+      <h2 class="meta-label">Play the game</h2>
+      <p style="margin-top: 8px;">
+        <a href={data.legacyUrl} target="_blank" rel="noopener noreferrer" class="legacy-link">Play now ↗</a>
+      </p>
+    </section>
+  )}
+</article>
+
+<style>
+  .project-article {
+    max-width: 768px;
+    margin: 0 auto;
+    padding: 48px 24px 64px;
+  }
+  .article-title {
+    font-size: clamp(1.5rem, 3vw, 2rem);
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    color: var(--ink);
+    line-height: 1.2;
+  }
+  .article-summary {
+    max-width: 640px;
+    font-size: 0.875rem;
+    line-height: 1.7;
+    color: var(--ink-3);
+  }
+  .meta-card {
+    margin-bottom: 32px;
+    padding: 16px 20px;
+    display: grid;
+    gap: 16px;
+    font-size: 0.8125rem;
+  }
+  @media (min-width: 640px) {
+    .meta-card { grid-template-columns: repeat(3, 1fr); }
+  }
+  .meta-label {
+    font-family: var(--font-mono);
+    font-size: 0.62rem;
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--ink-4);
+  }
+  .meta-value { margin-top: 4px; color: var(--ink-2); line-height: 1.6; }
+  .legacy-card {
+    margin-top: 24px;
+    padding: 16px 20px;
+    font-size: 0.8125rem;
+    color: var(--ink-2);
+  }
+  .legacy-link { color: var(--teal-text); font-weight: 600; }
+  .legacy-link:hover { color: var(--teal-hover); }
+
+  /* Markdown body: map Tailwind typography onto the cream palette */
+  .article-prose {
+    --tw-prose-body: var(--ink-2);
+    --tw-prose-headings: var(--ink);
+    --tw-prose-lead: var(--ink-3);
+    --tw-prose-links: var(--teal-text);
+    --tw-prose-bold: var(--ink);
+    --tw-prose-counters: var(--ink-4);
+    --tw-prose-bullets: var(--border-strong);
+    --tw-prose-hr: var(--border);
+    --tw-prose-quotes: var(--ink-2);
+    --tw-prose-quote-borders: var(--border-strong);
+    --tw-prose-captions: var(--ink-4);
+    --tw-prose-code: var(--ink);
+    --tw-prose-th-borders: var(--border-strong);
+    --tw-prose-td-borders: var(--border);
+    line-height: 1.75;
+  }
+  .article-prose :global(h2) { font-family: var(--font-serif); margin-top: 2rem; margin-bottom: 0.75rem; }
+  .article-prose :global(h3) { font-family: var(--font-serif); margin-top: 1.5rem; margin-bottom: 0.5rem; }
+  .article-prose :global(a:hover) { color: var(--teal-hover); }
+  .article-prose :global(pre) { border: 1px solid var(--border); border-radius: 10px; }
+  .article-prose :global(video),
+  .article-prose :global(img) { max-width: 100%; border-radius: 10px; }
+</style>

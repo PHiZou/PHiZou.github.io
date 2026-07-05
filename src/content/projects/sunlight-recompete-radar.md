@@ -14,6 +14,15 @@ Sunlight is a federal contracting intelligence platform that analyzes USASpendin
 
 The MVP focuses on DHS IT services (NAICS 541511 / 541512) over FY2020–2025 and surfaces $1.25B in obligated value across 191 candidate contracts.
 
+## Recruiter signal
+
+This is the project to start with if you are evaluating me for analytics engineering, data engineering, BI engineering, or GovCon-adjacent data roles.
+
+- **Data engineering**: automated public-data ingestion, normalized award records, and repeatable refresh logic
+- **Analytics engineering**: dbt models, tested SQL transformations, scoring logic, and explainable metrics
+- **BI / decision support**: contract-level ranking, portfolio views, and user-facing evidence behind each score
+- **Product delivery**: FastAPI backend, Next.js frontend, and a deployed live surface instead of a notebook-only prototype
+
 ## Why this matters
 
 Procurement intelligence at this depth is normally locked behind commercial tools that charge $20K+/seat/year. Sunlight delivers comparable insights from free public data, with **transparent SQL-based scoring** — no black-box ML — so every score can be decomposed into the evidence that produced it.
@@ -26,6 +35,16 @@ Procurement intelligence at this depth is normally locked behind commercial tool
 - Highlights active POP-end windows and at-stake obligated value
 - Provides historical obligation context (FY2020–FY2025)
 
+## Case study shape
+
+**Problem:** GovCon business-development and capture teams need to know which contracts are likely to recompete, but the raw public data is fragmented, hard to interpret, and usually turned into actionable intelligence by expensive commercial platforms.
+
+**What I built:** A full-stack analytics product that ingests public federal award data, models the contracting landscape, scores recompete opportunities, and exposes the results through a live web application.
+
+**Decision it supports:** Which expiring contracts are worth tracking, which incumbents look entrenched, where competition is concentrated, and where public data suggests a plausible capture opportunity.
+
+**Why it is credible:** The scoring is transparent and evidence-backed. A user can trace a score back to the award-level records and the business logic behind it.
+
 ## Technical architecture
 
 The core analytical cell is **(Agency, NAICS, PSC, Time)** — every score is computed at that grain and traceable back to award-level transactions.
@@ -35,6 +54,15 @@ The core analytical cell is **(Agency, NAICS, PSC, Time)** — every score is co
 - **Transformation**: dbt-core for modeling, scoring logic, and tested SQL
 - **API**: FastAPI service exposing scored cells and underlying evidence
 - **Frontend**: Next.js 14 + TypeScript + Tailwind, deployed on Vercel
+
+## Data model and scoring
+
+The project treats federal procurement data as an analytics-engineering problem rather than a static dashboard problem. The useful object is not a single award row; it is a scored contracting cell with enough historical context to support prioritization.
+
+- **Recompete score**: estimates how attractive or time-sensitive a recompete opportunity is
+- **Incumbent strength**: captures whether the current vendor appears difficult to displace
+- **Market concentration**: uses HHI-style concentration logic to show whether a space is crowded or dominated
+- **At-stake value**: aggregates obligated value so opportunity ranking is tied to contract dollars, not only counts
 
 ## What this project demonstrates
 

@@ -1,0 +1,42 @@
+---
+interface Props {
+  note?: string;
+}
+
+const {
+  note = "The work on this page is the same capability Peter brings into a full-time data or analytics team.",
+} = Astro.props as Props;
+---
+
+<section class="hire-bridge">
+  <div class="hire-bridge-inner">
+    <div style="max-width: 560px;">
+      <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 6px;">
+        <div class="pulse-dot"></div>
+        <span class="kicker">Open to full-time roles · NOVA/DMV</span>
+      </div>
+      <div style="font-size: 0.8125rem; line-height: 1.65; color: var(--ink-3);">{note}</div>
+    </div>
+    <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+      <a href="/resume" class="btn-primary">View resume</a>
+      <a href="mailto:Peter.H.Hagen@gmail.com" class="btn-outline">Contact Peter</a>
+    </div>
+  </div>
+</section>
+
+<style>
+  .hire-bridge {
+    padding: 36px 24px;
+    border-top: 1px solid var(--border);
+    background: var(--bg-alt);
+  }
+  .hire-bridge-inner {
+    max-width: 1100px;
+    margin: 0 auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 20px;
+    flex-wrap: wrap;
+  }
+</style>

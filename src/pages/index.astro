@@ -1,218 +1,474 @@
 ---
 import BaseLayout from "../layouts/BaseLayout.astro";
-import Hero from "../components/Hero.astro";
-import SkillsOverview from "../components/SkillsOverview.astro";
-import ProjectGrid from "../components/ProjectGrid.astro";
-import { getCollection } from "astro:content";
 
-const allProjects = await getCollection("projects");
-
-// Feature the projects with the clearest hiring signal first
-const featuredSlugs = [
-  "sunlight-recompete-radar",
-  "govcon-procurement-dashboard",
-  "obsidian-rag-chat",
-  "ai-pipeline-operational-insights",
-  "financial-analysis-april",
-  "nova-data-center-energy",
-  "supply-chain-petri-net",
-  "macro-system-dynamics",
+const heroStats = [
+  { label: "Core stack", value: "Python · SQL · AWS · dbt" },
+  { label: "Background", value: "Defense & GovCon data" },
+  { label: "Availability", value: "Full-time now · consulting" },
 ];
 
-const featuredProjects = featuredSlugs
-  .map((slug) => allProjects.find((p) => p.slug === slug))
-  .filter(Boolean)
-  .map((project) => ({
-    title: project.data.title,
-    slug: project.slug,
-    type: project.data.type,
-    summary: project.data.summary,
-    tags: project.data.tags || [],
-  }));
+const pipelineSteps = [
+  { step: "Ingest", tool: "Python + GitHub Actions" },
+  { step: "Warehouse", tool: "Postgres (Neon)" },
+  { step: "Model & score", tool: "dbt-core, tested SQL" },
+  { step: "API", tool: "FastAPI" },
+  { step: "Product", tool: "Next.js 14" },
+];
+
+const roadmap = [
+  "Expand beyond DHS to additional agencies and NAICS codes",
+  "SAM.gov solicitation data for forward-looking signals",
+  "Alerts and tracking for watched contracts",
+  "API access for BD teams",
+];
+
+const selectedProjects = [
+  {
+    title: "Sunlight — Federal Recompete Radar",
+    type: "Analytics engineering, end to end",
+    desc: "Ingestion → Postgres → dbt → FastAPI → Next.js. Explainable recompete scoring on $1.25B of DHS obligated value.",
+    url: "https://sunlight-pi.vercel.app/",
+    caseStudy: "/projects/sunlight-recompete-radar",
+  },
+  {
+    title: "Obsidian RAG Chat",
+    type: "AI pipeline / LLM",
+    desc: "Citation-grounded RAG on semantic chunking, embeddings, and vector retrieval.",
+    url: "https://obsidian-rag-7fzsf7xqbrkgxqw3c7xh2g.streamlit.app/",
+    caseStudy: "/projects/obsidian-rag-chat",
+  },
+  {
+    title: "Federal Procurement Intelligence Dashboard",
+    type: "BI / analytics",
+    desc: "Live USASpending API → agency spend, contractor leaderboards, acquisition trends.",
+    url: "https://govcon-analytics-dashboard.vercel.app",
+    caseStudy: "/projects/govcon-procurement-dashboard",
+  },
+  {
+    title: "NOVA Data Center Energy",
+    type: "D3 storytelling",
+    desc: "Scrollytelling on Northern Virginia infrastructure data — the data center boom, made legible.",
+    url: "https://nova-data-center-energy.vercel.app",
+    caseStudy: "/projects/nova-data-center-energy",
+  },
+  {
+    title: "AWS Data Pipeline & Analytics",
+    type: "Cloud ETL",
+    desc: "Batch pipeline architecture: S3, Lambda, Redshift, Airflow orchestration.",
+    url: null,
+    caseStudy: "/projects/aws-data-pipeline-analytics",
+  },
+  {
+    title: "Iran Conflict Operational Intelligence Dashboard",
+    type: "Defense & intel analytics",
+    desc: "Multi-view OSINT dashboard: escalation index, force posture, scenario pathways.",
+    url: "https://iran-conflict-portfolio.vercel.app",
+    caseStudy: "/projects/iran-conflict-dashboard",
+  },
+];
+
+const targetRoles = [
+  { role: "Data Engineer", note: "Pipelines · dbt · Airflow · AWS" },
+  { role: "Analytics Engineer", note: "SQL-heavy, stakeholder-facing models" },
+  { role: "Business Intelligence Engineer", note: "KPI systems, reporting layers" },
+  { role: "AI / Data Workflow roles", note: "RAG pipelines, LLM orchestration" },
+];
+
+const whyInterview = [
+  "Has done the unglamorous parts — data quality, stakeholder reporting, metric definitions that stick — on 114K+ member records at a national organization.",
+  "Ships end to end. Sunlight is a working analytics-engineering stack in production, not slideware.",
+  "GovCon fluency from day one: procurement data, DLA fuel bid environments, and the DMV market.",
+];
 ---
 
 <BaseLayout>
-  <Hero />
-
-  <section class="border-b border-slate-800 bg-slate-950">
-    <div class="mx-auto max-w-5xl px-4 py-12 sm:px-6 lg:px-8">
-      <header class="mb-6 space-y-1">
-        <h2 class="text-sm font-semibold uppercase tracking-[0.2em] text-teal-300">At a glance</h2>
-        <p class="text-sm text-slate-400">What I do, how I work, and what roles are the best fit.</p>
-      </header>
-      <div class="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
-        <div class="rounded-xl border border-slate-800 bg-slate-900/50 p-4">
-          <h2 class="text-xs font-semibold uppercase tracking-[0.18em] text-teal-300">What I build</h2>
-          <p class="mt-2 text-sm text-slate-300">Data pipelines and reporting layers that make messy operational data more usable.</p>
+  <!-- HERO -->
+  <section class="hero-mesh hero-section">
+    <div class="wrap hero-grid">
+      <div class="hero-copy">
+        <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+          <span class="hero-badge hero-badge-teal">Northern Virginia · DMV</span>
+          <span class="hero-badge hero-badge-amber">Open to full-time roles</span>
         </div>
-        <div class="rounded-xl border border-slate-800 bg-slate-900/50 p-4">
-          <h2 class="text-xs font-semibold uppercase tracking-[0.18em] text-teal-300">How I work</h2>
-          <p class="mt-2 text-sm text-slate-300">Systems-minded, SQL/Python-heavy, and focused on clear decision support rather than dashboard theater.</p>
-        </div>
-        <div class="rounded-xl border border-slate-800 bg-slate-900/50 p-4">
-          <h2 class="text-xs font-semibold uppercase tracking-[0.18em] text-teal-300">Best fit</h2>
-          <p class="mt-2 text-sm text-slate-300">Data Engineer, Analytics Engineer, BI Engineer, and adjacent AI/data workflow roles.</p>
-        </div>
-        <div class="rounded-xl border border-slate-800 bg-slate-900/50 p-4">
-          <h2 class="text-xs font-semibold uppercase tracking-[0.18em] text-teal-300">What stands out</h2>
-          <p class="mt-2 text-sm text-slate-300">RAG workflows, stakeholder-facing analytics, D3 storytelling, and project work with real personality.</p>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <section class="border-b border-slate-800 bg-slate-900">
-    <div class="mx-auto grid max-w-5xl gap-8 px-4 py-12 sm:px-6 lg:grid-cols-[1.2fr_0.8fr] lg:px-8">
-      <div>
-        <h2 class="text-sm font-semibold uppercase tracking-[0.2em] text-teal-300">Open to</h2>
-        <p class="mt-3 max-w-2xl text-sm leading-relaxed text-slate-300 sm:text-base">
-          Data Engineer, Analytics Engineer, BI Engineer, and AI/data infrastructure roles where the job is to make messy operational data usable. Strongest fit: teams that need someone who can move between SQL/Python implementation, stakeholder-facing analytics, and clear written explanation.
+        <h1 class="hero-title">
+          GovCon Data Engineering & Analytics<br />
+          <span style="color: var(--teal-text);">for teams that need trusted metrics, useful pipelines, and clear decisions.</span>
+        </h1>
+        <p class="hero-lede">
+          NOVA/DMV-based data and analytics professional building SQL/Python pipelines, reporting
+          layers, and explainable decision-support tools across GovCon, membership analytics,
+          procurement intelligence, and AI workflows.
+          <strong style="color: var(--ink-2);">Open to full-time roles and select consulting work.</strong>
         </p>
-      </div>
-      <div class="grid gap-3 text-sm text-slate-300">
-        <div class="border-l border-teal-400/60 pl-4">
-          <p class="font-semibold text-slate-100">DMV / DC / Northern Virginia</p>
-          <p class="mt-1 text-xs text-slate-400">GovCon, finance, infrastructure, healthcare, SaaS, and mission-oriented data teams.</p>
+        <div style="display: flex; gap: 10px; flex-wrap: wrap; align-items: center;">
+          <a href="/resume" class="btn-primary">View resume</a>
+          <a href="#sunlight" class="btn-outline">Review flagship project</a>
+          <a href="mailto:Peter.H.Hagen@gmail.com" class="btn-outline">Contact Peter</a>
+          <a href="https://github.com/PHiZou" target="_blank" rel="noopener noreferrer" class="btn-ghost">GitHub ↗</a>
         </div>
-        <div class="border-l border-teal-400/60 pl-4">
-          <p class="font-semibold text-slate-100">Immediate proof points</p>
-          <p class="mt-1 text-xs text-slate-400">Sunlight recompete radar, procurement BI, RAG workflows, market research automation, and D3 infrastructure storytelling.</p>
+        <div style="display: flex; gap: 28px; padding-top: 4px; flex-wrap: wrap;">
+          {heroStats.map((item) => (
+            <div>
+              <div class="hero-stat-label">{item.label}</div>
+              <div class="hero-stat-value">{item.value}</div>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      <!-- Two pathways -->
+      <div style="display: flex; flex-direction: column; gap: 14px;">
+        <div class="card card-glow-teal pathway-card">
+          <div class="pathway-label" style="color: var(--teal-text);">Hiring Peter?</div>
+          <div class="pathway-desc">
+            Resume, role fit, and strongest proof projects. Available now for full-time data and
+            analytics roles.
+          </div>
+          <div style="display: flex; flex-direction: column; gap: 6px; margin-top: 2px;">
+            <a href="/resume" class="btn-primary" style="justify-content: center;">View resume</a>
+            <a href="#projects" class="btn-outline" style="justify-content: center;">See strongest work</a>
+            <a href="https://www.linkedin.com/in/peterhagen13" target="_blank" rel="noopener noreferrer" class="btn-ghost" style="align-self: center; margin-top: 2px;">LinkedIn ↗</a>
+          </div>
+        </div>
+        <div class="card card-glow-amber pathway-card">
+          <div class="pathway-label" style="color: var(--amber);">Evaluating his work?</div>
+          <div class="pathway-desc">
+            Start with Sunlight, then the data products and consulting offers built for the DMV
+            market.
+          </div>
+          <div style="display: flex; flex-direction: column; gap: 6px; margin-top: 2px;">
+            <a href="#sunlight" class="btn-primary btn-amber" style="justify-content: center;">Sunlight — flagship project</a>
+            <div style="display: flex; gap: 6px;">
+              <a href="/products" class="btn-outline" style="flex: 1; justify-content: center;">Data products</a>
+              <a href="/consulting" class="btn-outline" style="flex: 1; justify-content: center;">Consulting</a>
+            </div>
+          </div>
         </div>
       </div>
     </div>
   </section>
 
-  <SkillsOverview />
-  <ProjectGrid projects={featuredProjects} />
+  <!-- SUNLIGHT FLAGSHIP -->
+  <section id="sunlight" class="amber-mesh section anchor-target">
+    <div class="wrap">
+      <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 24px; flex-wrap: wrap;">
+        <div class="eyebrow">Flagship project</div>
+        <span class="badge badge-live">Live</span>
+        <span class="badge badge-premium">Free early access</span>
+        <span class="badge badge-saas">DHS-focused MVP</span>
+      </div>
+      <div class="flagship-grid">
+        <div style="display: flex; flex-direction: column; gap: 16px;">
+          <h2 class="flagship-title">Sunlight — Federal Recompete Radar</h2>
+          <p class="flagship-lede">
+            GovCon BD and capture teams need to know which contracts are coming up for recompete,
+            how strong the incumbent is, and whether the market is winnable. That category of
+            intelligence is typically sold by commercial platforms at $20K+ per seat per year.
+            Sunlight rebuilds it from free public USASpending data — with
+            <strong style="color: var(--ink-2);">transparent, SQL-based scoring</strong> that
+            decomposes every number into the award-level evidence behind it.
+          </p>
+          <p class="flagship-scope">
+            Current MVP scope: DHS IT services (NAICS 541511 / 541512), FY2020–2025 —
+            <strong style="color: var(--ink-3);">191 candidate contracts</strong> and
+            <strong style="color: var(--ink-3);">$1.25B in at-stake obligated value</strong>,
+            ranked by recompete likelihood, incumbent strength, and market concentration.
+          </p>
+          <!-- Pipeline strip -->
+          <div class="pipeline-strip">
+            {pipelineSteps.map((s, i) => (
+              <div class="pipeline-step" style={i > 0 ? "border-left: 1px solid var(--border);" : ""}>
+                <div class="pipeline-step-label">{i + 1} · {s.step}</div>
+                <div class="pipeline-step-tool">{s.tool}</div>
+              </div>
+            ))}
+          </div>
+          <p style="font-size: 0.8125rem; line-height: 1.7; color: var(--ink-3); max-width: 620px;">
+            <strong style="color: var(--ink);">Why it matters if you're hiring:</strong> this is the
+            full shape of analytics-engineering work — ingestion through product — built solo with
+            production discipline (orchestration, tested models, explainable scoring). It's the same
+            work a Data or Analytics Engineer does inside a team.
+          </p>
+          <div style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap;">
+            <a href="https://sunlight-pi.vercel.app/" target="_blank" rel="noopener noreferrer" class="btn-primary btn-amber">Launch Sunlight ↗</a>
+            <a href="https://github.com/PHiZou/recompete-radar" target="_blank" rel="noopener noreferrer" class="btn-outline">View repo</a>
+            <a href="/projects/sunlight-recompete-radar" class="btn-outline">Read the case study</a>
+            <a href="/products" class="btn-ghost">All data products →</a>
+          </div>
+        </div>
+        <div class="card" style="padding: 20px; display: flex; flex-direction: column; gap: 12px;">
+          <div class="eyebrow" style="letter-spacing: 0.14em;">Roadmap</div>
+          {roadmap.map((f) => (
+            <div style="display: flex; align-items: flex-start; gap: 8px;">
+              <span style="color: var(--amber); margin-top: 2px; flex-shrink: 0;">→</span>
+              <span style="font-size: 0.72rem; color: var(--ink-3); line-height: 1.5;">{f}</span>
+            </div>
+          ))}
+          <div class="divider"></div>
+          <div style="font-size: 0.72rem; color: var(--ink-4); line-height: 1.6;">
+            Interested in early B2B access or partnership?
+            <a href="mailto:Peter.H.Hagen@gmail.com" style="color: var(--amber); font-weight: 600;">Email Peter</a>.
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
 
-  <section class="border-b border-slate-800 bg-slate-950">
-    <div class="mx-auto max-w-5xl px-4 py-14 sm:px-6 lg:px-8">
-      <header class="mb-6 flex flex-col justify-between gap-3 sm:flex-row sm:items-start">
+  <!-- PROFESSIONAL EXPERIENCE -->
+  <section class="section bg-alt">
+    <div class="wrap">
+      <div class="eyebrow" style="margin-bottom: 8px;">Professional experience</div>
+      <h2 class="section-title">Real organizational data, not just portfolio projects</h2>
+      <div class="two-col">
+        <div class="card" style="padding: 22px;">
+          <div class="org-label">National Association of Home Builders</div>
+          <div class="org-role">Director-level membership data & reporting</div>
+          <p class="org-desc">
+            Owned reporting and analytics on
+            <strong style="color: var(--ink-2);">114K+ member records</strong> — CRM-style data,
+            segmentation, dashboards, stakeholder reporting, and the operational data quality work
+            that makes leadership metrics trustworthy across a national organization.
+          </p>
+        </div>
+        <div class="card" style="padding: 22px;">
+          <div class="org-label">DGCI — Defense logistics & procurement</div>
+          <div class="org-role">DLA fuel contract bid environments</div>
+          <p class="org-desc">
+            Supported federal fuel contract bidding: logistics constraints, procurement-facing
+            analysis, and
+            <strong style="color: var(--ink-2);">executive-ready pricing and business recommendations</strong>
+            — early grounding in how GovCon buyers and operators actually make decisions.
+          </p>
+        </div>
+      </div>
+      <div style="margin-top: 16px; font-size: 0.75rem; color: var(--ink-4);">
+        M.S. Systems Engineering, George Mason University · B.S. Industrial & Systems Engineering,
+        Virginia Tech
+      </div>
+    </div>
+  </section>
+
+  <!-- SELECTED PROJECTS -->
+  <section id="projects" class="section anchor-target">
+    <div class="wrap">
+      <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 20px;">
         <div>
-          <h2 class="text-sm font-semibold uppercase tracking-[0.2em] text-teal-300">
-            Live Projects
-          </h2>
-          <p class="mt-1 text-sm text-slate-400">Deployed and runnable — click any to explore.</p>
+          <div class="eyebrow" style="margin-bottom: 8px;">Selected work</div>
+          <h2 style="font-size: 1.25rem; font-weight: 700; color: var(--ink);">Six projects, chosen for signal</h2>
         </div>
-        <a
-          href="/projects#live-projects"
-          class="shrink-0 text-xs font-semibold text-teal-300 hover:text-teal-200"
-        >
-          View all live projects →
-        </a>
-      </header>
-      <div class="divide-y divide-slate-800">
-        <div class="py-4 first:pt-0">
-          <a
-            href="https://obsidian-rag-7fzsf7xqbrkgxqw3c7xh2g.streamlit.app/"
-            target="_blank"
-            rel="noopener noreferrer"
-            class="group inline-flex items-baseline gap-1.5 text-sm font-medium text-slate-100 hover:text-teal-300"
-          >
-            <span>Obsidian RAG Chat</span>
-            <span class="text-slate-400 group-hover:text-teal-300">↗</span>
-          </a>
-          <p class="mt-0.5 text-xs text-slate-400">
-            Search and chat with an Obsidian vault through a citation-grounded RAG pipeline built on semantic chunking, embeddings, and vector retrieval
-          </p>
+        <a href="/projects" class="btn-ghost">Full catalog →</a>
+      </div>
+      <div style="display: flex; flex-direction: column;">
+        {selectedProjects.map((p, i) => (
+          <div class="project-row">
+            <span class="mono project-num">0{i + 1}</span>
+            <div>
+              <div style="display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap;">
+                <a href={p.caseStudy} class="project-title">{p.title}</a>
+                <span class="mono project-type">{p.type}</span>
+              </div>
+              <div style="font-size: 0.75rem; color: var(--ink-4); margin-top: 2px;">{p.desc}</div>
+            </div>
+            {p.url && (
+              <a href={p.url} target="_blank" rel="noopener noreferrer" class="project-launch">Launch ↗</a>
+            )}
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- FOR RECRUITERS & HIRING MANAGERS -->
+  <section class="section">
+    <div class="wrap">
+      <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 24px; flex-wrap: wrap; gap: 12px;">
+        <div>
+          <div class="eyebrow" style="margin-bottom: 8px;">For recruiters and hiring managers</div>
+          <h2 style="font-size: 1.25rem; font-weight: 700; color: var(--ink);">Where Peter fits</h2>
         </div>
-        <div class="py-4">
-          <a
-            href="https://beltway-realms-card-db-production.up.railway.app"
-            target="_blank"
-            rel="noopener noreferrer"
-            class="group inline-flex items-baseline gap-1.5 text-sm font-medium text-slate-100 hover:text-teal-300"
-          >
-            <span>Beltway Realms Card Database</span>
-            <span class="text-slate-400 group-hover:text-teal-300">↗</span>
-          </a>
-          <p class="mt-0.5 text-xs text-slate-400">
-            Full-stack card database with SQLite FTS5 search, comparison flows, recommendation logic, and a synergy-aware loadout builder
-          </p>
+        <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+          <a href="/resume" class="btn-primary">Download resume</a>
+          <a href="https://www.linkedin.com/in/peterhagen13" target="_blank" rel="noopener noreferrer" class="btn-outline">LinkedIn ↗</a>
+          <a href="https://github.com/PHiZou" target="_blank" rel="noopener noreferrer" class="btn-outline">GitHub ↗</a>
         </div>
-        <div class="py-4">
-          <a
-            href="https://ai-job-market-dashboard.vercel.app/projects/job-market-dashboard"
-            target="_blank"
-            rel="noopener noreferrer"
-            class="group inline-flex items-baseline gap-1.5 text-sm font-medium text-slate-100 hover:text-teal-300"
-          >
-            <span>AI Job Market Intelligence Dashboard</span>
-            <span class="text-slate-400 group-hover:text-teal-300">↗</span>
-          </a>
-          <p class="mt-0.5 text-xs text-slate-400">
-            Job-market analytics project tracking AI hiring trends, skill demand, and market momentum through aggregated posting data
-          </p>
+      </div>
+      <div class="two-col">
+        <div class="card" style="padding: 20px;">
+          <div class="card-label">Target roles</div>
+          <div style="display: flex; flex-direction: column;">
+            {targetRoles.map((r) => (
+              <div class="role-row">
+                <span style="font-size: 0.8125rem; font-weight: 600; color: var(--ink);">{r.role}</span>
+                <span style="font-size: 0.65rem; color: var(--ink-4);">{r.note}</span>
+              </div>
+            ))}
+          </div>
         </div>
-        <div class="py-4">
-          <a
-            href="/projects/low-fodmap-scientific-review"
-            class="group inline-flex items-baseline gap-1.5 text-sm font-medium text-slate-100 hover:text-teal-300"
-          >
-            <span>Low FODMAP Diet — Scientific Review</span>
-            <span class="text-slate-400 group-hover:text-teal-300">↗</span>
-          </a>
-          <p class="mt-0.5 text-xs text-slate-400">
-            Evidence-based R Markdown review translating clinical nutrition research into a clearer, reproducible report.
-          </p>
-        </div>
-        <div class="py-4">
-          <a
-            href="https://phizou.github.io/DMV-Company-Research-Vault/"
-            target="_blank"
-            rel="noopener noreferrer"
-            class="group inline-flex items-baseline gap-1.5 text-sm font-medium text-slate-100 hover:text-teal-300"
-          >
-            <span>DMV Company Research Vault</span>
-            <span class="text-slate-400 group-hover:text-teal-300">↗</span>
-          </a>
-          <p class="mt-0.5 text-xs text-slate-400">
-            Public research vault mapping DMV tech, GovCon, and infrastructure companies through a structured Obsidian knowledge base
-          </p>
-        </div>
-        <div class="py-4">
-          <a
-            href="https://nova-data-center-energy.vercel.app"
-            target="_blank"
-            rel="noopener noreferrer"
-            class="group inline-flex items-baseline gap-1.5 text-sm font-medium text-slate-100 hover:text-teal-300"
-          >
-            <span>NOVA Data Center Energy</span>
-            <span class="text-slate-400 group-hover:text-teal-300">↗</span>
-          </a>
-          <p class="mt-0.5 text-xs text-slate-400">
-            D3 scrollytelling project translating public infrastructure data into a clearer view of Northern Virginia's data center boom
-          </p>
-        </div>
-        <div class="py-4">
-          <a
-            href="https://iran-us-conflict-map2.vercel.app/"
-            target="_blank"
-            rel="noopener noreferrer"
-            class="group inline-flex items-baseline gap-1.5 text-sm font-medium text-slate-100 hover:text-teal-300"
-          >
-            <span>Iran–US Conflict Map</span>
-            <span class="text-slate-400 group-hover:text-teal-300">↗</span>
-          </a>
-          <p class="mt-0.5 text-xs text-slate-400">
-            Interactive D3 map tracking strikes, naval engagements, oil disruption, and humanitarian impact — day-by-day timeline
-          </p>
-        </div>
-        <div class="py-4">
-          <a
-            href="https://beltway-realms-game.vercel.app"
-            target="_blank"
-            rel="noopener noreferrer"
-            class="group inline-flex items-baseline gap-1.5 text-sm font-medium text-slate-100 hover:text-teal-300"
-          >
-            <span>Beltway Realms</span>
-            <span class="text-slate-400 group-hover:text-teal-300">↗</span>
-          </a>
-          <p class="mt-0.5 text-xs text-slate-400">
-            Experimental portfolio world that turns regional identity, projects, and storytelling into a game-like front-end experience
-          </p>
+        <div class="card" style="padding: 20px;">
+          <div class="card-label">Why interview Peter</div>
+          <div style="display: flex; flex-direction: column; gap: 10px;">
+            {whyInterview.map((b) => (
+              <div style="display: flex; gap: 10px; align-items: flex-start;">
+                <span style="color: var(--teal-text); flex-shrink: 0; margin-top: 1px;">▸</span>
+                <span style="font-size: 0.78rem; line-height: 1.65; color: var(--ink-3);">{b}</span>
+              </div>
+            ))}
+          </div>
         </div>
       </div>
     </div>
   </section>
 </BaseLayout>
+
+<style>
+  .anchor-target { scroll-margin-top: 70px; }
+
+  .hero-section {
+    padding: 64px 24px 56px;
+    border-bottom: 1px solid var(--border);
+  }
+  .hero-grid {
+    display: grid;
+    grid-template-columns: 1fr 360px;
+    gap: 48px;
+    align-items: start;
+  }
+  .hero-copy { display: flex; flex-direction: column; gap: 20px; }
+  .hero-title {
+    font-size: clamp(1.9rem, 4vw, 2.9rem);
+    font-weight: 700;
+    line-height: 1.12;
+    letter-spacing: -0.02em;
+    color: var(--ink);
+  }
+  .hero-lede {
+    font-size: 0.9375rem;
+    line-height: 1.75;
+    color: var(--ink-3);
+    max-width: 560px;
+  }
+  .hero-stat-label {
+    font-size: 0.65rem;
+    color: var(--ink-5);
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    margin-bottom: 2px;
+  }
+  .hero-stat-value { font-size: 0.75rem; color: var(--ink-3); font-weight: 500; }
+
+  .pathway-card { padding: 20px; display: flex; flex-direction: column; gap: 10px; }
+  .pathway-label {
+    font-size: 0.65rem;
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+  }
+  .pathway-desc { font-size: 0.8125rem; line-height: 1.6; color: var(--ink-3); }
+
+  .flagship-grid {
+    display: grid;
+    grid-template-columns: 1fr 300px;
+    gap: 40px;
+    align-items: start;
+  }
+  .flagship-title {
+    font-size: clamp(1.4rem, 3vw, 2rem);
+    font-weight: 700;
+    line-height: 1.15;
+    color: var(--ink);
+    letter-spacing: -0.02em;
+  }
+  .flagship-lede { font-size: 0.875rem; line-height: 1.75; color: var(--ink-3); max-width: 620px; }
+  .flagship-scope { font-size: 0.8125rem; line-height: 1.7; color: var(--ink-4); max-width: 620px; }
+
+  .pipeline-strip {
+    display: flex;
+    align-items: stretch;
+    flex-wrap: wrap;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    overflow: hidden;
+    background: var(--bg-card);
+  }
+  .pipeline-step { flex: 1; min-width: 120px; padding: 12px 14px; }
+  .pipeline-step-label {
+    font-size: 0.6rem;
+    font-weight: 700;
+    color: var(--amber);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    margin-bottom: 3px;
+  }
+  .pipeline-step-tool { font-size: 0.7rem; color: var(--ink-3); }
+
+  .section-title { font-size: 1.25rem; font-weight: 700; color: var(--ink); margin-bottom: 24px; }
+  .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+
+  .org-label {
+    font-size: 0.65rem;
+    font-weight: 700;
+    color: var(--teal-text);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    margin-bottom: 8px;
+  }
+  .org-role { font-size: 0.875rem; font-weight: 700; color: var(--ink); margin-bottom: 8px; }
+  .org-desc { font-size: 0.78rem; line-height: 1.7; color: var(--ink-3); }
+
+  .project-row {
+    display: grid;
+    grid-template-columns: 28px 1fr auto;
+    gap: 14px;
+    align-items: baseline;
+    padding: 14px 0;
+    border-bottom: 1px solid var(--border);
+  }
+  .project-num { font-size: 0.7rem; font-weight: 500; color: var(--border-strong); }
+  .project-title {
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: var(--ink);
+    text-decoration: none;
+  }
+  .project-title:hover { color: var(--teal-text); }
+  .project-type {
+    font-size: 0.62rem;
+    color: var(--teal-text);
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+  .project-launch {
+    font-size: 0.7rem;
+    font-weight: 700;
+    color: var(--teal-text);
+    text-decoration: none;
+    white-space: nowrap;
+  }
+
+  .card-label {
+    font-size: 0.65rem;
+    font-weight: 700;
+    color: var(--teal-text);
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    margin-bottom: 12px;
+  }
+  .role-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 9px 0;
+    border-bottom: 1px solid var(--border);
+  }
+
+  @media (max-width: 760px) {
+    .hero-grid, .flagship-grid, .two-col { grid-template-columns: 1fr; }
+    .project-row { grid-template-columns: 20px 1fr; }
+    .project-launch { grid-column: 2; }
+    .section, .hero-section { padding-left: 18px; padding-right: 18px; }
+  }
+  @media (max-width: 460px) {
+    .hero-title { font-size: 1.9rem; line-height: 1.15; }
+  }
+</style>

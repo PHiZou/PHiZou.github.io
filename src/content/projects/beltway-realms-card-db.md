@@ -6,7 +6,6 @@ summary: "Full-stack searchable card database built around 700 cards, SQLite FTS
 tags: ["React", "TypeScript", "SQLite", "Hono", "Node.js", "Full-Stack", "Product"]
 stack: ["React 19", "TypeScript", "Vite", "SQLite (FTS5)", "Hono.js", "better-sqlite3", "React Router 7"]
 impact: Shows product and systems thinking through search, recommendation logic, loadout modeling, and a real full-stack interface.
-liveUrl: https://beltway-realms-card-db-production.up.railway.app
 ---
 
 # Beltway Realms Card Database

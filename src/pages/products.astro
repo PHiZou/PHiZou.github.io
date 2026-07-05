@@ -1,0 +1,184 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import HireBridge from "../components/HireBridge.astro";
+
+const products = [
+  {
+    id: "sunlight",
+    flagship: true,
+    badges: [
+      ["badge-live", "Live"],
+      ["badge-saas", "DHS-focused MVP"],
+    ],
+    title: "Sunlight — Federal Recompete Radar",
+    problem:
+      "BD and capture teams need earlier recompete signal: which contracts expire soon, how strong the incumbent is, whether the market is winnable.",
+    pipeline:
+      "Public USASpending data → Postgres → dbt → FastAPI → Next.js. Every score decomposes into award-level evidence — transparent SQL, no black box.",
+    buyer: "GovCon BD, capture, pricing, market-intelligence, and growth teams.",
+    proves:
+      "Analytics engineering end to end, product thinking, SQL modeling, domain research, API/app delivery.",
+    scope:
+      "Current scope: DHS IT services (NAICS 541511/541512), FY2020–2025 — 191 candidate contracts, $1.25B at-stake obligated value.",
+    roadmap: [
+      "Recompete alerts & tracked watchlists",
+      "Agency expansion beyond DHS",
+      "CSV exports & BD team API",
+      "Sample reports & walkthroughs",
+    ],
+    url: "https://sunlight-pi.vercel.app/",
+    repo: "https://github.com/PHiZou/recompete-radar",
+    caseStudy: "/projects/sunlight-recompete-radar",
+  },
+  {
+    id: "dmv-vault",
+    flagship: false,
+    badges: [["badge-live", "Live — free access"]],
+    title: "DMV Company Research Vault",
+    problem:
+      "Local GovCon vendors, recruiters, BD teams, and job seekers all re-research the same regional companies from scratch.",
+    pipeline:
+      "Structured Obsidian knowledge graph: 200+ NOVA/DMV tech and GovCon companies — ownership, agency ties, contract relationships, competitive positioning.",
+    buyer: "GovCon BD teams, recruiters, and job seekers targeting DMV accounts.",
+    proves:
+      "Market research discipline, information architecture, and product thinking — turning messy public information into a navigable asset.",
+    scope:
+      "Public and free today; a paid market-intelligence tier (target-account research, hiring signals) is exploratory.",
+    roadmap: [
+      "Company maps & contract relationships",
+      "Hiring-signal tracking",
+      "Target-account research packs",
+    ],
+    url: "https://phizou.github.io/DMV-Company-Research-Vault/",
+    repo: null,
+    caseStudy: null,
+  },
+  {
+    id: "job-market",
+    flagship: false,
+    badges: [["badge-live", "Live"]],
+    title: "AI Job Market Intelligence",
+    problem:
+      "Job seekers, recruiters, bootcamps, and workforce boards lack a clear read on which AI/data skills are actually in demand.",
+    pipeline:
+      "Aggregated posting data → trend analytics: skill demand curves, role velocity, market momentum.",
+    buyer:
+      "Recruiters, career-services organizations, workforce boards, and RevOps teams tracking hiring demand.",
+    proves:
+      "Public-data ingestion, BI/storytelling, and the instinct to find an underserved audience for a dataset.",
+    scope: "Free dashboard today; premium tiers are exploratory.",
+    roadmap: ["Compensation bands by role", "Geographic breakdowns", "Weekly digest"],
+    url: "https://ai-job-market-dashboard.vercel.app/projects/job-market-dashboard",
+    repo: null,
+    caseStudy: null,
+  },
+];
+---
+
+<BaseLayout
+  title="Data Products – Peter Hagen"
+  description="Data products built for the NOVA/DMV market: Sunlight federal recompete radar, DMV company research vault, and AI job market intelligence."
+>
+  <section class="products-hero">
+    <div class="wrap">
+      <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 16px;">
+        <span class="badge badge-saas">Product lab</span>
+      </div>
+      <h1 class="page-title" style="margin-bottom: 12px;">
+        Data products, built to be used<br />
+        <span style="color: var(--purple-text);">— and to prove capability.</span>
+      </h1>
+      <p style="font-size: 0.875rem; line-height: 1.7; color: var(--ink-3); max-width: 620px;">
+        Each product here started with a real buyer problem in the NOVA/DMV market. They double as
+        proof: identifying a market, structuring messy public data, and shipping something people
+        can actually use.
+        <strong style="color: var(--ink-2);">Roadmaps and pricing are exploratory, not launched offerings.</strong>
+      </p>
+    </div>
+  </section>
+
+  <section style="padding: 48px 24px;">
+    <div class="wrap" style="display: flex; flex-direction: column; gap: 24px;">
+      {products.map((p) => (
+        <div class:list={["card", "product-card", { "card-glow-amber": p.flagship }]}>
+          <div style="display: flex; flex-direction: column; gap: 12px;">
+            <div style="display: flex; gap: 8px; align-items: center; flex-wrap: wrap;">
+              {p.flagship && <span class="badge badge-premium">Flagship</span>}
+              {p.badges.map((b) => <span class={"badge " + b[0]}>{b[1]}</span>)}
+            </div>
+            <h2 style="font-size: 1.1rem; font-weight: 700; color: var(--ink);">{p.title}</h2>
+            <div class="product-line"><strong style="color: var(--ink-2);">The problem:</strong> {p.problem}</div>
+            <div class="product-line"><strong style="color: var(--ink-2);">How it works:</strong> {p.pipeline}</div>
+            <div class="product-line"><strong style="color: var(--ink-2);">Who it serves:</strong> {p.buyer}</div>
+            <div style="font-size: 0.72rem; line-height: 1.6; color: var(--ink-4); font-style: italic;">{p.scope}</div>
+            <div class="product-proves">
+              <strong>What this proves as a hire:</strong>
+              <span style="color: var(--ink-3);"> {p.proves}</span>
+            </div>
+            <div style="display: flex; gap: 10px; margin-top: 4px; flex-wrap: wrap;">
+              <a href={p.url} target="_blank" rel="noopener noreferrer" class="btn-primary" style="font-size: 0.75rem; padding: 7px 14px;">Launch ↗</a>
+              {p.repo && (
+                <a href={p.repo} target="_blank" rel="noopener noreferrer" class="btn-outline" style="font-size: 0.75rem; padding: 6px 14px;">View repo</a>
+              )}
+              {p.caseStudy && (
+                <a href={p.caseStudy} class="btn-outline" style="font-size: 0.75rem; padding: 6px 14px;">Case study</a>
+              )}
+              <a href="mailto:Peter.H.Hagen@gmail.com?subject=Walkthrough request" class="btn-ghost">Request a walkthrough →</a>
+            </div>
+          </div>
+          <div style="display: flex; flex-direction: column; gap: 10px;">
+            <div class="mono roadmap-label">Exploratory roadmap</div>
+            {p.roadmap.map((f) => (
+              <div style="display: flex; align-items: flex-start; gap: 8px;">
+                <span style="color: var(--amber); margin-top: 2px; flex-shrink: 0;">→</span>
+                <span style="font-size: 0.72rem; color: var(--ink-3); line-height: 1.5;">{f}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+      ))}
+    </div>
+  </section>
+
+  <HireBridge note="These products exist to be useful — and to show what Peter can build inside a team: pipelines, modeling, product delivery, and market judgment." />
+</BaseLayout>
+
+<style>
+  .products-hero {
+    border-bottom: 1px solid var(--border);
+    padding: 64px 24px 48px;
+    background: oklch(0.94 0.025 280 / 0.4);
+  }
+  .page-title {
+    font-size: clamp(1.75rem, 4vw, 2.4rem);
+    font-weight: 700;
+    line-height: 1.12;
+    letter-spacing: -0.02em;
+    color: var(--ink);
+  }
+  .product-card {
+    padding: 28px;
+    display: grid;
+    grid-template-columns: 1fr 260px;
+    gap: 32px;
+  }
+  .product-line { font-size: 0.78rem; line-height: 1.7; color: var(--ink-3); }
+  .product-proves {
+    font-size: 0.75rem;
+    line-height: 1.65;
+    color: var(--teal-text);
+    border-top: 1px solid var(--border);
+    padding-top: 12px;
+  }
+  .roadmap-label {
+    font-size: 0.62rem;
+    font-weight: 700;
+    color: var(--ink-5);
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+  }
+  @media (max-width: 760px) {
+    .product-card { grid-template-columns: 1fr; }
+    .products-hero, section { padding-left: 18px; padding-right: 18px; }
+  }
+</style>
