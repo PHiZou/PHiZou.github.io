@@ -118,7 +118,7 @@ const whyInterview = [
 
       <!-- Two pathways -->
       <div style="display: flex; flex-direction: column; gap: 14px;">
-        <div class="card card-glow-teal pathway-card">
+        <div class="card card-glow-teal pathway-card reveal">
           <div class="pathway-label" style="color: var(--teal-text);">Hiring Peter?</div>
           <div class="pathway-desc">
             Resume, role fit, and strongest proof projects. Available now for full-time data and
@@ -130,7 +130,7 @@ const whyInterview = [
             <a href="https://www.linkedin.com/in/peterhagen123" target="_blank" rel="noopener noreferrer" class="btn-ghost" style="align-self: center; margin-top: 2px;">LinkedIn ↗</a>
           </div>
         </div>
-        <div class="card card-glow-amber pathway-card">
+        <div class="card card-glow-amber pathway-card reveal">
           <div class="pathway-label" style="color: var(--amber);">Evaluating his work?</div>
           <div class="pathway-desc">
             Start with Sunlight, then the data products and consulting offers built for the DMV
@@ -196,7 +196,7 @@ const whyInterview = [
             <a href="/products" class="btn-ghost">All data products →</a>
           </div>
         </div>
-        <div class="card" style="padding: 20px; display: flex; flex-direction: column; gap: 12px;">
+        <div class="card reveal" style="padding: 20px; display: flex; flex-direction: column; gap: 12px;">
           <div class="eyebrow" style="letter-spacing: 0.14em;">Roadmap</div>
           {roadmap.map((f) => (
             <div style="display: flex; align-items: flex-start; gap: 8px;">
@@ -220,7 +220,7 @@ const whyInterview = [
       <div class="eyebrow" style="margin-bottom: 8px;">Professional experience</div>
       <h2 class="section-title">Real organizational data, not just portfolio projects</h2>
       <div class="two-col">
-        <div class="card" style="padding: 22px;">
+        <div class="card reveal" style="padding: 22px;">
           <div class="org-label">National Association of Home Builders</div>
           <div class="org-role">Director-level membership data & reporting</div>
           <p class="org-desc">
@@ -230,7 +230,7 @@ const whyInterview = [
             that makes leadership metrics trustworthy across a national organization.
           </p>
         </div>
-        <div class="card" style="padding: 22px;">
+        <div class="card reveal" style="padding: 22px;">
           <div class="org-label">DGCI — Defense logistics & procurement</div>
           <div class="org-role">DLA fuel contract bid environments</div>
           <p class="org-desc">
@@ -260,7 +260,7 @@ const whyInterview = [
       </div>
       <div style="display: flex; flex-direction: column;">
         {selectedProjects.map((p, i) => (
-          <div class="project-row">
+          <div class="project-row reveal">
             <span class="mono project-num">0{i + 1}</span>
             <div>
               <div style="display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap;">
@@ -293,7 +293,7 @@ const whyInterview = [
         </div>
       </div>
       <div class="two-col">
-        <div class="card" style="padding: 20px;">
+        <div class="card reveal" style="padding: 20px;">
           <div class="card-label">Target roles</div>
           <div style="display: flex; flex-direction: column;">
             {targetRoles.map((r) => (
@@ -304,7 +304,7 @@ const whyInterview = [
             ))}
           </div>
         </div>
-        <div class="card" style="padding: 20px;">
+        <div class="card reveal" style="padding: 20px;">
           <div class="card-label">Why interview Peter</div>
           <div style="display: flex; flex-direction: column; gap: 10px;">
             {whyInterview.map((b) => (

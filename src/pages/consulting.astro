@@ -77,7 +77,7 @@ const offers = [
       <div class="eyebrow" style="margin-bottom: 20px;">Packaged offers</div>
       <div class="offer-grid">
         {offers.map((o) => (
-          <div class="card offer-card">
+          <div class="card offer-card reveal">
             <div style="font-size: 0.9rem; font-weight: 700; color: var(--ink);">{o.title}</div>
             <div class="offer-line"><strong style="color: var(--ink-2);">The problem:</strong> {o.problem}</div>
             <div class="offer-line"><strong style="color: var(--ink-2);">Deliverable:</strong> {o.deliverable}</div>
@@ -97,14 +97,14 @@ const offers = [
     <div class="wrap">
       <div class="eyebrow" style="margin-bottom: 20px;">Grounded in real organizational work</div>
       <div class="offer-grid">
-        <div class="card" style="padding: 20px;">
+        <div class="card reveal" style="padding: 20px;">
           <div class="ground-label">NAHB — membership data & reporting</div>
           <p style="font-size: 0.78rem; line-height: 1.7; color: var(--ink-3);">
             114K+ member records: reporting workflows, CRM/member analytics, segmentation, and the
             stakeholder reporting that leadership actually used.
           </p>
         </div>
-        <div class="card" style="padding: 20px;">
+        <div class="card reveal" style="padding: 20px;">
           <div class="ground-label">DGCI — defense logistics & procurement</div>
           <p style="font-size: 0.78rem; line-height: 1.7; color: var(--ink-3);">
             DLA fuel bid support: logistics constraints, procurement and pricing analysis, and

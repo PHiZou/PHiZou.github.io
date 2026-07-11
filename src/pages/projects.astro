@@ -178,7 +178,7 @@ const moreProjects = allProjects
           </div>
           <div style="display: flex; flex-direction: column;">
             {group.projects.map((p) => (
-              <div class="catalog-row">
+              <div class="catalog-row reveal">
                 <div style="flex: 1;">
                   {p.caseStudy ? (
                     <a href={p.caseStudy} class="catalog-title">{p.title}</a>
@@ -209,7 +209,7 @@ const moreProjects = allProjects
           </div>
           <div style="display: flex; flex-direction: column;">
             {moreProjects.map((p) => (
-              <div class="catalog-row">
+              <div class="catalog-row reveal">
                 <div style="flex: 1;">
                   <a href={`/projects/${p.slug}`} class="catalog-title">{p.data.title}</a>
                   <span class="catalog-desc">{p.data.type}</span>

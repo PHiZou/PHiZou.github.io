@@ -34,7 +34,7 @@ html {
 body {
   color: var(--ink);
   font-family: var(--font-sans);
-  min-height: 100vh;
+  min-height: 100dvh;
   background-color: var(--bg);
   background-image:
     /* fine grain speckle */
@@ -59,15 +59,28 @@ h1, h2, h3 { font-family: var(--font-serif); }
 ::-webkit-scrollbar-thumb { background: var(--border-strong); border-radius: 3px; }
 
 /* Animations */
-@keyframes fadeUp {
-  from { opacity: 0; transform: translateY(16px); }
-  to { opacity: 1; transform: translateY(0); }
-}
 @keyframes pulse-ring {
   0%, 100% { opacity: 0.6; transform: scale(1); }
   50% { opacity: 1; transform: scale(1.05); }
 }
-.fade-up { animation: fadeUp 0.5s ease both; }
+
+/* Scroll reveal — progressive enhancement.
+   Hidden state only applies when motion is welcome AND JS marked <html> as js.
+   No-JS or reduced-motion users always see content. */
+.js .reveal {
+  opacity: 0;
+  transform: translateY(18px);
+  transition: opacity 0.6s cubic-bezier(0.16, 1, 0.3, 1), transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+  transition-delay: var(--reveal-delay, 0s);
+  will-change: opacity, transform;
+}
+.js .reveal.in-view {
+  opacity: 1;
+  transform: none;
+}
+@media (prefers-reduced-motion: reduce) {
+  .js .reveal { opacity: 1; transform: none; transition: none; }
+}
 
 .pulse-dot {
   width: 6px;
@@ -147,7 +160,19 @@ h1, h2, h3 { font-family: var(--font-serif); }
 .hero-badge-amber { background: oklch(0.944 0.055 75); border: 1px solid oklch(0.725 0.084 75 / 0.6); color: oklch(0.521 0.12 75); }
 
 /* Card */
-.card { background: var(--bg-card); border: 1px solid var(--border); border-radius: 12px; box-shadow: 0 1px 3px rgba(101, 123, 131, 0.1); }
+.card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  box-shadow: 0 1px 3px rgba(101, 123, 131, 0.1);
+  transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+}
+@media (prefers-reduced-motion: no-preference) {
+  .card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 6px 22px oklch(0.42 0.03 200 / 0.1);
+  }
+}
 .card-glow-amber { box-shadow: 0 0 0 1px oklch(0.682 0.098 75 / 0.3), 0 4px 24px oklch(0.682 0.098 75 / 0.07); }
 .card-glow-teal { box-shadow: 0 0 0 1px oklch(0.725 0.084 195 / 0.3), 0 4px 24px oklch(0.725 0.084 195 / 0.07); }
 
