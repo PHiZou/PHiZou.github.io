@@ -47,11 +47,15 @@ const isActive = (href: string) =>
     <meta property="og:description" content={description} />
     <meta property="og:url" content={`https://phizou.github.io${Astro.url.pathname}`} />
     <meta property="og:site_name" content="Peter Hagen – Portfolio" />
+    <meta property="og:image" content="https://phizou.github.io/og-image.png" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
 
     <!-- Twitter / X card -->
-    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content={title} />
     <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content="https://phizou.github.io/og-image.png" />
 
     <!-- Additional SEO -->
     <meta name="author" content="Peter Hagen" />
