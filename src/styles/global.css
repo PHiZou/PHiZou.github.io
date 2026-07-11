@@ -142,7 +142,6 @@ h1, h2, h3 { font-family: var(--font-serif); }
 .tag-teal { background: oklch(0.948 0.048 195); border-color: oklch(0.725 0.084 195); color: oklch(0.493 0.1 195); }
 .tag-amber { background: oklch(0.948 0.055 75); border-color: oklch(0.682 0.098 75); color: oklch(0.493 0.12 75); }
 .tag-slate { background: var(--bg-alt); border-color: var(--border-strong); color: var(--ink-3); }
-.tag-red { background: oklch(0.94 0.048 25); border-color: oklch(0.767 0.07 25); color: oklch(0.559 0.08 25); }
 
 /* Hero badge pill */
 .hero-badge {
@@ -245,25 +244,6 @@ h1, h2, h3 { font-family: var(--font-serif); }
 .badge-premium { background: oklch(0.948 0.055 75); color: oklch(0.54 0.15 75); border: 1px solid oklch(0.725 0.091 75 / 0.5); }
 .badge-saas { background: oklch(0.944 0.055 280); color: oklch(0.559 0.12 280); border: 1px solid oklch(0.767 0.07 280 / 0.5); }
 .badge-defense { background: oklch(0.94 0.048 25); color: oklch(0.588 0.08 25); border: 1px solid oklch(0.81 0.056 25 / 0.5); }
-
-/* Metric callout */
-.metric-value { font-size: 1.75rem; font-weight: 700; line-height: 1; letter-spacing: -0.02em; }
-
-/* Section label */
-.section-label { font-size: 0.65rem; font-weight: 700; letter-spacing: 0.18em; text-transform: uppercase; }
-
-input[type="email"] {
-  background: var(--bg-card);
-  border: 1px solid var(--border-strong);
-  border-radius: 8px;
-  padding: 8px 12px;
-  color: var(--ink);
-  font-family: inherit;
-  font-size: 0.8125rem;
-  outline: none;
-  transition: border-color 0.15s;
-}
-input[type="email"]:focus { border-color: var(--teal); }
 
 /* Screen reader only utility */
 .sr-only {

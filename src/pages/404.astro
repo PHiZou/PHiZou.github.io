@@ -1,0 +1,96 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+
+const links = [
+  { href: "/", label: "Home", note: "Start here" },
+  { href: "/projects", label: "All projects", note: "Pipelines, dashboards, RAG" },
+  { href: "/resume", label: "Resume", note: "Role fit and background" },
+  { href: "/consulting", label: "Consulting", note: "Packaged data engagements" },
+];
+---
+
+<BaseLayout
+  title="Page not found – Peter Hagen"
+  description="That page doesn't exist. Head back to the portfolio home, projects, or resume."
+>
+  <section class="hero-mesh notfound">
+    <div class="wrap-narrow" style="display: flex; flex-direction: column; gap: 22px;">
+      <div class="eyebrow" style="color: var(--teal-text);">Error 404</div>
+      <h1 class="notfound-title">This page didn't make it to production.</h1>
+      <p class="notfound-lede">
+        The link is broken or the page has moved. No dead ends — here's where to go next.
+      </p>
+      <div class="notfound-grid">
+        {links.map((l) => (
+          <a href={l.href} class="card reveal notfound-card">
+            <span class="notfound-card-label">{l.label}</span>
+            <span class="notfound-card-note">{l.note}</span>
+            <span class="notfound-card-arrow">→</span>
+          </a>
+        ))}
+      </div>
+      <div style="font-size: 0.75rem; color: var(--ink-4);">
+        Still stuck? <a href="mailto:Peter.H.Hagen@gmail.com" style="color: var(--teal-text); font-weight: 600;">Email Peter</a>.
+      </div>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .notfound {
+    padding: 80px 24px 96px;
+    border-bottom: 1px solid var(--border);
+  }
+  .notfound-title {
+    font-size: clamp(1.75rem, 4vw, 2.6rem);
+    font-weight: 700;
+    line-height: 1.12;
+    letter-spacing: -0.02em;
+    color: var(--ink);
+    max-width: 18ch;
+  }
+  .notfound-lede {
+    font-size: 0.9375rem;
+    line-height: 1.75;
+    color: var(--ink-3);
+    max-width: 52ch;
+  }
+  .notfound-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin-top: 6px;
+  }
+  .notfound-card {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    align-items: center;
+    row-gap: 2px;
+    padding: 16px 18px;
+    text-decoration: none;
+  }
+  .notfound-card-label {
+    font-size: 0.875rem;
+    font-weight: 700;
+    color: var(--ink);
+  }
+  .notfound-card-note {
+    grid-column: 1;
+    font-size: 0.72rem;
+    color: var(--ink-4);
+  }
+  .notfound-card-arrow {
+    grid-column: 2;
+    grid-row: 1 / span 2;
+    font-size: 1rem;
+    color: var(--teal-text);
+    transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  .notfound-card:hover .notfound-card-arrow { transform: translateX(4px); }
+  .notfound-card:hover .notfound-card-label { color: var(--teal-text); }
+
+  @media (max-width: 560px) {
+    .notfound-grid { grid-template-columns: 1fr; }
+    .notfound { padding-left: 18px; padding-right: 18px; }
+  }
+</style>
