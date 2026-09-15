@@ -2,17 +2,17 @@
 title: Sunlight — Federal Recompete Radar
 type: GovCon Analytics Dashboard
 template: govcon-analytics
-summary: A federal contracting intelligence platform that forecasts contract recompetitions across five federal agencies. Surfaces explainable scores for recompete likelihood and incumbent strength — built on free public data, the kind of intelligence usually locked behind $20K+/seat commercial tools.
+summary: A federal contracting intelligence platform that forecasts contract recompetitions across six federal agencies. Surfaces explainable scores for recompete likelihood and incumbent strength — built on free public data, the kind of intelligence usually locked behind $20K+/seat commercial tools.
 tags: ["GovCon", "BI", "Procurement", "Analytics Engineering", "Forecasting", "Recompete"]
 stack: ["Postgres (Neon)", "dbt-core", "Python", "FastAPI", "Next.js 14", "TypeScript", "Tailwind", "GitHub Actions", "Fly.io", "Vercel"]
-impact: "$52.6B in at-stake obligated value across 3,854 recompete candidates in five agencies (Sept 2026). Demonstrates a full analytics-engineering stack — ingestion, modeling, scoring, API, and frontend — plus a SQL analysis layer that stress-tests its own scoring."
+impact: "$56.0B in at-stake obligated value across 4,287 recompete candidates in six agencies (Sept 2026). Demonstrates a full analytics-engineering stack — ingestion, modeling, scoring, API, and frontend — plus a SQL analysis layer that stress-tests its own scoring."
 liveUrl: "https://recompete-radar.vercel.app/"
 repoUrl: "https://github.com/PHiZou/recompete-radar"
 ---
 
-Sunlight is a federal contracting intelligence platform that analyzes USASpending.gov data to forecast contract recompetitions across HHS, VA, DHS, Commerce, and SSA. It identifies which contracts are expiring soon and ranks them by a composite **recompete score** that weighs contract value, incumbent strength, and competitive opportunity.
+Sunlight is a federal contracting intelligence platform that analyzes USASpending.gov data to forecast contract recompetitions across HHS, VA, DHS, Treasury, Commerce, and SSA. It identifies which contracts are expiring soon and ranks them by a composite **recompete score** that weighs contract value, incumbent strength, and competitive opportunity.
 
-The current scope covers IT and data services (NAICS 541511 / 541512 / 518210) across five agencies — about 58K awards with periods of performance from 1996 to 2034 — and surfaces $52.6B in at-stake obligated value across 3,854 recompete candidates (36-month window, as of September 2026).
+The current scope covers IT and data services (NAICS 541511 / 541512 / 518210) across six agencies — about 65K awards with periods of performance from 1996 to 2034 — and surfaces $56.0B in at-stake obligated value across 4,287 recompete candidates (36-month window, as of September 2026).
 
 ## Recruiter signal
 
@@ -30,7 +30,7 @@ Procurement intelligence at this depth is normally locked behind commercial tool
 ## What the platform does
 
 - Ranks contracts by explainable recompete and incumbent-strength scores
-- Tracks contract portfolios across sub-agencies in five federal departments
+- Tracks contract portfolios across sub-agencies in six federal departments
 - Surfaces award-level evidence behind every score (vendor entity resolution is in progress)
 - Highlights active POP-end windows and at-stake obligated value
 - Publishes an [Insights page](https://recompete-radar.vercel.app/insights) with the strongest findings from the SQL analysis layer
@@ -42,7 +42,7 @@ I wrote a set of analysis queries against the warehouse to test what the data ca
 - **"Full and open" competition often draws one bidder**: 54–62% of full-and-open awards in every agency received a single offer — $39.0B where the competitive label describes the procedure, not the outcome
 - **Offer counts have traps**: parent IDIQ vehicles report offers on the vehicle rather than the order, and at least one award type uses 999 as a placeholder, so every offer-based query filters them out
 - **The incumbent-strength score saturates**: 54% of candidates tie at its structural maximum of 65, so the ranking needs recalibration
-- **Mid-size specialists retain work best**: in a backtest with a placebo control, incumbents with $18–82M in scope retained contracts most often and the largest primes least — the reverse of what a size-weighted score assumes
+- **Mid-size specialists retain work best**: in a backtest with a placebo control, incumbents with roughly $20–90M in scope retained contracts most often (36%) and the largest primes least (27%) — the reverse of what a size-weighted score assumes. The pattern has held on three successively larger data scopes
 
 ## Case study shape
 
