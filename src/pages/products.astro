@@ -8,7 +8,7 @@ const products = [
     flagship: true,
     badges: [
       ["badge-live", "Live"],
-      ["badge-saas", "DHS-focused MVP"],
+      ["badge-saas", "5-agency scope"],
     ],
     title: "Sunlight — Federal Recompete Radar",
     problem:
@@ -19,14 +19,14 @@ const products = [
     proves:
       "Analytics engineering end to end, product thinking, SQL modeling, domain research, API/app delivery.",
     scope:
-      "Current scope: DHS IT services (NAICS 541511/541512), FY2020–2025 — 191 candidate contracts, $1.25B at-stake obligated value.",
+      "Current scope: HHS, VA, DHS, Commerce & SSA IT/data services (NAICS 541511/541512/518210) — ~58K awards, 3,854 recompete candidates, $52.6B at-stake obligated value (Sept 2026).",
     roadmap: [
       "Recompete alerts & tracked watchlists",
-      "Agency expansion beyond DHS",
+      "Scoring recalibration from the SQL analysis findings",
       "CSV exports & BD team API",
       "Sample reports & walkthroughs",
     ],
-    url: "https://sunlight-pi.vercel.app/",
+    url: "https://recompete-radar.vercel.app/",
     repo: "https://github.com/PHiZou/recompete-radar",
     caseStudy: "/projects/sunlight-recompete-radar",
   },
@@ -116,7 +116,7 @@ const products = [
               <span style="color: var(--ink-3);"> {p.proves}</span>
             </div>
             <div style="display: flex; gap: 10px; margin-top: 4px; flex-wrap: wrap;">
-              <a href={p.url} target="_blank" rel="noopener noreferrer" class="btn-primary" style="font-size: 0.75rem; padding: 7px 14px;">Launch ↗</a>
+              <a href={p.url} target="_blank" rel="noopener noreferrer" class="btn-primary slow-demo-link" style="font-size: 0.75rem; padding: 7px 14px;">Launch ↗</a>
               {p.repo && (
                 <a href={p.repo} target="_blank" rel="noopener noreferrer" class="btn-outline" style="font-size: 0.75rem; padding: 6px 14px;">View repo</a>
               )}
@@ -125,6 +125,7 @@ const products = [
               )}
               <a href="mailto:Peter.H.Hagen@gmail.com?subject=Walkthrough request" class="btn-ghost">Request a walkthrough →</a>
             </div>
+            <div class="launch-note">Live demos may take a few seconds while hosted services wake up.</div>
           </div>
           <div style="display: flex; flex-direction: column; gap: 10px;">
             <div class="mono roadmap-label">Exploratory roadmap</div>
@@ -169,6 +170,11 @@ const products = [
     color: var(--teal-text);
     border-top: 1px solid var(--border);
     padding-top: 12px;
+  }
+  .launch-note {
+    font-size: 0.68rem;
+    color: var(--ink-5);
+    line-height: 1.45;
   }
   .roadmap-label {
     font-size: 0.62rem;

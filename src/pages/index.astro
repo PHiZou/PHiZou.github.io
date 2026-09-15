@@ -16,7 +16,7 @@ const pipelineSteps = [
 ];
 
 const roadmap = [
-  "Expand beyond DHS to additional agencies and NAICS codes",
+  "Recalibrate incumbent-strength scoring from the retention backtest",
   "SAM.gov solicitation data for forward-looking signals",
   "Alerts and tracking for watched contracts",
   "API access for BD teams",
@@ -26,8 +26,8 @@ const selectedProjects = [
   {
     title: "Sunlight — Federal Recompete Radar",
     type: "Analytics engineering, end to end",
-    desc: "Ingestion → Postgres → dbt → FastAPI → Next.js. Explainable recompete scoring on $1.25B of DHS obligated value.",
-    url: "https://sunlight-pi.vercel.app/",
+    desc: "Ingestion → Postgres → dbt → FastAPI → Next.js. Explainable recompete scoring on $52.6B at stake across five federal agencies.",
+    url: "https://recompete-radar.vercel.app/",
     caseStudy: "/projects/sunlight-recompete-radar",
   },
   {
@@ -155,7 +155,7 @@ const whyInterview = [
         <div class="eyebrow">Flagship project</div>
         <span class="badge badge-live">Live</span>
         <span class="badge badge-premium">Free early access</span>
-        <span class="badge badge-saas">DHS-focused MVP</span>
+        <span class="badge badge-saas">5-agency scope</span>
       </div>
       <div class="flagship-grid">
         <div style="display: flex; flex-direction: column; gap: 16px;">
@@ -169,10 +169,11 @@ const whyInterview = [
             decomposes every number into the award-level evidence behind it.
           </p>
           <p class="flagship-scope">
-            Current MVP scope: DHS IT services (NAICS 541511 / 541512), FY2020–2025 —
-            <strong style="color: var(--ink-3);">191 candidate contracts</strong> and
-            <strong style="color: var(--ink-3);">$1.25B in at-stake obligated value</strong>,
-            ranked by recompete likelihood, incumbent strength, and market concentration.
+            Current scope: IT and data services (NAICS 541511 / 541512 / 518210) across HHS, VA,
+            DHS, Commerce, and SSA —
+            <strong style="color: var(--ink-3);">3,854 recompete candidates</strong> and
+            <strong style="color: var(--ink-3);">$52.6B in at-stake obligated value</strong>
+            (Sept 2026), ranked by recompete likelihood and incumbent strength.
           </p>
           <!-- Pipeline strip -->
           <div class="pipeline-strip">
@@ -190,7 +191,7 @@ const whyInterview = [
             work a Data or Analytics Engineer does inside a team.
           </p>
           <div style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap;">
-            <a href="https://sunlight-pi.vercel.app/" target="_blank" rel="noopener noreferrer" class="btn-primary btn-amber">Launch Sunlight ↗</a>
+            <a href="https://recompete-radar.vercel.app/" target="_blank" rel="noopener noreferrer" class="btn-primary btn-amber slow-demo-link">Launch Sunlight ↗</a>
             <a href="https://github.com/PHiZou/recompete-radar" target="_blank" rel="noopener noreferrer" class="btn-outline">View repo</a>
             <a href="/projects/sunlight-recompete-radar" class="btn-outline">Read the case study</a>
             <a href="/products" class="btn-ghost">All data products →</a>

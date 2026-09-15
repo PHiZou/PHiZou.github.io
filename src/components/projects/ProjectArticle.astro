@@ -27,7 +27,7 @@ const timelineLabel = isQuant ? "Horizon" : "Timeline";
 
   <div style="margin-bottom: 24px; display: flex; flex-wrap: wrap; gap: 10px;">
     {data.liveUrl && (
-      <a href={data.liveUrl} target="_blank" rel="noopener noreferrer" class="btn-primary">{launchLabel}</a>
+      <a href={data.liveUrl} target="_blank" rel="noopener noreferrer" class="btn-primary slow-demo-link">{launchLabel}</a>
     )}
     {!data.liveUrl && data.legacyUrl && (
       <a href={data.legacyUrl} target="_blank" rel="noopener noreferrer" class="btn-primary">View live project ↗</a>
@@ -36,6 +36,12 @@ const timelineLabel = isQuant ? "Horizon" : "Timeline";
       <a href={data.repoUrl} target="_blank" rel="noopener noreferrer" class="btn-outline">View code on GitHub ↗</a>
     )}
   </div>
+
+  {data.liveUrl && (
+    <p class="launch-note">
+      Live demo opens in a new tab. Hosted apps may take a few seconds to wake up.
+    </p>
+  )}
 
   {((data.stack && data.stack.length > 0) || data.timeline || data.impact) && (
     <section class="card meta-card">
@@ -129,6 +135,12 @@ const timelineLabel = isQuant ? "Horizon" : "Timeline";
   }
   .legacy-link { color: var(--teal-text); font-weight: 600; }
   .legacy-link:hover { color: var(--teal-hover); }
+  .launch-note {
+    margin: -12px 0 24px;
+    font-size: 0.72rem;
+    line-height: 1.5;
+    color: var(--ink-4);
+  }
 
   /* Markdown body: map Tailwind typography onto the cream palette */
   .article-prose {

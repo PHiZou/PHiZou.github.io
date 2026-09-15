@@ -117,6 +117,9 @@ const isActive = (href: string) =>
         </div>
       </footer>
     </div>
+    <div id="demo-load-toast" class="demo-load-toast" role="status" aria-live="polite">
+      Opening live demo. Some hosted apps need a few seconds to wake up.
+    </div>
 
     <script>
       const items = Array.from(document.querySelectorAll<HTMLElement>(".reveal"));
@@ -147,6 +150,21 @@ const isActive = (href: string) =>
         );
         items.forEach((el) => io.observe(el));
       }
+
+      const demoToast = document.getElementById("demo-load-toast");
+      const demoLinks = Array.from(document.querySelectorAll<HTMLAnchorElement>(".slow-demo-link"));
+      let toastTimer: number | undefined;
+
+      demoLinks.forEach((link) => {
+        link.addEventListener("click", () => {
+          if (!demoToast) return;
+          demoToast.classList.add("is-visible");
+          window.clearTimeout(toastTimer);
+          toastTimer = window.setTimeout(() => {
+            demoToast.classList.remove("is-visible");
+          }, 5200);
+        });
+      });
     </script>
   </body>
 </html>
@@ -261,6 +279,30 @@ const isActive = (href: string) =>
     transition: color 0.15s;
   }
   .footer-links a:hover { color: var(--teal); }
+
+  .demo-load-toast {
+    position: fixed;
+    right: 18px;
+    bottom: 18px;
+    z-index: 200;
+    max-width: min(340px, calc(100vw - 36px));
+    padding: 10px 14px;
+    border: 1px solid var(--border-strong);
+    border-radius: 8px;
+    background: var(--bg-card);
+    color: var(--ink-2);
+    box-shadow: 0 8px 28px rgba(101, 123, 131, 0.18);
+    font-size: 0.75rem;
+    line-height: 1.45;
+    opacity: 0;
+    transform: translateY(8px);
+    pointer-events: none;
+    transition: opacity 0.18s ease, transform 0.18s ease;
+  }
+  .demo-load-toast.is-visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
 
   @media (max-width: 760px) {
     .site-header-inner {

@@ -14,7 +14,7 @@ const groups = [
         title: "Sunlight — Federal Recompete Radar",
         desc: "End-to-end analytics engineering: ingest → Postgres → dbt → FastAPI → Next.js.",
         status: "Live",
-        url: "https://sunlight-pi.vercel.app/",
+        url: "https://recompete-radar.vercel.app/",
         caseStudy: "/projects/sunlight-recompete-radar",
       },
       {
@@ -53,9 +53,9 @@ const groups = [
     projects: [
       {
         title: "Sunlight — Federal Recompete Radar",
-        desc: "Recompete scoring on $1.25B of DHS obligated value.",
+        desc: "Recompete scoring on $52.6B at stake across five federal agencies.",
         status: "Live",
-        url: "https://sunlight-pi.vercel.app/",
+        url: "https://recompete-radar.vercel.app/",
         caseStudy: "/projects/sunlight-recompete-radar",
       },
       {
@@ -191,7 +191,7 @@ const moreProjects = allProjects
                 </div>
                 <div style="display: flex; align-items: center; gap: 12px;">
                   {p.url && p.caseStudy && (
-                    <a href={p.url} target="_blank" rel="noopener noreferrer" class="catalog-launch">Launch ↗</a>
+                    <a href={p.url} target="_blank" rel="noopener noreferrer" class="catalog-launch slow-demo-link">Launch ↗</a>
                   )}
                   <span class={"badge " + statusClass[p.status]}>{p.status}</span>
                 </div>
@@ -215,7 +215,7 @@ const moreProjects = allProjects
                   <span class="catalog-desc">{p.data.type}</span>
                 </div>
                 {p.data.liveUrl && (
-                  <a href={p.data.liveUrl} target="_blank" rel="noopener noreferrer" class="catalog-launch">Launch ↗</a>
+                  <a href={p.data.liveUrl} target="_blank" rel="noopener noreferrer" class="catalog-launch slow-demo-link">Launch ↗</a>
                 )}
               </div>
             ))}
@@ -258,6 +258,15 @@ const moreProjects = allProjects
     color: var(--teal-text);
     text-decoration: none;
     white-space: nowrap;
+  }
+  .catalog-launch::after {
+    content: " may take a moment";
+    display: block;
+    font-size: 0.58rem;
+    font-weight: 500;
+    color: var(--ink-5);
+    letter-spacing: 0;
+    margin-top: 1px;
   }
   @media (max-width: 760px) {
     section { padding-left: 18px; padding-right: 18px; }
