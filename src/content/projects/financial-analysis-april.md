@@ -2,7 +2,7 @@
 title: Financial Market Analysis — April 2026
 type: Quant Model
 template: quant-model
-summary: Comprehensive macroeconomic and equity analysis report generated through an AI-assisted research pipeline. Combines live market data, technical signals, and economic indicators into a structured analytical document.
+summary: Comprehensive macroeconomic and equity analysis report generated through an AI-assisted research pipeline. Combines market data, technical signals, and economic indicators into a structured analytical document.
 tags: ["Financial Analysis", "Macro Research", "Equity Research", "Economic Indicators"]
 stack: ["Python", "OpenBB Platform", "yfinance", "Kimi K2.5", "HTML Report"]
 impact: Demonstrates end-to-end research automation—ingesting market data, computing signals, and synthesizing insights through an AI-augmented workflow.

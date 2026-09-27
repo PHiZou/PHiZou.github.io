@@ -2,15 +2,15 @@
 title: Daily AI News Poem Generator
 type: AI Pipeline
 template: ai-pipeline
-summary: Automatically generated daily vertical videos summarizing world events as short poems, narrated with local TTS and assembled using MoviePy.
+summary: Pipeline that generated vertical videos summarizing world events as short poems, narrated with local TTS and assembled using MoviePy (ran Dec 2025; now archived).
 tags: ["AI/ML", "Automation", "Python", "OpenAI", "TTS"]
 stack: ["Python", "OpenAI GPT-4o-mini", "Piper TTS", "MoviePy", "Cron"]
-impact: Demonstrates end-to-end AI automation pipeline for daily content generation.
+impact: "Demonstrates an end-to-end AI content pipeline: news summary → poem → TTS → video."
 ---
 
 # Daily AI News Poem Generator
 
-An autonomous AI pipeline that transforms daily world news into engaging vertical video poems, running unattended every morning at 8:00 AM EST.
+An AI pipeline that turned the day's world news into vertical video poems. It ran on a daily schedule in December 2025 and is now archived; sample output below.
 
 ## Latest Output
 
@@ -20,8 +20,6 @@ An autonomous AI pipeline that transforms daily world news into engaging vertica
 </video>
 
 ## Archive
-
-Under this header, we will append new video entries daily.
 
 ## 2025-12-09
 
@@ -61,8 +59,8 @@ Under this header, we will append new video entries daily.
 ## Why This Project Matters
 
 - **Demonstrates end-to-end AI pipeline engineering** — From data ingestion to multimedia output
-- **Real daily automation with scheduling + publishing** — Production-ready reliability and CI/CD integration
-- **Production-quality multimodal output** — Text, audio, and video orchestration in a single system
+- **Scheduled automation** — The pipeline ran unattended on a daily schedule during its active period
+- **Multimodal output** — Text, audio, and video orchestration in a single system
 
 ## Source Code
 
