@@ -1,0 +1,170 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+
+const updated = "October 4, 2026";
+const email = "Peter.H.Hagen@gmail.com";
+---
+
+<BaseLayout
+  title="Privacy Policy – Peter Hagen"
+  description="Privacy policy for phizou.github.io and the personal automation tools operated by Peter Hagen."
+>
+  <section class="wrap">
+    <header class="head">
+      <p class="eyebrow">Legal</p>
+      <h1>Privacy Policy</h1>
+      <p class="updated">Last updated {updated}</p>
+    </header>
+
+    <div class="prose">
+      <p class="lede">
+        This site is a personal portfolio operated by Peter Hagen. It has no accounts, no sign-in,
+        no comment system, and no advertising. The short version: I don't collect anything about you.
+      </p>
+
+      <h2>This website</h2>
+      <p>
+        <strong>phizou.github.io</strong> is a static site. It sets no cookies, runs no analytics or
+        tracking scripts, and has no way to identify you. Nothing you do here is recorded by me.
+      </p>
+      <p>Two third parties are nonetheless involved in serving the page, and both are worth naming:</p>
+      <ul>
+        <li>
+          <strong>GitHub Pages</strong> hosts the site. Like any web host, GitHub receives your IP
+          address and browser user-agent in the ordinary course of delivering the page and may retain
+          it for security and abuse prevention. This is governed by
+          <a href="https://docs.github.com/site-policy/privacy-policies/github-privacy-statement" target="_blank" rel="noopener noreferrer">GitHub's Privacy Statement</a>.
+        </li>
+        <li>
+          <strong>Google Fonts</strong> serves the typefaces from <code>fonts.googleapis.com</code> and
+          <code>fonts.gstatic.com</code>, so your browser makes a request to Google and Google receives
+          your IP address. See
+          <a href="https://policies.google.com/privacy" target="_blank" rel="noopener noreferrer">Google's Privacy Policy</a>.
+        </li>
+      </ul>
+      <p>
+        I don't have access to either party's logs, and I don't combine, buy, sell, or share any
+        visitor data — because I don't hold any.
+      </p>
+
+      <h2>Project demos</h2>
+      <p>
+        Some pages link out to live demos of my own projects, hosted on third-party platforms. Those
+        are separate applications under their hosts' own terms and privacy practices. Anything you
+        type into a demo is handled by that demo, not by this site.
+      </p>
+
+      <h2>Personal automation tools</h2>
+      <p>
+        I build and run private automation for my own accounts — including a tool that publishes
+        short videos to <strong>my own YouTube channel</strong>. If you've arrived here from a Google
+        consent screen, this is the policy that covers it.
+      </p>
+      <p>These tools:</p>
+      <ul>
+        <li>are operated by me, for me, on my own data and my own accounts;</li>
+        <li>authorize only against my own Google account, using the narrowest scopes that work —
+          uploading videos to my channel and reading back their status to confirm the upload succeeded;</li>
+        <li>are not offered as a product or service to anyone else, and have no other users;</li>
+        <li>store their credentials locally on my own machine and transmit them to no one;</li>
+        <li>do not request, receive, or process any other person's Google data.</li>
+      </ul>
+      <p>
+        No data from these tools is sold, rented, or shared with third parties. Credentials are
+        revocable at any time from my
+        <a href="https://myaccount.google.com/permissions" target="_blank" rel="noopener noreferrer">Google account permissions</a>
+        page.
+      </p>
+
+      <h2>Children</h2>
+      <p>
+        This site isn't directed at children and knowingly collects no information from anyone,
+        including children under 13.
+      </p>
+
+      <h2>Changes</h2>
+      <p>
+        If this policy changes, the updated date above changes with it. There's no mailing list to
+        notify, by design.
+      </p>
+
+      <h2>Contact</h2>
+      <p>
+        Questions about this policy: <a href={`mailto:${email}`}>{email}</a>.
+      </p>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .wrap {
+    max-width: 740px;
+    margin: 0 auto;
+    padding: 56px 24px 72px;
+  }
+  .head {
+    border-bottom: 1px solid var(--border);
+    padding-bottom: 22px;
+    margin-bottom: 34px;
+  }
+  .eyebrow {
+    font-size: 0.6rem;
+    font-weight: 700;
+    color: var(--ink-4);
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    margin: 0 0 10px;
+  }
+  h1 {
+    font-size: 1.9rem;
+    font-weight: 700;
+    color: var(--ink);
+    letter-spacing: -0.02em;
+    margin: 0 0 8px;
+  }
+  .updated {
+    font-size: 0.75rem;
+    color: var(--ink-5);
+    margin: 0;
+  }
+  .prose {
+    font-size: 0.9rem;
+    line-height: 1.7;
+    color: var(--ink-2);
+  }
+  .lede {
+    font-size: 1rem;
+    color: var(--ink);
+    margin: 0 0 28px;
+  }
+  .prose h2 {
+    font-size: 0.78rem;
+    font-weight: 700;
+    color: var(--ink);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    margin: 34px 0 12px;
+  }
+  .prose p { margin: 0 0 14px; }
+  .prose ul {
+    margin: 0 0 16px;
+    padding-left: 20px;
+  }
+  .prose li { margin-bottom: 7px; }
+  .prose strong { color: var(--ink); font-weight: 600; }
+  .prose a {
+    color: var(--teal);
+    text-decoration: none;
+    border-bottom: 1px solid transparent;
+    transition: border-color 0.15s;
+  }
+  .prose a:hover { border-bottom-color: var(--teal); }
+  .prose code {
+    font-family: "IBM Plex Mono", ui-monospace, monospace;
+    font-size: 0.82em;
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 1px 5px;
+  }
+</style>
