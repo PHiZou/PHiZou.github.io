@@ -1,4 +1,0 @@
-User-agent: *
-Allow: /
-
-Sitemap: https://phizou.github.io/sitemap.xml

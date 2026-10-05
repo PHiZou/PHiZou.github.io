@@ -1,0 +1,11 @@
+# build output (CI builds from src/ via withastro/action)
+dist/
+.astro/
+
+# dependencies
+node_modules/
+
+# env / OS
+.env
+.env.*
+.DS_Store
