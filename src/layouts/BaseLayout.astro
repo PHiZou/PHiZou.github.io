@@ -13,11 +13,11 @@ const {
 
 const NAV_ITEMS = [
   { id: "home", label: "Home", href: "/" },
+  { id: "projects", label: "Projects", href: "/projects" },
+  { id: "resume", label: "Resume", href: "/resume" },
   { id: "consulting", label: "Consulting", href: "/consulting" },
   { id: "products", label: "Data Products", href: "/products", badge: "New" },
   { id: "defense", label: "Defense & Intel", href: "/defense" },
-  { id: "projects", label: "All Projects", href: "/projects" },
-  { id: "resume", label: "Resume", href: "/resume" },
 ];
 
 const pathname = Astro.url.pathname.replace(/\/$/, "") || "/";
