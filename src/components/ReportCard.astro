@@ -1,0 +1,42 @@
+---
+const reportUrl = "/pdf/recompete-portfolio-landscape-2026-10-17.pdf";
+---
+
+<article class="report-card">
+  <a href={reportUrl} target="_blank" rel="noopener noreferrer" class="report-cover" aria-label="Open Civilian contracting in perspective (PDF)">
+    <img src="/images/recompete-radar/portfolio-report.webp" alt="First page of the portfolio landscape report, with paired charts comparing award counts and historical obligations by agency." width="600" height="776" loading="lazy" decoding="async" />
+  </a>
+  <div class="report-copy">
+    <p class="report-kind">Visual report · PDF · 4 pages</p>
+    <h3>Civilian contracting in perspective</h3>
+    <p class="report-description">Compare award counts and historical dollars, then explore the industry mix, concentration, competition and contract end dates.</p>
+    <p class="report-scope">
+      Snapshot: <time datetime="2026-10-17">Oct. 17, 2026</time> · 19 civilian agencies, excluding DHS.
+      Includes completed awards.
+    </p>
+    <div class="report-actions">
+      <a href={reportUrl} target="_blank" rel="noopener noreferrer">Open the report <span aria-hidden="true">↗</span></a>
+      <a href={reportUrl} download>Download PDF <span aria-hidden="true">↓</span></a>
+    </div>
+  </div>
+</article>
+
+<style>
+  .report-card { display: grid; grid-template-columns: 140px minmax(0, 1fr); gap: 28px; align-items: center; padding: 24px; border-radius: 12px; background: var(--bg-card); box-shadow: 0 0 0 1px var(--border); }
+  .report-cover { display: block; padding: 8px; background: var(--bg-alt); border-radius: 5px; }
+  .report-cover img { display: block; width: 100%; height: auto; box-shadow: 0 2px 8px oklch(.42 .03 200 / .12); }
+  .report-copy { min-width: 0; }
+  .report-kind { font-size: .6875rem; font-weight: 600; color: var(--teal-text); }
+  h3 { margin-top: 8px; font-size: 1.5rem; font-weight: 600; line-height: 1.2; color: var(--ink); text-wrap: pretty; }
+  .report-description { margin-top: 10px; max-width: 65ch; font-size: .9375rem; line-height: 1.65; color: var(--ink-2); }
+  .report-scope { margin-top: 10px; max-width: 65ch; font-size: .8125rem; line-height: 1.6; color: var(--ink-3); }
+  .report-actions { display: flex; flex-wrap: wrap; gap: 10px 24px; margin-top: 16px; }
+  .report-actions a { font-size: .8125rem; font-weight: 600; color: var(--teal-text); text-decoration: none; }
+  .report-actions a:hover { text-decoration: underline; text-underline-offset: 4px; }
+  .report-cover:focus-visible, .report-actions a:focus-visible { outline: 2px solid var(--teal-text); outline-offset: 5px; }
+  @media (max-width: 600px) {
+    .report-card { grid-template-columns: 90px minmax(0, 1fr); gap: 18px; padding: 18px; align-items: start; }
+    h3 { font-size: 1.25rem; }
+    .report-description { font-size: .875rem; }
+  }
+</style>

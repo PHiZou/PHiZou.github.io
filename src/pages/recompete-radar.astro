@@ -6,6 +6,7 @@
 import BaseLayout from "../layouts/BaseLayout.astro";
 import HireBridge from "../components/HireBridge.astro";
 import StoryCard from "../components/StoryCard.astro";
+import ReportCard from "../components/ReportCard.astro";
 
 // Newest first.
 const stories = [
@@ -34,7 +35,7 @@ const stories = [
 
 <BaseLayout
   title="Recompete Radar – Peter Hagen"
-  description="Federal contracting, explained with data. Data stories, an analytical brief and a live app built on Recompete Radar by Peter Hagen."
+  description="Federal contracting, explained with data. Interactive stories, a visual report, an analytical brief and a live app built on Recompete Radar by Peter Hagen."
 >
   <section class="hero-mesh rr-hero">
     <div class="wrap">
@@ -48,6 +49,7 @@ const stories = [
       <p class="rr-role">My work: data collection, cleaning and testing, analysis, and the tools below.</p>
       <nav class="rr-jump" aria-label="On this page">
         <a href="#stories">Data stories</a>
+        <a href="#report">Visual report</a>
         <a href="#brief">Brief &amp; case study</a>
         <a href="#schematics">System schematics</a>
         <a href="#app">Live app</a>
@@ -64,6 +66,9 @@ const stories = [
         {stories.map((s, i) => (
           <StoryCard {...s} label={i === 0 ? "Latest story" : "Data story"} eager={i === 0} />
         ))}
+      </div>
+      <div id="report" class="rr-report anchor">
+        <ReportCard />
       </div>
     </div>
   </section>
@@ -145,6 +150,7 @@ const stories = [
   .rr-sub strong { color: var(--ink); }
 
   .rr-list { margin-top: 24px; display: grid; grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr); gap: 28px; }
+  .rr-report { margin-top: 28px; }
 
   .rr-split { display: flex; justify-content: space-between; align-items: center; gap: 24px; flex-wrap: wrap; }
   .rr-actions { display: flex; gap: 10px; flex-wrap: wrap; }
