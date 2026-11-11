@@ -1,0 +1,135 @@
+---
+// Landing page for the Recompete Radar data stories.
+// The stories themselves are raw static files in public/stories/ and are
+// served as-is (their own styles, scripts and fonts). Do not edit them here.
+// Card text is taken from each story's own headline and findings; keep the
+// numbers in sync with the story if a story is ever replaced.
+import BaseLayout from "../layouts/BaseLayout.astro";
+import HireBridge from "../components/HireBridge.astro";
+
+// Newest first (sorted below by asOf).
+const stories = [
+  {
+    href: "/stories/contracts-coming-due/",
+    title: "$62.9 billion in federal work comes up for grabs in the next 12 months",
+    finding:
+      "11,794 contracts at 20 civilian agencies reach the end of their final period by November 2027, and a quarter of the money ends in a single month: September.",
+    asOf: "2026-11-08",
+    asOfLabel: "Nov. 8, 2026",
+  },
+  {
+    href: "/stories/hhs-contracting/",
+    title: "Medicare’s machinery runs on contractors",
+    finding:
+      "CMS takes 44% of HHS contract dollars from just 6% of its awards, and spreads that work across more than 900 vendors.",
+    asOf: "2026-11-04",
+    asOfLabel: "Nov. 4, 2026",
+  },
+].sort((a, b) => b.asOf.localeCompare(a.asOf));
+---
+
+<BaseLayout
+  title="Recompete Radar – Data stories – Peter Hagen"
+  description="Federal contracting, explained with data. Interactive data stories from Recompete Radar by Peter Hagen."
+>
+  <section class="hero-mesh rr-hero">
+    <div class="wrap">
+      <div class="eyebrow">Recompete Radar · Data stories</div>
+      <h1 class="rr-title">Federal contracting, explained with data.</h1>
+      <p class="rr-lede">
+        Short interactive stories built on Recompete Radar, my pipeline for public federal contract
+        records. Each one asks a single question and answers it with charts you can explore.
+      </p>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="wrap">
+      <div class="rr-list">
+        {stories.map((s, i) => (
+          <a href={s.href} class:list={["card", "rr-card", "reveal", { "rr-card-lead": i === 0 }]}>
+            <div class="rr-meta">
+              {i === 0 && <span class="badge badge-live">Newest</span>}
+              <span class="rr-kind">Interactive data story</span>
+            </div>
+            <h2 class="rr-card-title">{s.title}</h2>
+            <p class="rr-finding">{s.finding}</p>
+            <div class="rr-foot">
+              <span class="rr-asof">Data as of <time datetime={s.asOf}>{s.asOfLabel}</time></span>
+              <span class="rr-read">Read the story →</span>
+            </div>
+          </a>
+        ))}
+      </div>
+
+      <div class="rr-about">
+        <div>
+          <div class="eyebrow" style="margin-bottom: 6px;">How these are made</div>
+          <p>
+            The data comes from USAspending.gov and is cleaned, tested and modeled in dbt on
+            Snowflake. Each story states its data date, scope and method at the end. The case study
+            covers the pipeline, the data problems I found along the way, and the limits.
+          </p>
+        </div>
+        <a href="/projects/sunlight-recompete-radar" class="btn-outline" style="white-space: nowrap;">Read the case study</a>
+      </div>
+    </div>
+  </section>
+
+  <HireBridge note="These stories show how Peter works: take a large, messy public dataset, find the question worth asking, and answer it clearly." />
+</BaseLayout>
+
+<style>
+  .rr-hero { padding: 56px 24px 44px; border-bottom: 1px solid var(--border); }
+  .rr-title {
+    font-size: clamp(1.9rem, 4.4vw, 2.9rem);
+    font-weight: 700;
+    line-height: 1.12;
+    letter-spacing: -0.02em;
+    color: var(--ink);
+    margin-top: 10px;
+    max-width: 760px;
+  }
+  .rr-lede { margin-top: 14px; font-size: 1rem; line-height: 1.7; color: var(--ink-2); max-width: 640px; }
+
+  .rr-list { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  .rr-card { padding: 22px 24px; display: flex; flex-direction: column; gap: 10px; text-decoration: none; }
+  .rr-card-lead { grid-column: 1 / -1; padding: 28px 30px; }
+  .rr-meta { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+  .rr-kind { font-size: 0.65rem; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: var(--ink-3); }
+  .rr-card-title { font-size: 1.25rem; font-weight: 700; line-height: 1.25; color: var(--ink); letter-spacing: -0.01em; }
+  .rr-card-lead .rr-card-title { font-size: clamp(1.4rem, 3vw, 1.85rem); max-width: 760px; }
+  .rr-finding { font-size: 0.9rem; line-height: 1.65; color: var(--ink-2); max-width: 680px; }
+  .rr-foot {
+    margin-top: auto;
+    padding-top: 12px;
+    border-top: 1px solid var(--border);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+  .rr-asof { font-size: 0.75rem; color: var(--ink-3); }
+  .rr-read { font-size: 0.8125rem; font-weight: 700; color: var(--teal-text); }
+  .rr-card:hover .rr-card-title { color: var(--teal-text); }
+
+  .rr-about {
+    margin-top: 32px;
+    padding-top: 24px;
+    border-top: 1px solid var(--border);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 20px;
+    flex-wrap: wrap;
+  }
+  .rr-about p { font-size: 0.8125rem; line-height: 1.7; color: var(--ink-3); max-width: 640px; }
+
+  @media (max-width: 760px) {
+    .rr-hero { padding: 40px 18px 32px; }
+    .section { padding-left: 18px; padding-right: 18px; }
+    .rr-list { grid-template-columns: 1fr; }
+    .rr-card-lead { padding: 22px 22px; }
+  }
+</style>

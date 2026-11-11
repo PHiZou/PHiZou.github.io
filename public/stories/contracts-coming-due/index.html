@@ -1,0 +1,582 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Contracts Coming Due</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<meta name="description" content="11,794 federal contracts worth $62.9 billion reach the end of their final period in the next 12 months. When they end, who holds them, and how much belongs to small businesses.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Libre+Franklin:wght@400;600;800&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.8.5/d3.min.js"></script>
+<style>
+/* Layout: one 640px reading column, figures widen to 960px; a fiscal-calendar story told in four charts. */
+:root {
+  --paper: #F6F7F8;
+  --ink: #18212B;
+  --ink-2: #5A6573;
+  --rule: #DCE0E5;
+  --large: #63748A;
+  --other: #9CC9B4;
+  --small: #17795A;
+  --none: #C7CDD4;
+  --hi: #B8860B;
+  --tip: #FFFFFF;
+  --onfill: #FFFFFF;
+  --f-display: "Libre Franklin", "Helvetica Neue", Arial, sans-serif;
+  --f-body: "Source Serif 4", Georgia, "Times New Roman", serif;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --paper: #12171D; --ink: #E7EBEF; --ink-2: #9AA6B3; --rule: #2A333D;
+    --large: #7F91A8; --other: #4F8C72; --small: #45C495; --none: #3E4852; --hi: #E2B53E; --tip: #1C232B; --onfill: #0E1318;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --paper: #12171D; --ink: #E7EBEF; --ink-2: #9AA6B3; --rule: #2A333D;
+  --large: #7F91A8; --other: #4F8C72; --small: #45C495; --none: #3E4852; --hi: #E2B53E; --tip: #1C232B; --onfill: #0E1318;
+  color-scheme: dark;
+}
+*, *::before, *::after { box-sizing: border-box; }
+body {
+  margin: 0; background: var(--paper); color: var(--ink);
+  font-family: var(--f-body); font-size: 19px; line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+}
+main {
+  padding-block: 48px 72px;
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+}
+.col { max-width: 640px; margin: 0 auto; }
+.wide { max-width: 960px; margin: 0 auto; }
+.kicker { font-family: var(--f-display); font-weight: 600; font-size: 0.78rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--small); margin: 0 0 14px; }
+h1 { font-family: var(--f-display); font-weight: 800; font-size: clamp(2.1rem, 5.6vw, 3.4rem); line-height: 1.06; letter-spacing: -0.02em; margin: 0 0 20px; text-wrap: balance; }
+.dek { font-size: 1.2rem; line-height: 1.5; color: var(--ink-2); margin: 0 0 16px; }
+.byline { font-family: var(--f-display); font-size: 0.85rem; color: var(--ink-2); margin: 0 0 40px; }
+.byline strong { color: var(--ink); font-weight: 600; }
+h2 { font-family: var(--f-display); font-weight: 800; font-size: 1.5rem; line-height: 1.2; letter-spacing: -0.01em; margin: 60px 0 12px; text-wrap: balance; }
+p { margin: 0 0 18px; }
+.num { font-variant-numeric: tabular-nums; }
+figure { margin: 30px auto 10px; position: relative; }
+.ft { font-family: var(--f-display); font-weight: 600; font-size: 1.05rem; line-height: 1.3; margin: 0 0 4px; text-wrap: balance; }
+.fs { font-family: var(--f-display); font-size: 0.85rem; color: var(--ink-2); margin: 0 0 12px; }
+figcaption { font-family: var(--f-display); font-size: 0.75rem; color: var(--ink-2); margin-top: 10px; line-height: 1.45; }
+.controls { display: flex; flex-wrap: wrap; gap: 6px; margin: 0 0 12px; }
+.controls button {
+  font-family: var(--f-display); font-size: 0.8rem; font-weight: 600;
+  color: var(--ink); background: transparent; border: 1px solid var(--rule);
+  border-radius: 999px; padding: 5px 13px; cursor: pointer;
+}
+.controls button[aria-pressed="true"] { background: var(--ink); color: var(--paper); border-color: var(--ink); }
+.controls button:focus-visible, .dot:focus-visible { outline: 2px solid var(--hi); outline-offset: 2px; }
+.legend { display: flex; flex-wrap: wrap; gap: 4px 16px; font-family: var(--f-display); font-size: 0.8rem; color: var(--ink-2); margin: 0 0 10px; }
+.sw { display: inline-block; width: 11px; height: 11px; border-radius: 2px; margin-right: 6px; vertical-align: -1px; }
+svg { display: block; overflow: visible; }
+svg text { font-family: var(--f-display); font-size: 12px; fill: var(--ink); font-variant-numeric: tabular-nums; }
+svg .muted { fill: var(--ink-2); }
+.axis line, .axis path { stroke: var(--rule); }
+.axis text { fill: var(--ink-2); font-size: 11px; }
+.grid line { stroke: var(--rule); }
+.seg-large { fill: var(--large); } .seg-other { fill: var(--other); } .seg-small { fill: var(--small); } .seg-none { fill: var(--none); }
+.seg-sa { fill: var(--small); } .seg-open { fill: var(--large); }
+.hov { cursor: pointer; }
+.colhit { fill: transparent; cursor: pointer; }
+.colhit:hover, .colhit.on { fill: var(--rule); fill-opacity: 0.45; }
+.dot { stroke: var(--paper); stroke-width: 1.5; cursor: pointer; transition: opacity .25s; }
+.dot.dim { opacity: 0.1; }
+.ann { fill: var(--ink-2); font-size: 11.5px; }
+.annline { stroke: var(--ink-2); stroke-width: 1; fill: none; }
+.tip {
+  position: absolute; pointer-events: none; opacity: 0; z-index: 5;
+  background: var(--tip); color: var(--ink); border: 1px solid var(--rule); border-radius: 6px;
+  padding: 10px 12px; font-family: var(--f-display); font-size: 0.8rem; line-height: 1.45;
+  width: max-content; max-width: 260px; box-shadow: 0 6px 20px rgba(0,0,0,.14); transition: opacity .12s;
+}
+.tip b { display: block; font-size: 0.88rem; margin-bottom: 2px; }
+.tip table { border-collapse: collapse; margin-top: 4px; }
+.tip td { padding: 1px 0; } .tip td + td { padding-left: 12px; text-align: right; font-variant-numeric: tabular-nums; }
+.sizebar { display: grid; grid-template-columns: 82px 1fr; gap: 10px 12px; align-items: center; font-family: var(--f-display); }
+.sizebar .lab { font-size: 0.82rem; font-weight: 600; }
+.sizebar .bar { display: flex; height: 34px; border-radius: 3px; overflow: hidden; }
+.sizebar .bar span { display: flex; align-items: center; justify-content: center; font-size: 0.78rem; font-weight: 600; color: var(--onfill); white-space: nowrap; overflow: hidden; font-variant-numeric: tabular-nums; }
+.sizebar .bar .b-other, .sizebar .bar .b-none { color: var(--ink); }
+.list { list-style: none; padding: 0; margin: 16px 0 0; border-top: 1px solid var(--rule); font-family: var(--f-display); }
+.list li { display: grid; grid-template-columns: 1fr auto; gap: 2px 14px; padding: 10px 0; border-bottom: 1px solid var(--rule); }
+.list .who { font-weight: 600; font-size: 0.9rem; min-width: 0; }
+.list .what { grid-column: 1 / -1; font-size: 0.82rem; color: var(--ink-2); }
+.list .amt { font-weight: 600; font-size: 0.9rem; font-variant-numeric: tabular-nums; text-align: right; }
+.chip { display: inline-block; font-size: 0.68rem; font-weight: 600; letter-spacing: .04em; text-transform: uppercase; padding: 1px 6px; border-radius: 3px; margin-left: 6px; vertical-align: 1px; color: var(--onfill); }
+.note { border-top: 1px solid var(--rule); margin-top: 64px; padding-top: 20px; font-size: 0.88rem; color: var(--ink-2); line-height: 1.6; }
+.note h3 { font-family: var(--f-display); font-size: 0.95rem; color: var(--ink); margin: 0 0 8px; }
+footer { margin-top: 32px; padding-top: 18px; border-top: 1px solid var(--rule); display: flex; flex-wrap: wrap; justify-content: space-between; gap: 10px; font-family: var(--f-display); font-size: 0.85rem; }
+footer a { color: var(--ink); font-weight: 600; text-decoration-color: var(--small); text-underline-offset: 3px; }
+a { color: inherit; }
+@media (max-width: 560px) {
+  body { font-size: 17.5px; }
+  main { padding-block: 32px 56px; }
+  .sizebar { grid-template-columns: 1fr; gap: 4px; }
+  .sizebar .lab { margin-top: 8px; }
+}
+@media (prefers-reduced-motion: reduce) { .dot, .tip { transition: none; } }
+</style>
+
+</head>
+<body>
+<main>
+  <header class="col">
+    <p class="kicker">Recompete Radar · Federal contracting</p>
+    <h1>$62.9 billion in federal work comes up for grabs in the next 12 months</h1>
+    <p class="dek">At 20 civilian agencies, 11,794 professional services contracts reach the end of their final period by November 2027, with no options left to extend them. Here is when they end, who holds them, and how much of it belongs to small businesses.</p>
+    <p class="byline">By <strong>Peter Hagen</strong> · Data as of Nov. 8, 2026</p>
+  </header>
+
+  <section class="col">
+    <p>Most federal service contracts run in one-year option periods. A contract can look like it is ending when the agency is really just about to renew it for another year. This story only counts contracts in their last period, where the agency has to compete the work again, extend it in some other way, or let it lapse.</p>
+    <p>That leaves a large, very uneven calendar. Use the buttons to switch between dollars and number of contracts.</p>
+  </section>
+
+  <figure class="wide" id="f-month">
+    <p class="ft">A quarter of the money ends in a single month: September, the last month of the federal fiscal year</p>
+    <p class="fs">Contracts in their final period, by month they end and who holds them</p>
+    <div class="controls" role="group" aria-label="Measure">
+      <button type="button" data-k="b" aria-pressed="true">Dollars</button>
+      <button type="button" data-k="n" aria-pressed="false">Contracts</button>
+    </div>
+    <div class="legend" id="legend-size"></div>
+    <div id="c-month"></div>
+    <div class="tip" id="tip-month"></div>
+    <figcaption>November 2026 and November 2027 are partial months. Dollars are lifetime obligations on each contract. Source: USAspending.gov and SAM.gov via Recompete Radar.</figcaption>
+  </figure>
+
+  <section class="col">
+    <h2>Big companies hold most of the money</h2>
+    <p>Matching each contract holder to its SAM.gov registration shows whether it counts as a small business in the industry the contract is classified under. Many firms are small in some industries and large in others, so that distinction matters.</p>
+  </section>
+
+  <figure class="col" id="f-size">
+    <p class="ft">Small businesses hold 1 in 4 of these contracts, but only 1 in 8 dollars</p>
+    <p class="fs">Share of contracts and dollars ending in the next 12 months, by the holder's size</p>
+    <div class="sizebar" id="sizebar"></div>
+    <figcaption>"Small elsewhere" means the company is registered as small in other industry codes, but not the one this contract uses. "Not in SAM" means no current public registration.</figcaption>
+  </figure>
+
+  <section class="col">
+    <h2>Two departments dominate</h2>
+    <p>Health and Human Services, which runs Medicare and Medicaid, has the most money ending. Veterans Affairs is close behind, and almost all of its dollars sit with large companies.</p>
+  </section>
+
+  <figure class="wide" id="f-agency">
+    <p class="ft">HHS and VA account for $24.3 billion, nearly 40% of everything ending</p>
+    <p class="fs">Contracts in their final period by agency, split by the holder's size. Hover or tap a bar for details.</p>
+    <div class="controls" role="group" aria-label="Measure">
+      <button type="button" data-k="b" aria-pressed="true">Dollars</button>
+      <button type="button" data-k="n" aria-pressed="false">Contracts</button>
+    </div>
+    <div id="c-agency"></div>
+    <div class="tip" id="tip-agency"></div>
+    <figcaption>"Other agencies" combines six smaller ones: Labor, NSF, SSA, SEC, OPM and SBA. Source: USAspending.gov and SAM.gov via Recompete Radar.</figcaption>
+  </figure>
+
+  <section class="col">
+    <h2>The biggest single contracts</h2>
+    <p>The largest contract ending is the one to run the Oak Ridge Institute for Science and Education, worth $3.2 billion over its life. But the biggest cluster is at Veterans Affairs, where the multi-year effort to replace the department's electronic health record has several large contracts finishing at once.</p>
+  </section>
+
+  <figure class="wide" id="f-big">
+    <p class="ft">Five of the 25 largest contracts ending belong to the VA's electronic health record program, worth $4.1 billion</p>
+    <p class="fs">The 25 largest contracts ending in the next 12 months, plus the 10 largest held by small businesses</p>
+    <div class="controls" role="group" aria-label="Filter">
+      <button type="button" data-f="all" aria-pressed="true">All</button>
+      <button type="button" data-f="ehr" aria-pressed="false">VA health record</button>
+      <button type="button" data-f="small" aria-pressed="false">Small businesses</button>
+    </div>
+    <div class="legend" id="legend-big"></div>
+    <div id="c-big"></div>
+    <div class="tip" id="tip-big"></div>
+    <ol class="list" id="list-big"></ol>
+    <figcaption>Dollar values use a log scale so smaller contracts stay visible. Descriptions are summarized from each award's own description in USAspending.</figcaption>
+  </figure>
+
+  <section class="col">
+    <h2>What agencies are asking for right now</h2>
+    <p>SAM.gov lists the solicitations and early notices agencies have open today. These don't map one to one onto the contracts above, since a new solicitation rarely names the contract it replaces. But they show where the next round of work is already moving.</p>
+  </section>
+
+  <figure class="wide" id="f-open">
+    <p class="ft">Of 434 open professional services notices, 3 in 4 are open to companies of any size</p>
+    <p class="fs">Notices open on SAM.gov at the same 20 agencies, by whether they are reserved for small businesses</p>
+    <div class="controls" role="group" aria-label="Notices">
+      <button type="button" data-k="prof" aria-pressed="true">Professional services</button>
+      <button type="button" data-k="all" aria-pressed="false">All open notices</button>
+    </div>
+    <div class="legend">
+      <span><span class="sw" style="background:var(--small)"></span>Reserved for small businesses</span>
+      <span><span class="sw" style="background:var(--large)"></span>Open to any size</span>
+    </div>
+    <div id="c-open"></div>
+    <div class="tip" id="tip-open"></div>
+    <figcaption>Professional services means notices under industry codes 54 (professional, scientific and technical) and 518 (data processing and hosting), the same scope as the contracts above. Source: SAM.gov contract opportunities, Nov. 8, 2026.</figcaption>
+  </figure>
+
+  <section class="col">
+    <p>Across every kind of purchase, nearly half of open notices at these agencies are reserved for small businesses. For professional services, it's a quarter. That matches the contracts ending: in services, most of the money goes to firms that compete without a set-aside.</p>
+  </section>
+
+  <aside class="col note">
+    <h3>How this was made</h3>
+    <p>Contract data comes from USAspending.gov, limited to professional services at 20 civilian agencies (Defense is not included), and processed in a dbt pipeline on Snowflake. A contract counts as in its final period when its current end date is within three months of its latest possible end date, so no options are left. The window is Nov. 8, 2026 to Nov. 7, 2027. Dollar figures are lifetime obligations on each contract. Company size comes from the public SAM.gov entity registration file, matched on each company's unique entity ID and the contract's industry code. Open notices come from SAM.gov's daily contract opportunities file.</p>
+  </aside>
+
+  <footer class="col">
+    <span>More federal contracting analysis at <a href="https://phizou.github.io" target="_blank" rel="noopener">phizou.github.io</a></span>
+    <a href="https://www.linkedin.com/in/peterhagen123" target="_blank" rel="noopener">Get in touch</a>
+  </footer>
+</main>
+
+<script>
+(function () {
+  const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const dur = reduce ? 0 : 650;
+  const SIZES = [
+    { k: "large", label: "Large business" },
+    { k: "other", label: "Small elsewhere" },
+    { k: "small", label: "Small business" },
+    { k: "none", label: "Not in SAM" }
+  ];
+  const fmtB = v => v >= 1000 ? `$${(v / 1000).toFixed(1)}B` : `$${Math.round(v)}M`;
+  const fmtN = d3.format(",");
+  const fmtV = (k, v) => k === "b" ? fmtB(v) : fmtN(v);
+
+  // shared legend
+  const legHtml = SIZES.map(s => `<span><span class="sw seg-${s.k}" style="background:var(--${s.k})"></span>${s.label}</span>`).join("");
+  document.getElementById("legend-size").innerHTML = legHtml;
+  document.getElementById("legend-big").innerHTML = SIZES.slice(0, 4).map(s => `<span><span class="sw" style="background:var(--${s.k})"></span>${s.label}</span>`).join("");
+
+  function tipAt(tip, fig, e, html) {
+    tip.innerHTML = html;
+    const r = fig.getBoundingClientRect();
+    const px = e.clientX - r.left, py = e.clientY - r.top;
+    tip.style.opacity = 1;
+    const tw = tip.offsetWidth;
+    let x = px + 14;
+    if (x + tw > r.width) x = px - tw - 14;
+    tip.style.left = Math.max(0, x) + "px";
+    tip.style.top = Math.max(0, py - 16) + "px";
+  }
+  function bindToggle(figId, cb) {
+    const btns = document.querySelectorAll(`#${figId} .controls button`);
+    btns.forEach(b => b.addEventListener("click", () => {
+      btns.forEach(x => x.setAttribute("aria-pressed", String(x === b)));
+      cb(b.dataset.k || b.dataset.f);
+    }));
+  }
+
+  /* ---------- 1. by month ---------- */
+  // [large n, large $M, none n, none $M, other n, other $M, small n, small $M]
+  const rawMonth = {
+    "2026-11":[294,2979.5,19,12.2,197,329.4,114,563.8],"2026-12":[705,3473.8,14,1.9,435,1195.1,279,992.6],
+    "2027-01":[371,4522.3,3,.5,213,646.5,211,414.1],"2027-02":[428,5103.3,7,4.2,226,1059.3,195,633.6],
+    "2027-03":[605,4907.6,15,23.7,326,1106.6,347,850.5],"2027-04":[292,844,4,19.3,165,354.7,128,256.9],
+    "2027-05":[347,3681,14,14.8,157,375.4,169,345.2],"2027-06":[575,2609.7,6,2.6,242,668.1,220,504.8],
+    "2027-07":[390,2126,7,1.5,188,349.1,197,410.9],"2027-08":[395,3339.3,6,4.7,345,468.3,236,612.6],
+    "2027-09":[1197,11796.4,17,398.9,581,2117.2,720,2227.8],"2027-10":[77,315.8,1,.1,57,126.5,34,55.9],
+    "2027-11":[12,9.6,0,0,7,8.8,4,2.1]
+  };
+  const parseM = d3.timeParse("%Y-%m");
+  const months = Object.entries(rawMonth).map(([m, v]) => ({
+    m, d: parseM(m),
+    n: { large: v[0], none: v[2], other: v[4], small: v[6] },
+    b: { large: v[1], none: v[3], other: v[5], small: v[7] }
+  }));
+  months.forEach(r => { r.nT = d3.sum(SIZES, s => r.n[s.k]); r.bT = d3.sum(SIZES, s => r.b[s.k]); });
+
+  const mHost = document.getElementById("c-month"), mFig = document.getElementById("f-month"), mTip = document.getElementById("tip-month");
+  const mSvg = d3.select(mHost).append("svg").attr("role", "img").attr("aria-label", "Contracts ending by month, stacked by holder size");
+  let mKey = "b";
+  function drawMonth(animate) {
+    const W = mHost.clientWidth, narrow = W < 560, H = narrow ? 300 : 360;
+    const m = { t: 30, r: 8, b: 30, l: narrow ? 42 : 52 };
+    mSvg.attr("width", W).attr("height", H).attr("viewBox", `0 0 ${W} ${H}`);
+    const x = d3.scaleBand().domain(months.map(d => d.m)).range([m.l, W - m.r]).padding(0.18);
+    const max = d3.max(months, d => d[mKey + "T"]);
+    const y = d3.scaleLinear().domain([0, max * 1.08]).nice().range([H - m.b, m.t]);
+    const t = mSvg.transition().duration(animate ? dur : 0);
+
+    let g = mSvg.select("g.grid"); if (g.empty()) g = mSvg.append("g").attr("class", "grid");
+    g.call(d3.axisLeft(y).ticks(5).tickSize(-(W - m.l - m.r)).tickFormat(""))
+      .attr("transform", `translate(${m.l},0)`).call(s => s.select(".domain").remove());
+    let ya = mSvg.select("g.ya"); if (ya.empty()) ya = mSvg.append("g").attr("class", "axis ya");
+    ya.attr("transform", `translate(${m.l},0)`)
+      .call(d3.axisLeft(y).ticks(5).tickSize(0).tickPadding(8).tickFormat(v => mKey === "b" ? (v === 0 ? "0" : fmtB(v)) : fmtN(v)))
+      .call(s => s.select(".domain").remove());
+    let xa = mSvg.select("g.xa"); if (xa.empty()) xa = mSvg.append("g").attr("class", "axis xa");
+    xa.attr("transform", `translate(0,${H - m.b})`)
+      .call(d3.axisBottom(x).tickSizeOuter(0).tickFormat(k => { const d = parseM(k); const s = d3.timeFormat(narrow ? "%b" : "%b")(d); return narrow ? s[0] : s; }));
+    xa.selectAll(".tick text").filter(k => k.endsWith("-01")).each(function (k) {
+      d3.select(this).append("tspan").attr("x", 0).attr("dy", "1.2em").text(k.slice(0, 4));
+    });
+
+    let cols = mSvg.select("g.cols"); if (cols.empty()) cols = mSvg.append("g").attr("class", "cols");
+    const grp = cols.selectAll("g.mc").data(months, d => d.m).join(enter => {
+      const gg = enter.append("g").attr("class", "mc");
+      SIZES.forEach(s => gg.append("rect").attr("class", `seg-${s.k}`).attr("data-s", s.k));
+      return gg;
+    });
+    grp.each(function (d) {
+      let acc = 0;
+      SIZES.forEach(s => {
+        const v = d[mKey][s.k];
+        d3.select(this).select(`rect[data-s="${s.k}"]`)
+          .attr("x", x(d.m)).attr("width", x.bandwidth())
+          .transition(t).attr("y", y(acc + v)).attr("height", Math.max(0, y(acc) - y(acc + v)));
+        acc += v;
+      });
+    });
+
+    let ann = mSvg.select("g.ann"); if (ann.empty()) ann = mSvg.append("g").attr("class", "ann");
+    ann.selectAll("*").remove();
+    const sep = months.find(d => d.m === "2027-09");
+    const sx = x(sep.m) + x.bandwidth() / 2, sy = y(sep[mKey + "T"]);
+    ann.append("text").attr("class", "ann").attr("x", sx).attr("y", Math.max(12, sy - 8)).attr("text-anchor", narrow ? "end" : "middle")
+      .text(mKey === "b" ? `${fmtB(sep.bT)} ends in Sept.` : `${fmtN(sep.nT)} end in Sept.`);
+
+    let hits = mSvg.select("g.hits"); if (hits.empty()) hits = mSvg.append("g").attr("class", "hits");
+    hits.selectAll("rect").data(months, d => d.m).join("rect").attr("class", "colhit")
+      .attr("x", d => x(d.m) - x.step() * x.paddingInner() / 2).attr("width", x.step())
+      .attr("y", m.t).attr("height", H - m.b - m.t)
+      .on("pointerenter pointermove pointerdown", (e, d) => {
+        hits.selectAll("rect").classed("on", r => r === d);
+        const rows = [...SIZES].reverse().map(s => `<tr><td><span class="sw" style="background:var(--${s.k})"></span>${s.label}</td><td>${fmtV(mKey, d[mKey][s.k])}</td></tr>`).join("");
+        tipAt(mTip, mFig, e, `<b>${d3.timeFormat("%B %Y")(d.d)}</b>${fmtN(d.nT)} contracts · ${fmtB(d.bT)}<table>${rows}</table>`);
+      })
+      .on("pointerleave", () => { hits.selectAll("rect").classed("on", false); mTip.style.opacity = 0; });
+    hits.raise();
+  }
+  bindToggle("f-month", k => { mKey = k; drawMonth(true); });
+
+  /* ---------- 2. size bars ---------- */
+  const tot = { n: {}, b: {} };
+  SIZES.forEach(s => { tot.n[s.k] = d3.sum(months, d => d.n[s.k]); tot.b[s.k] = d3.sum(months, d => d.b[s.k]); });
+  const totN = d3.sum(SIZES, s => tot.n[s.k]), totB = d3.sum(SIZES, s => tot.b[s.k]);
+  const order = ["small", "other", "large", "none"];
+  const lbl = Object.fromEntries(SIZES.map(s => [s.k, s.label]));
+  document.getElementById("sizebar").innerHTML = [["Contracts", "n", totN], ["Dollars", "b", totB]].map(([name, k, T]) => {
+    const segs = order.map(s => {
+      const p = tot[k][s] / T * 100;
+      const show = p >= 9 ? `${Math.round(p)}%` : "";
+      const val = k === "n" ? `${fmtN(tot[k][s])} contracts` : fmtB(tot[k][s]);
+      return `<span class="b-${s}" style="width:${p}%;background:var(--${s})" title="${lbl[s]}: ${val} (${p.toFixed(1)}%)">${show}</span>`;
+    }).join("");
+    return `<div class="lab">${name}<br><span class="num" style="font-weight:400;color:var(--ink-2)">${k === "n" ? fmtN(T) : fmtB(T)}</span></div><div class="bar">${segs}</div>`;
+  }).join("") + `<div></div><div class="legend" style="margin:4px 0 0">${order.map(s => `<span><span class="sw" style="background:var(--${s})"></span>${lbl[s]}</span>`).join("")}</div>`;
+
+  /* ---------- 3. by agency ---------- */
+  const rawAg = [
+    ["Health and Human Services","HHS",{large:[1309,8704.6],none:[42,16.9],other:[397,1876.1],small:[663,2201.5]}],
+    ["Veterans Affairs","VA",{large:[459,9807.5],none:[3,5.7],other:[772,1035.5],small:[304,690.7]}],
+    ["Homeland Security","DHS",{large:[676,6736.6],none:[5,8.8],other:[206,1681.7],small:[259,1424.5]}],
+    ["State","State",{large:[259,3759.1],none:[2,13],other:[197,824.4],small:[159,900.6]}],
+    ["Energy","Energy",{large:[114,4087],none:[2,9.7],other:[83,351.4],small:[80,208.7]}],
+    ["Transportation","DOT",{large:[915,2820.8],none:[6,19.7],other:[495,830.8],small:[239,517.1]}],
+    ["NASA","NASA",{large:[258,2016.6],none:[3,371.7],other:[122,325.9],small:[85,44.1]}],
+    ["Commerce","Commerce",{large:[225,1339.5],none:[6,1.5],other:[140,397],small:[170,413.3]}],
+    ["Agriculture","USDA",{large:[270,1060.7],none:[3,8.2],other:[129,524.6],small:[121,172.5]}],
+    ["Education","Education",{large:[30,1519.2],none:[3,2.3],other:[22,43],small:[45,175.9]}],
+    ["Treasury","Treasury",{large:[147,1076.7],none:[4,1.3],other:[45,151.5],small:[121,376.4]}],
+    ["Justice","Justice",{large:[435,684.4],none:[8,19.7],other:[141,453],small:[171,269.9]}],
+    ["Interior","Interior",{large:[476,905.8],none:[23,1.8],other:[346,162.9],small:[361,289.6]}],
+    ["Other agencies","Other",{large:[115,1189.8],none:[3,4.1],other:[44,147.3],small:[76,185.9]}]
+  ];
+  const agencies = rawAg.map(([name, short, v]) => {
+    const r = { name, short, n: {}, b: {} };
+    SIZES.forEach(s => { r.n[s.k] = v[s.k][0]; r.b[s.k] = v[s.k][1]; });
+    r.nT = d3.sum(SIZES, s => r.n[s.k]); r.bT = d3.sum(SIZES, s => r.b[s.k]);
+    return r;
+  });
+  const aHost = document.getElementById("c-agency"), aFig = document.getElementById("f-agency"), aTip = document.getElementById("tip-agency");
+  const aSvg = d3.select(aHost).append("svg").attr("role", "img").attr("aria-label", "Contracts ending by agency, stacked by holder size");
+  let aKey = "b";
+  function drawAgency(animate) {
+    const W = aHost.clientWidth, narrow = W < 560;
+    const left = narrow ? 74 : 150, right = 64, rowH = 30, y0 = 4;
+    const H = y0 + agencies.length * rowH;
+    aSvg.attr("width", W).attr("height", H).attr("viewBox", `0 0 ${W} ${H}`);
+    const sorted = [...agencies].sort((a, b) => (a.short === "Other") - (b.short === "Other") || b[aKey + "T"] - a[aKey + "T"]);
+    const x = d3.scaleLinear().domain([0, d3.max(agencies, d => d[aKey + "T"])]).range([0, W - left - right]);
+    const t = aSvg.transition().duration(animate ? dur : 0).ease(d3.easeCubicInOut);
+    const rows = aSvg.selectAll("g.ar").data(agencies, d => d.short).join(enter => {
+      const g = enter.append("g").attr("class", "ar hov");
+      g.append("rect").attr("class", "colhit");
+      g.append("text").attr("class", "lab");
+      SIZES.forEach(s => g.append("rect").attr("class", `seg-${s.k}`).attr("data-s", s.k));
+      g.append("text").attr("class", "val");
+      return g;
+    });
+    rows.transition(t).attr("transform", d => `translate(0,${y0 + sorted.indexOf(d) * rowH})`);
+    rows.select("rect.colhit").attr("x", 0).attr("y", 0).attr("width", W).attr("height", rowH);
+    rows.select(".lab").attr("x", left - 10).attr("y", rowH / 2 + 4).attr("text-anchor", "end").text(d => narrow ? d.short : d.name);
+    rows.each(function (d) {
+      let acc = 0;
+      SIZES.forEach(s => {
+        const v = d[aKey][s.k];
+        d3.select(this).select(`rect[data-s="${s.k}"]`).attr("y", 6).attr("height", rowH - 12)
+          .transition(t).attr("x", left + x(acc)).attr("width", Math.max(0, x(acc + v) - x(acc)));
+        acc += v;
+      });
+      d3.select(this).select(".val").attr("y", rowH / 2 + 4).text(fmtV(aKey, d[aKey + "T"]))
+        .transition(t).attr("x", left + x(acc) + 6);
+    });
+    rows.on("pointerenter pointermove pointerdown", (e, d) => {
+      const rowsHtml = [...SIZES].reverse().map(s => `<tr><td><span class="sw" style="background:var(--${s.k})"></span>${s.label}</td><td>${fmtV(aKey, d[aKey][s.k])}</td></tr>`).join("");
+      const sp = d.b.small / d.bT * 100;
+      tipAt(aTip, aFig, e, `<b>${d.name}</b>${fmtN(d.nT)} contracts · ${fmtB(d.bT)}<br>Small businesses: ${sp.toFixed(0)}% of dollars<table>${rowsHtml}</table>`);
+    }).on("pointerleave", () => { aTip.style.opacity = 0; });
+  }
+  bindToggle("f-agency", k => { aKey = k; drawAgency(true); });
+
+  /* ---------- 4. biggest contracts ---------- */
+  const big = [
+    ["Oak Ridge Associated Universities","Energy",3248.1,"2027-09-30","large","Runs the Oak Ridge Institute for Science and Education",16],
+    ["Oracle Health Government Services","VA",1511.3,"2027-08-16","large","Hosting and operations for the VA's new electronic health record",58,1],
+    ["Accenture Federal Services","Education",943.2,"2027-02-19","large","Enterprise digital and customer-care platform",22],
+    ["Booz Allen Hamilton","VA",859.7,"2027-01-15","large","Program office support for the health record overhaul",32,1],
+    ["Accenture Federal Services","HHS · CMS",796.2,"2027-01-10","large","Runs the federally facilitated health insurance exchange",2],
+    ["Booz Allen Hamilton","VA",753.1,"2027-09-23","large","Software, operations and security for VA health services IT",5],
+    ["Oracle Health Government Services","VA",736.2,"2027-09-14","large","Electronic health record operations",24,1],
+    ["CACI","DHS · CBP",714.2,"2027-09-29","large","Border enforcement software applications",6],
+    ["KBR Wyle Services","NASA",678.7,"2027-05-31","large","Ground systems and mission operations",26],
+    ["LDRM","State",595.2,"2026-11-30","large","Visa support at the National Visa Center and Kentucky Consular Center",11],
+    ["TISTA Science and Technology","VA",553.3,"2027-03-28","large","IT support for the VA Franchise Fund",22],
+    ["Oracle Health Government Services","VA",517.0,"2027-09-29","large","Additional interfaces for the electronic health record",58,1],
+    ["Wellpoint Federal Solutions","HHS · CMS",505.3,"2027-03-31","large","Next-generation desktop services",16],
+    ["Oracle Health Government Services","VA",502.4,"2027-05-16","large","Electronic health record licenses and fees",16,1],
+    ["Noridian Healthcare Solutions","HHS · CMS",407.4,"2027-05-09","large","Work to lower improper Medicare payment rates",22],
+    ["Sprezzatura Management Consulting","VA",399.8,"2027-09-26","large","Onboarding, engineering and governance services",7],
+    ["GovCIO","VA",389.7,"2027-08-22","large","Technical management for VA health services IT",12],
+    ["Lockheed Martin Integrated Systems","NASA",371.5,"2027-09-30","none","Keeps the Hubble Space Telescope operating",17],
+    ["Accenture Federal Services","USDA",369.0,"2027-05-31","large","FedRAMP-certified cloud hosting",22],
+    ["Anduril Industries","DHS · CBP",363.0,"2027-06-17","large","Border surveillance towers",85],
+    ["Veterans EZ Info","VA",362.6,"2027-09-27","other","Health data middleware development and operations",7],
+    ["Peraton","State",353.6,"2027-06-03","large","IT services (no detailed description filed)",22],
+    ["GovCIO","VA",353.4,"2027-06-18","large","Mail management for the Veterans Benefits Administration",5],
+    ["General Dynamics IT","DHS",342.8,"2026-12-30","large","Operates the biometric identity system (OBIM)",70],
+    ["Maximus Federal Services","Education",327.7,"2027-01-31","large","Manages the defaulted student loan portfolio",35],
+    ["A Square Group","HHS · CMS",206.7,"2026-11-14","small","Workload management system support",8],
+    ["DV United","DHS · USCIS",186.1,"2026-12-24","small","Development and operations for immigration systems",12],
+    ["Communications Resource","State",178.1,"2027-02-28","small","Worldwide physical security information system",11],
+    ["Quality Support","State",125.9,"2026-12-10","small","Visa operations and processing support",1],
+    ["Octo Metric","DHS · USCIS",95.3,"2026-12-11","small","Agile IT for a data analytics exchange",2],
+    ["Pluribus Digital","DHS · USCIS",86.3,"2027-09-26","small","Biometrics systems operations and development",2],
+    ["CTIS","HHS",85.6,"2027-06-30","small","IT for the Cancer Therapy Evaluation Program",5],
+    ["Samtek","HHS · CMS",76.8,"2027-05-31","small","Cloud onboarding and migration",6],
+    ["Norwegian Space Agency","Commerce · NOAA",72.5,"2027-08-12","small","Satellite data services",37],
+    ["Makwa Global Security Solutions","State",67.3,"2027-09-29","small","Overseas staffing for anti-terrorism assistance",19]
+  ];
+  const parseD = d3.timeParse("%Y-%m-%d");
+  const contracts = big.map(([who, ag, m, end, sz, what, inc, ehr], i) => ({ i, who, ag, m, end: parseD(end), sz, what, inc, ehr: !!ehr }));
+  const bHost = document.getElementById("c-big"), bFig = document.getElementById("f-big"), bTip = document.getElementById("tip-big");
+  const bSvg = d3.select(bHost).append("svg").attr("role", "img").attr("aria-label", "Largest contracts ending, by end date and value");
+  const listEl = document.getElementById("list-big");
+  let bFilter = "all";
+  const pass = d => bFilter === "all" || (bFilter === "ehr" && d.ehr) || (bFilter === "small" && d.sz === "small");
+  const fmtDate = d3.timeFormat("%b. %-d, %Y");
+  const sizeName = { large: "Large", other: "Small elsewhere", small: "Small", none: "Not in SAM" };
+
+  function bigTip(e, d) {
+    tipAt(bTip, bFig, e, `<b>${d.who}</b>${d.ag}<br>${d.what}<br><span class="num">${fmtB(d.m)}</span> lifetime · ends ${fmtDate(d.end)}<br>Holder: ${sizeName[d.sz]} · incumbent strength ${d.inc}/100`);
+  }
+  function drawBig() {
+    const W = bHost.clientWidth, narrow = W < 560, H = narrow ? 330 : 400;
+    const m = { t: 18, r: 14, b: 36, l: narrow ? 46 : 54 };
+    bSvg.attr("width", W).attr("height", H).attr("viewBox", `0 0 ${W} ${H}`);
+    bSvg.selectAll("*").remove();
+    const x = d3.scaleTime().domain([parseD("2026-11-01"), parseD("2027-11-08")]).range([m.l, W - m.r]);
+    const y = d3.scaleLog().domain([55, 4000]).range([H - m.b, m.t]);
+    const yt = [100, 250, 500, 1000, 2500];
+    bSvg.append("g").attr("class", "grid").selectAll("line").data(yt).join("line")
+      .attr("x1", m.l).attr("x2", W - m.r).attr("y1", d => y(d)).attr("y2", d => y(d));
+    bSvg.append("g").attr("class", "axis").attr("transform", `translate(${m.l},0)`)
+      .call(d3.axisLeft(y).tickValues(yt).tickFormat(fmtB).tickSize(0).tickPadding(8)).call(s => s.select(".domain").remove());
+    bSvg.append("g").attr("class", "axis").attr("transform", `translate(0,${H - m.b})`)
+      .call(d3.axisBottom(x).ticks(d3.timeMonth.every(narrow ? 3 : 2)).tickFormat(d3.timeFormat("%b %Y")).tickSizeOuter(0));
+    const r = narrow ? 6 : 7.5;
+    const dots = bSvg.append("g").selectAll("circle").data([...contracts].sort((a, b) => pass(a) - pass(b))).join("circle")
+      .attr("class", d => "dot" + (pass(d) ? "" : " dim"))
+      .attr("cx", d => x(d.end)).attr("cy", d => y(d.m)).attr("r", r)
+      .attr("fill", d => `var(--${d.sz})`)
+      .attr("tabindex", d => pass(d) ? 0 : -1)
+      .attr("aria-label", d => `${d.who}, ${fmtB(d.m)}, ends ${fmtDate(d.end)}`)
+      .on("pointerenter pointermove pointerdown", bigTip)
+      .on("pointerleave", () => { bTip.style.opacity = 0; })
+      .on("focus", function (e, d) { const b = this.getBoundingClientRect(); bigTip({ clientX: b.left + b.width / 2, clientY: b.top }, d); })
+      .on("blur", () => { bTip.style.opacity = 0; });
+
+    if (bFilter === "all") {
+      const o = contracts[0], ox = x(o.end), oy = y(o.m);
+      bSvg.append("path").attr("class", "annline").attr("d", `M${ox - r - 2},${oy} L${ox - (narrow ? 18 : 26)},${oy}`);
+      bSvg.append("text").attr("class", "ann").attr("x", ox - (narrow ? 22 : 30)).attr("y", oy + 4).attr("text-anchor", "end").text("Oak Ridge Institute, $3.2B");
+    }
+    if (bFilter === "ehr") {
+      const tot = d3.sum(contracts.filter(d => d.ehr), d => d.m);
+      bSvg.append("text").attr("class", "ann").attr("x", m.l + 6).attr("y", m.t + 12).text(`VA health record contracts: ${fmtB(tot)} in total`);
+    }
+
+    const shown = contracts.filter(pass).slice(0, bFilter === "all" ? 6 : 10);
+    listEl.innerHTML = shown.map(d => `<li><span class="who">${d.who}<span class="chip" style="background:var(--${d.sz})">${sizeName[d.sz]}</span></span><span class="amt">${fmtB(d.m)}</span><span class="what">${d.ag} · ${d.what} · ends ${fmtDate(d.end)}</span></li>`).join("");
+  }
+  bindToggle("f-big", f => { bFilter = f; bTip.style.opacity = 0; drawBig(); });
+
+  /* ---------- 5. open notices ---------- */
+  const open = [
+    ["Veterans Affairs","VA",839,429,82,47],["Homeland Security","DHS",281,158,18,2],["Agriculture","USDA",265,187,16,3],
+    ["Interior","Interior",239,157,20,14],["Health and Human Services","HHS",227,50,141,15],["Justice","Justice",194,130,6,5],
+    ["Transportation","DOT",194,57,68,6],["State","State",159,7,16,4],["Energy","Energy",137,18,20,5],
+    ["NASA","NASA",53,15,22,5],["Commerce","Commerce",38,19,2,0],["Treasury","Treasury",25,8,3,1],
+    ["National Science Foundation","NSF",15,0,15,0],["Other agencies","Other",15,12,5,3]
+  ].map(([name, short, all, allSa, prof, profSa]) => ({ name, short, all: { t: all, sa: allSa }, prof: { t: prof, sa: profSa } }));
+  const oHost = document.getElementById("c-open"), oFig = document.getElementById("f-open"), oTip = document.getElementById("tip-open");
+  const oSvg = d3.select(oHost).append("svg").attr("role", "img").attr("aria-label", "Open SAM.gov notices by agency");
+  let oKey = "prof";
+  function drawOpen(animate) {
+    const W = oHost.clientWidth, narrow = W < 560;
+    const left = narrow ? 74 : 190, right = 44, rowH = 26, y0 = 2;
+    const H = y0 + open.length * rowH;
+    oSvg.attr("width", W).attr("height", H).attr("viewBox", `0 0 ${W} ${H}`);
+    const sorted = [...open].sort((a, b) => (a.short === "Other") - (b.short === "Other") || b[oKey].t - a[oKey].t);
+    const x = d3.scaleLinear().domain([0, d3.max(open, d => d[oKey].t)]).range([0, W - left - right]);
+    const t = oSvg.transition().duration(animate ? dur : 0).ease(d3.easeCubicInOut);
+    const rows = oSvg.selectAll("g.or").data(open, d => d.short).join(enter => {
+      const g = enter.append("g").attr("class", "or hov");
+      g.append("rect").attr("class", "colhit");
+      g.append("text").attr("class", "lab");
+      g.append("rect").attr("class", "seg-sa");
+      g.append("rect").attr("class", "seg-open");
+      g.append("text").attr("class", "val");
+      return g;
+    });
+    rows.transition(t).attr("transform", d => `translate(0,${y0 + sorted.indexOf(d) * rowH})`);
+    rows.select("rect.colhit").attr("x", 0).attr("y", 0).attr("width", W).attr("height", rowH);
+    rows.select(".lab").attr("x", left - 10).attr("y", rowH / 2 + 4).attr("text-anchor", "end").text(d => narrow ? d.short : d.name);
+    rows.select(".seg-sa").attr("y", 5).attr("height", rowH - 10).transition(t).attr("x", left).attr("width", d => x(d[oKey].sa));
+    rows.select(".seg-open").attr("y", 5).attr("height", rowH - 10).transition(t).attr("x", d => left + x(d[oKey].sa)).attr("width", d => x(d[oKey].t - d[oKey].sa));
+    rows.select(".val").attr("y", rowH / 2 + 4).text(d => fmtN(d[oKey].t)).transition(t).attr("x", d => left + x(d[oKey].t) + 6);
+    rows.on("pointerenter pointermove pointerdown", (e, d) => {
+      const v = d[oKey], p = v.t ? Math.round(v.sa / v.t * 100) : 0;
+      tipAt(oTip, oFig, e, `<b>${d.name}</b>${fmtN(v.t)} open ${oKey === "prof" ? "professional services " : ""}notices<br>${fmtN(v.sa)} reserved for small businesses (${p}%)`);
+    }).on("pointerleave", () => { oTip.style.opacity = 0; });
+  }
+  bindToggle("f-open", k => { oKey = k; drawOpen(true); });
+
+  /* ---------- layout ---------- */
+  function drawAll() { drawMonth(false); drawAgency(false); drawBig(); drawOpen(false); }
+  drawAll();
+  let rt;
+  window.addEventListener("resize", () => { clearTimeout(rt); rt = setTimeout(drawAll, 150); });
+})();
+</script>
+
+</body>
+</html>

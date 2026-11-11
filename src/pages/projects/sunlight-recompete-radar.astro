@@ -1,0 +1,663 @@
+---
+// Flagship case study. Hand-built page (not the markdown template) so the
+// brief, charts and status labels can be laid out deliberately.
+// Every figure below is dated; sources are listed in SOURCES at the bottom
+// of this frontmatter. Re-verify before changing a number.
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import HireBridge from "../../components/HireBridge.astro";
+
+const SNAPSHOT = "11 Nov 2026";
+
+const glance = [
+  {
+    label: "The problem",
+    text: "Federal contract records are public, but they arrive as hundreds of thousands of inconsistent rows. Nobody can read them and say which expiring contracts deserve attention.",
+  },
+  {
+    label: "What I built",
+    text: "A pipeline that collects the records, cleans and tests them in a warehouse, scores each expiring contract, and serves a ranked list with the reasons behind every score.",
+  },
+  {
+    label: "What it helps decide",
+    text: "Which of roughly 27,700 expiring contracts are worth a closer look, and how entrenched the current vendor appears to be.",
+  },
+  {
+    label: "Where it stops",
+    text: "It ranks research leads. It does not predict winners, and it covers civilian IT and professional services only.",
+  },
+];
+
+const stats = [
+  { value: "484,242", label: "contract awards modeled", note: "FY2008 onward" },
+  { value: "20 × 12", label: "agencies × service categories", note: "civilian only, no DoD" },
+  { value: "27,673", label: "expiring contracts ranked", note: "ending within 36 months" },
+  { value: "0.84", label: "backtest AUC, incumbent retention", note: "placebo check: 0.80 (see trap 4)" },
+];
+
+// Trap 1: option-end dates. Warehouse query 2026-11-11 + data-quality review 2026-10-15.
+const dateBars = [
+  { label: "Before the fix", value: 0, display: "0", muted: true },
+  { label: "After the fix", value: 445864, display: "445,864 (92%)" },
+];
+const dateMax = 484242;
+
+// Trap 2: subcontract reports. Warehouse analysis 2026-11-08, 117,266 reports.
+const subBars = [
+  { label: "Every report added up", value: 107.76, display: "$107.8B", muted: true },
+  { label: "Exact re-filings removed", value: 98.02, display: "$98.0B", muted: true },
+  { label: "Latest valid report per subcontract", value: 50.72, display: "$50.7B" },
+];
+
+// Trap 4: scoring. Public repo README (refit 2026-10-15) and live Insights page.
+const scoreBars = [
+  { label: "First score (hand-set points)", value: 0.56, display: "0.56", muted: true },
+  { label: "Rebuilt scorecards (backtested)", value: 0.84, display: "0.84" },
+];
+
+// Illustrative score card: invented contract, real fitted weights from
+// dbt/seeds/score_weights.csv in the public repo.
+// -2.8392 + 0.9623 + 1.4969 + 1.0775 + 0 + 0 - 0.8547 = -0.1572 -> 46%
+const factors = [
+  { name: "Share of this office's spending", bucket: "50–80%", w: 0.96 },
+  { name: "Rival vendors at this office", bucket: "2–3", w: 1.5 },
+  { name: "Earlier awards for the same work", bucket: "4 or more", w: 1.08 },
+  { name: "Contract length", bucket: "2+ years", w: -0.85 },
+  { name: "Sole-source award", bucket: "No", w: 0 },
+  { name: "Contract vehicle", bucket: "Task order", w: 0 },
+];
+const maxW = 1.5;
+
+const pipeline = [
+  { step: "Collect", tool: "Python", text: "Bulk award exports from USAspending for each agency, with retry and backoff when the government endpoint times out." },
+  { step: "Store", tool: "Snowflake", text: "Raw files staged and loaded unchanged, under a key-pair service user rather than a personal login." },
+  { step: "Model & test", tool: "dbt", text: "Staging, award, vendor and candidate models, with tests that fail the build when a rule breaks." },
+  { step: "Score", tool: "SQL + Python", text: "Two small logistic scorecards. Weights are fitted on past outcomes, stored as a reviewed file, and applied in SQL." },
+  { step: "Serve", tool: "Postgres · FastAPI · Next.js", text: "Only the finished tables are copied to a small serving database behind an API and web app." },
+];
+
+const checks = [
+  "A contract's identity must match its ID and parent ID, so two orders that share a number are never merged.",
+  "Every score bucket must have a weight. A new category cannot slip through unscored.",
+  "Missing, pre-1900 and reversed dates are kept in raw data but excluded from scoring. (The earliest start date on file is the year 1009.)",
+  "Subcontract totals must stay ordered: the defensible figure can never exceed the raw sum.",
+  "The record that exposed the double-counting is pinned as a regression test. If the fix regresses, the build fails.",
+  "Loads are idempotent. Re-loading a file that has not changed inserts zero rows.",
+];
+
+const decisions = [
+  {
+    title: "A scorecard instead of a black box",
+    text: "Each input is a named bucket with one visible weight. A reader can see which factor moved a score and argue with it.",
+  },
+  {
+    title: "Exact joins or no join",
+    text: "Related records link only on the exact government-issued key. Rows that do not match are kept and flagged, not guessed.",
+  },
+  {
+    title: "Keep the raw value beside the cleaned one",
+    text: "Cleaning contract descriptions removed accounting tags; 7,943 descriptions turned out to be tags and nothing else. The original text stays in its own column.",
+  },
+];
+
+const status = [
+  { where: "Public code repository", what: "Warehouse move, 20-agency scope, backtested scorecards, weekly refresh workflow.", state: "Public", cls: "badge-live" },
+  { where: "Live web app", what: "An earlier, smaller slice. Its Insights page is dated August 2026 and covers five agencies.", state: "Public, older", cls: "badge-premium" },
+  { where: "Warehouse and local branch", what: "Option-date fix and backfill, subcontract de-duplication, description cleanup, enrichment jobs (written, not yet scheduled).", state: "Not yet released", cls: "badge-saas" },
+  { where: "Additional sources", what: "SAM.gov notices and vendor registrations are loaded for analysis. Nothing derived from them appears on this page until I finish reviewing the source's terms of use.", state: "Held", cls: "badge-defense" },
+];
+
+const limits = [
+  "One row per award. The data has no modification-by-modification history.",
+  "Public data does not link an expiring contract to its replacement. Follow-on awards are inferred: same office, same product code, starting near the end date.",
+  "Scores rank leads. They are not calibrated win probabilities (trap 4 explains why).",
+  "Dollar figures are historical obligations, not the value of future work.",
+  "Scope is 20 civilian agencies and 12 IT and professional-services categories. No Defense data.",
+  "One agency (HUD, 3,467 awards) is missing option dates and descriptions because its source export kept failing.",
+  "All counts are a dated snapshot. The candidate window rolls forward every day.",
+];
+
+const upNext = [
+  {
+    title: "Brief 2: is “full and open” competition actually competitive?",
+    text: "An August analysis of five agencies found most openly competed awards drew a single bid. It needs to be rerun on the full 20-agency scope before I publish numbers.",
+  },
+  {
+    title: "Annotated walkthrough with real screens",
+    text: "The rebuilt app has worked examples and a broader default view. Screens will go here once that version is released.",
+  },
+];
+---
+
+<BaseLayout
+  title="Recompete Radar – Case study – Peter Hagen"
+  description="How Peter Hagen turned 484,242 messy public contract records into a tested, explainable shortlist: the data traps found, the pipeline built, and the limits."
+>
+  <article class="cs">
+    <!-- HEADER -->
+    <header class="cs-head">
+      <p class="kicker">Flagship case study · solo project</p>
+      <h1 class="cs-title">Recompete Radar</h1>
+      <p class="cs-sub">
+        Turning 484,242 messy public contract records into a ranked, explainable shortlist, and
+        finding out where the data could not be trusted along the way.
+      </p>
+      <div class="cs-cta">
+        <a href="/resume" class="btn-primary">View resume</a>
+        <a href="mailto:Peter.H.Hagen@gmail.com" class="btn-outline">Contact Peter</a>
+        <a href="https://github.com/PHiZou/recompete-radar" target="_blank" rel="noopener noreferrer" class="btn-ghost">Code on GitHub ↗</a>
+      </div>
+      <p class="cs-note">
+        Federal contracting is the subject matter. The work is the transferable part: collecting
+        unreliable data, testing it, and turning it into something a person can act on.
+      </p>
+    </header>
+
+    <!-- AT A GLANCE -->
+    <section class="glance-grid" aria-label="At a glance">
+      {glance.map((g) => (
+        <div class="card glance-card">
+          <h2 class="mini-label">{g.label}</h2>
+          <p>{g.text}</p>
+        </div>
+      ))}
+    </section>
+
+    <section class="stat-row" aria-label="Key figures">
+      {stats.map((s) => (
+        <div class="stat">
+          <div class="stat-value">{s.value}</div>
+          <div class="stat-label">{s.label}</div>
+          <div class="stat-note">{s.note}</div>
+        </div>
+      ))}
+    </section>
+    <p class="source-line">Warehouse snapshot, {SNAPSHOT}. Source data: USAspending.gov prime award summaries.</p>
+
+    <nav class="toc" aria-label="On this page">
+      <a href="#brief">1 · The brief</a>
+      <a href="#score">2 · How a score is explained</a>
+      <a href="#pipeline">3 · Pipeline and checks</a>
+      <a href="#status">4 · What is public</a>
+      <a href="#limits">5 · Limits</a>
+    </nav>
+
+    <a href="/recompete-radar" class="card stories-link">
+      <div>
+        <div class="mini-label" style="margin-bottom: 4px;">Data stories built on Radar</div>
+        <div class="stories-link-text">Interactive stories on contracts coming due and on HHS contracting.</div>
+      </div>
+      <span class="stories-link-go">See the stories →</span>
+    </a>
+
+    <!-- 1 · BRIEF -->
+    <section id="brief" class="block">
+      <div class="block-head">
+        <span class="badge badge-live">Finished</span>
+        <span class="block-kind">Analytical brief</span>
+      </div>
+      <h2 class="block-title">Four traps in public contract data</h2>
+      <p class="lede">
+        <strong>The question:</strong> can you rank expiring contracts straight from public
+        records? <strong>The answer:</strong> not until four problems are fixed. Each one would
+        have produced a confident, wrong number.
+      </p>
+
+      <!-- Trap 1 -->
+      <div class="trap">
+        <div class="trap-num mono">01</div>
+        <div class="trap-body">
+          <h3>A date format quietly erased every option date</h3>
+          <p>
+            Contracts have a current end date and a later one if every option is used. The source
+            writes the first as a date and the second as a timestamp. My loader accepted only
+            dates, so it turned all 484,242 option-end values into blanks without an error.
+          </p>
+          <figure class="chart" aria-label="Awards with an option-end date, before and after the fix">
+            <figcaption>Awards with an option-end date, of 484,242</figcaption>
+            {dateBars.map((b) => (
+              <div class="bar-row">
+                <div class="bar-label">{b.label}</div>
+                <div class="bar-track">
+                  <div class:list={["bar", { "bar-muted": b.muted }]} style={`width:${Math.max((b.value / dateMax) * 100, 0.6)}%`}></div>
+                </div>
+                <div class="bar-value mono">{b.display}</div>
+              </div>
+            ))}
+            <p class="chart-note">
+              The remaining 8% are genuine blanks in the source (34,911) plus one agency whose
+              export would not download (3,467).
+            </p>
+          </figure>
+          <p>
+            <strong>What I did:</strong> fixed the parser so unreadable dates raise a warning,
+            added regression tests that reproduce the failure, then restored 445,864 dates in one
+            transaction and checked every row against the original files. Nothing else in the
+            tables changed.
+          </p>
+          <p class="so-what">
+            <strong>Why it matters:</strong> 7,816 of today's 27,673 candidates (28%) have option
+            time running more than three months past their current end date. Without the fix,
+            every one of them would look like it is about to expire.
+          </p>
+        </div>
+      </div>
+
+      <!-- Trap 2 -->
+      <div class="trap">
+        <div class="trap-num mono">02</div>
+        <div class="trap-body">
+          <h3>Subcontract reports double-count, and some are typos</h3>
+          <p>
+            Prime contractors report what they pass to subcontractors. Across 117,266 reports I
+            found 18,611 exact re-filings and 904 single reports larger than the entire contract
+            they belong to. One listed $3.13 billion against a $116 million contract: a $3.1
+            million amount with the decimal point lost.
+          </p>
+          <figure class="chart" aria-label="Total subcontract dollars under three counting rules">
+            <figcaption>Total reported subcontract dollars, three ways of counting</figcaption>
+            {subBars.map((b) => (
+              <div class="bar-row">
+                <div class="bar-label">{b.label}</div>
+                <div class="bar-track">
+                  <div class:list={["bar", { "bar-muted": b.muted }]} style={`width:${(b.value / 107.76) * 100}%`}></div>
+                </div>
+                <div class="bar-value mono">{b.display}</div>
+              </div>
+            ))}
+            <p class="chart-note">Warehouse analysis, 8 Nov 2026. Not yet in the public app.</p>
+          </figure>
+          <p>
+            <strong>What I did:</strong> modeled one row per report with flags for repeats and
+            impossible amounts, made the latest valid report per subcontract the default measure,
+            and kept the raw sums beside it for comparison.
+          </p>
+          <p class="so-what">
+            <strong>Why it matters:</strong> the naive total is more than twice the defensible
+            one. Anyone sizing a vendor's subcontracting from the raw sum would be off by half.
+          </p>
+        </div>
+      </div>
+
+      <!-- Trap 3 -->
+      <div class="trap">
+        <div class="trap-num mono">03</div>
+        <div class="trap-body">
+          <h3>“Number of bids” is not always a number of bids</h3>
+          <p>
+            One award type uses 999 as a placeholder. Orders placed under umbrella contracts
+            often repeat the bid count of the umbrella, not the order. Rows with a blank award
+            type averaged 78 bids, and 47% of them reported 50 or more. Real order-level
+            competition is closer to two or three.
+          </p>
+          <p>
+            <strong>What I did:</strong> every bid-based query keeps only counts between 1 and 50
+            and excludes umbrella-level rows. With those filters, 54–62% of awards labeled “full
+            and open” at each of five agencies drew exactly one bid.
+          </p>
+          <p class="so-what">
+            <strong>Why it matters:</strong> an average bid count taken from the raw column would
+            describe a market that does not exist.
+          </p>
+          <p class="chart-note">August 2026 analysis of an earlier five-agency slice (57,566 awards). Not yet rerun on the current scope.</p>
+        </div>
+      </div>
+
+      <!-- Trap 4 -->
+      <div class="trap">
+        <div class="trap-num mono">04</div>
+        <div class="trap-body">
+          <h3>My first score looked precise and was not</h3>
+          <p>
+            The original incumbent-strength score added up hand-set points. When I tested it, 54%
+            of contracts were tied at its maximum, and it barely beat a coin flip at predicting
+            whether the incumbent kept the work.
+          </p>
+          <figure class="chart" aria-label="Backtest accuracy of the first score and the rebuilt scorecards">
+            <figcaption>Predicting whether the incumbent keeps the work (AUC; 0.5 is a coin flip, 1.0 is perfect)</figcaption>
+            {scoreBars.map((b) => (
+              <div class="bar-row">
+                <div class="bar-label">{b.label}</div>
+                <div class="bar-track bar-track-auc">
+                  <div class:list={["bar", { "bar-muted": b.muted }]} style={`width:${b.value * 100}%`}></div>
+                </div>
+                <div class="bar-value mono">{b.display}</div>
+              </div>
+            ))}
+            <p class="chart-note">
+              Fitted on contracts that ended before 2021, tested on later ones. 94,000 ended
+              contracts, refit 15 Oct 2026. The marker shows 0.5.
+            </p>
+          </figure>
+          <p>
+            <strong>What I did:</strong> replaced it with two small scorecards fitted on past
+            outcomes, validated on a later time period. The largest tie fell from 54% to under
+            8%.
+          </p>
+          <p class="so-what">
+            <strong>The honest part:</strong> I ran the same model on a placebo window three to
+            five years away, where it should find nothing, and it still scored 0.80. Much of the
+            signal comes from offices that simply buy from the same vendor repeatedly. So the
+            scores are presented as a ranking, never as odds.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- 2 · SCORE -->
+    <section id="score" class="block">
+      <div class="block-head">
+        <span class="badge badge-premium">Illustrative</span>
+        <span class="block-kind">Product walkthrough</span>
+      </div>
+      <h2 class="block-title">How a score is explained</h2>
+      <p class="lede">
+        Every ranked contract shows the factors that moved its score. The contract below is
+        invented for illustration. The weights are the real fitted values from the public
+        repository.
+      </p>
+
+      <div class="card mock">
+        <div class="mock-banner">Invented example · not a real contract</div>
+        <div class="mock-top">
+          <div>
+            <div class="mock-title">Help-desk and application support</div>
+            <div class="mock-meta">Example Agency · task order · fixed price · ends in 9 months</div>
+          </div>
+          <div class="mock-scores">
+            <div>
+              <div class="mock-score">46</div>
+              <div class="mock-score-label">Incumbent strength</div>
+            </div>
+            <div>
+              <div class="mock-score mock-score-b">35</div>
+              <div class="mock-score-label">Recompete score</div>
+            </div>
+          </div>
+        </div>
+        <div class="factor-head">
+          <span>What moved incumbent strength</span>
+          <span>weaker ← → stronger</span>
+        </div>
+        {factors.map((f) => (
+          <div class="factor">
+            <div class="factor-name">
+              {f.name}
+              <span class="factor-bucket">{f.bucket}</span>
+            </div>
+            <div class="factor-track" aria-hidden="true">
+              <div class="factor-zero"></div>
+              {f.w !== 0 && (
+                <div
+                  class:list={["factor-bar", f.w > 0 ? "factor-pos" : "factor-neg"]}
+                  style={f.w > 0
+                    ? `left:50%; width:${(f.w / maxW) * 50}%`
+                    : `right:50%; width:${(Math.abs(f.w) / maxW) * 50}%`}
+                ></div>
+              )}
+            </div>
+            <div class="factor-w mono">{f.w > 0 ? "+" : f.w < 0 ? "−" : ""}{Math.abs(f.w).toFixed(2)}</div>
+          </div>
+        ))}
+        <ol class="callouts">
+          <li><strong>Few rivals is the largest factor.</strong> An office that has used only two or three vendors for this work rarely switches.</li>
+          <li><strong>Long contracts cut the other way.</strong> After two or more years, the follow-on is less likely to go to the same vendor.</li>
+          <li><strong>Timing is not in the score.</strong> Users filter on months remaining, so urgency never hides a weak lead.</li>
+        </ol>
+        <p class="chart-note">
+          Recompete score = chance of a follow-on contract × (1 − incumbent strength). Here:
+          64% × 54% ≈ 35.
+        </p>
+      </div>
+    </section>
+
+    <!-- 3 · PIPELINE -->
+    <section id="pipeline" class="block">
+      <div class="block-head">
+        <span class="badge badge-live">Finished</span>
+        <span class="block-kind">Implementation notes</span>
+      </div>
+      <h2 class="block-title">Pipeline and checks</h2>
+      <ol class="pipe">
+        {pipeline.map((p, i) => (
+          <li class="pipe-step">
+            <div class="pipe-num mono">{i + 1}</div>
+            <div>
+              <div class="pipe-name">{p.step} <span class="pipe-tool mono">{p.tool}</span></div>
+              <p>{p.text}</p>
+            </div>
+          </li>
+        ))}
+      </ol>
+
+      <div class="two">
+        <div class="card pad">
+          <h3 class="mini-label">Checks that fail the build</h3>
+          <ul class="ticks">
+            {checks.map((c) => <li>{c}</li>)}
+          </ul>
+        </div>
+        <div class="card pad">
+          <h3 class="mini-label">Three decisions I would defend</h3>
+          {decisions.map((d) => (
+            <div class="decision">
+              <div class="decision-title">{d.title}</div>
+              <p>{d.text}</p>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+
+    <!-- 4 · STATUS -->
+    <section id="status" class="block">
+      <h2 class="block-title">What is public and what is not</h2>
+      <p class="lede">
+        The warehouse is ahead of the public app. This page describes the current work; the live
+        app shows an earlier version.
+      </p>
+      <div class="status-list">
+        {status.map((s) => (
+          <div class="status-row">
+            <div class="status-where">{s.where}</div>
+            <div class="status-what">{s.what}</div>
+            <div><span class={`badge ${s.cls}`}>{s.state}</span></div>
+          </div>
+        ))}
+      </div>
+      <p class="live-link">
+        Optional: <a href="https://recompete-radar.vercel.app/" target="_blank" rel="noopener noreferrer" class="slow-demo-link">open the live app (earlier version) ↗</a>
+      </p>
+    </section>
+
+    <!-- 5 · LIMITS -->
+    <section id="limits" class="block">
+      <h2 class="block-title">Limits</h2>
+      <ul class="limits">
+        {limits.map((l) => <li>{l}</li>)}
+      </ul>
+    </section>
+
+    <!-- UP NEXT -->
+    <section class="block">
+      <div class="block-head">
+        <span class="tag tag-slate">Planned · not built yet</span>
+      </div>
+      <div class="two">
+        {upNext.map((u) => (
+          <div class="placeholder">
+            <div class="decision-title">{u.title}</div>
+            <p>{u.text}</p>
+          </div>
+        ))}
+      </div>
+    </section>
+  </article>
+
+  <HireBridge note="This project is the clearest picture of how Peter works: collect the data, test it, say what it can and cannot support, and ship something usable." />
+</BaseLayout>
+
+<style>
+  .cs { max-width: 860px; margin: 0 auto; padding: 48px 24px 64px; }
+  .cs p { font-size: 0.875rem; line-height: 1.7; color: var(--ink-2); }
+
+  .cs-head { display: flex; flex-direction: column; gap: 12px; margin-bottom: 32px; }
+  .cs-title {
+    font-size: clamp(2rem, 5vw, 3rem);
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    line-height: 1.1;
+    color: var(--ink);
+  }
+  .cs p.cs-sub { font-size: 1.0625rem; line-height: 1.6; color: var(--ink-2); max-width: 640px; }
+  .cs-cta { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; margin-top: 4px; }
+  .cs p.cs-note { font-size: 0.8125rem; color: var(--ink-3); max-width: 640px; }
+
+  .mini-label {
+    font-family: var(--font-mono);
+    font-size: 0.65rem;
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--teal-text);
+    margin-bottom: 8px;
+  }
+  .glance-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+  .glance-card { padding: 18px 20px; }
+  .cs .glance-card p { font-size: 0.8125rem; line-height: 1.65; }
+
+  .stat-row {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 0;
+    margin-top: 20px;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    background: var(--bg-card);
+  }
+  .stat { padding: 16px 18px; border-left: 1px solid var(--border); }
+  .stat:first-child { border-left: none; }
+  .stat-value { font-family: var(--font-serif); font-size: 1.6rem; font-weight: 700; color: var(--ink); line-height: 1.1; }
+  .stat-label { font-size: 0.75rem; color: var(--ink-2); margin-top: 6px; line-height: 1.4; }
+  .stat-note { font-size: 0.68rem; color: var(--ink-3); margin-top: 2px; line-height: 1.4; }
+  .cs p.source-line { font-size: 0.7rem; color: var(--ink-3); margin-top: 8px; }
+
+  .toc {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px 18px;
+    margin-top: 28px;
+    padding: 12px 0;
+    border-top: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+  }
+  .toc a { font-size: 0.75rem; font-weight: 600; color: var(--ink-3); text-decoration: none; }
+  .toc a:hover { color: var(--teal-text); }
+
+  .stories-link { margin-top: 20px; padding: 14px 18px; display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap; text-decoration: none; }
+  .stories-link-text { font-size: 0.85rem; color: var(--ink); }
+  .stories-link-go { font-size: 0.8125rem; font-weight: 700; color: var(--teal-text); white-space: nowrap; }
+
+  .block { margin-top: 48px; scroll-margin-top: 76px; }
+  .block-head { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; }
+  .block-kind { font-size: 0.7rem; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: var(--ink-3); }
+  .block-title { font-size: clamp(1.35rem, 3vw, 1.75rem); font-weight: 700; letter-spacing: -0.01em; color: var(--ink); line-height: 1.2; margin-bottom: 10px; }
+  .cs p.lede { font-size: 0.9375rem; max-width: 680px; }
+  .cs strong { color: var(--ink); }
+
+  .trap { display: grid; grid-template-columns: 44px 1fr; gap: 8px; margin-top: 28px; padding-top: 24px; border-top: 1px solid var(--border); }
+  .trap-num { font-size: 0.8rem; font-weight: 500; color: var(--amber); padding-top: 3px; }
+  .trap-body { display: flex; flex-direction: column; gap: 12px; min-width: 0; }
+  .trap-body h3 { font-size: 1.125rem; font-weight: 700; color: var(--ink); line-height: 1.3; }
+  .cs p.so-what { border-left: 3px solid var(--amber); padding-left: 12px; }
+
+  .chart { background: var(--bg-card); border: 1px solid var(--border); border-radius: 10px; padding: 16px 18px; display: flex; flex-direction: column; gap: 10px; }
+  .chart figcaption { font-size: 0.75rem; font-weight: 600; color: var(--ink); }
+  .bar-row { display: grid; grid-template-columns: 210px 1fr 110px; gap: 12px; align-items: center; }
+  .bar-label { font-size: 0.75rem; color: var(--ink-2); line-height: 1.35; }
+  .bar-track { height: 14px; position: relative; }
+  .bar { height: 100%; background: var(--teal); border-radius: 0 4px 4px 0; }
+  .bar-muted { background: var(--border-strong); }
+  .bar-track-auc::after { content: ""; position: absolute; left: 50%; top: -3px; bottom: -3px; width: 1px; background: var(--ink-3); }
+  .bar-value { font-size: 0.75rem; color: var(--ink); text-align: right; white-space: nowrap; }
+  .cs p.chart-note { font-size: 0.7rem; line-height: 1.5; color: var(--ink-3); }
+
+  .mock { margin-top: 18px; padding: 0 20px 18px; overflow: hidden; }
+  .mock:hover { transform: none; }
+  .mock-banner {
+    margin: 0 -20px 16px;
+    padding: 6px 20px;
+    background: oklch(0.948 0.055 75);
+    border-bottom: 1px solid oklch(0.725 0.091 75 / 0.5);
+    font-family: var(--font-mono);
+    font-size: 0.65rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: oklch(0.45 0.13 75);
+  }
+  .mock-top { display: flex; justify-content: space-between; gap: 16px; flex-wrap: wrap; align-items: flex-start; }
+  .mock-title { font-family: var(--font-serif); font-size: 1.05rem; font-weight: 700; color: var(--ink); }
+  .mock-meta { font-size: 0.75rem; color: var(--ink-3); margin-top: 2px; }
+  .mock-scores { display: flex; gap: 22px; }
+  .mock-score { font-family: var(--font-serif); font-size: 1.9rem; font-weight: 700; line-height: 1; color: var(--ink); }
+  .mock-score-b { color: var(--teal-text); }
+  .mock-score-label { font-size: 0.65rem; color: var(--ink-3); margin-top: 4px; }
+  .factor-head { display: flex; justify-content: space-between; margin: 18px 0 6px; font-size: 0.65rem; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--ink-3); }
+  .factor { display: grid; grid-template-columns: 1fr 180px 48px; gap: 12px; align-items: center; padding: 7px 0; border-top: 1px solid var(--border); }
+  .factor-name { font-size: 0.78rem; color: var(--ink); }
+  .factor-bucket { margin-left: 6px; font-size: 0.7rem; color: var(--ink-3); }
+  .factor-track { position: relative; height: 12px; }
+  .factor-zero { position: absolute; left: 50%; top: -3px; bottom: -3px; width: 1px; background: var(--border-strong); }
+  .factor-bar { position: absolute; top: 0; bottom: 0; }
+  .factor-pos { background: var(--teal); border-radius: 0 4px 4px 0; }
+  .factor-neg { background: var(--amber); border-radius: 4px 0 0 4px; }
+  .factor-w { font-size: 0.75rem; text-align: right; color: var(--ink); }
+  .callouts { margin: 16px 0 10px; padding-left: 18px; list-style: decimal; display: flex; flex-direction: column; gap: 6px; }
+  .callouts li { font-size: 0.8125rem; line-height: 1.6; color: var(--ink-2); }
+
+  .pipe { list-style: none; margin: 16px 0 0; padding: 0; }
+  .pipe-step { display: grid; grid-template-columns: 30px 1fr; gap: 10px; padding: 12px 0; border-top: 1px solid var(--border); }
+  .pipe-num { font-size: 0.75rem; color: var(--amber); padding-top: 2px; }
+  .pipe-name { font-size: 0.9rem; font-weight: 700; color: var(--ink); }
+  .pipe-tool { margin-left: 8px; font-size: 0.68rem; font-weight: 500; color: var(--teal-text); }
+  .cs .pipe-step p { font-size: 0.8125rem; margin-top: 2px; }
+
+  .two { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-top: 18px; }
+  .pad { padding: 18px 20px; }
+  .ticks { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 9px; }
+  .ticks li { position: relative; padding-left: 18px; font-size: 0.8rem; line-height: 1.55; color: var(--ink-2); }
+  .ticks li::before { content: "✓"; position: absolute; left: 0; color: var(--teal-text); font-weight: 700; }
+  .decision + .decision { margin-top: 12px; }
+  .decision-title { font-size: 0.85rem; font-weight: 700; color: var(--ink); }
+  .cs .decision p, .cs .placeholder p { font-size: 0.8rem; line-height: 1.6; margin-top: 2px; }
+
+  .status-list { margin-top: 14px; border-top: 1px solid var(--border); }
+  .status-row { display: grid; grid-template-columns: 190px 1fr 130px; gap: 14px; align-items: start; padding: 12px 0; border-bottom: 1px solid var(--border); }
+  .status-where { font-size: 0.82rem; font-weight: 700; color: var(--ink); }
+  .status-what { font-size: 0.8rem; line-height: 1.55; color: var(--ink-2); }
+  .status-row > div:last-child { text-align: right; }
+  .cs p.live-link { font-size: 0.75rem; color: var(--ink-3); margin-top: 12px; }
+  .live-link a { color: var(--ink-2); text-decoration: underline; text-underline-offset: 2px; }
+  .live-link a:hover { color: var(--teal-text); }
+
+  .limits { margin: 8px 0 0; padding-left: 18px; list-style: disc; display: flex; flex-direction: column; gap: 7px; }
+  .limits li { font-size: 0.85rem; line-height: 1.6; color: var(--ink-2); }
+  .limits li::marker { color: var(--border-strong); }
+
+  .placeholder { border: 1px dashed var(--border-strong); border-radius: 12px; padding: 16px 18px; }
+
+  @media (max-width: 720px) {
+    .cs { padding: 32px 18px 48px; }
+    .glance-grid, .two { grid-template-columns: 1fr; }
+    .stat-row { grid-template-columns: 1fr 1fr; }
+    .stat:nth-child(3) { border-left: none; }
+    .stat:nth-child(n + 3) { border-top: 1px solid var(--border); }
+    .trap { grid-template-columns: 1fr; }
+    .bar-row { grid-template-columns: 1fr auto; gap: 4px 10px; }
+    .bar-label { grid-column: 1 / -1; }
+    .factor { grid-template-columns: 1fr 44px; gap: 4px 10px; }
+    .factor-name { grid-column: 1 / -1; }
+    .status-row { grid-template-columns: 1fr; gap: 6px; }
+    .status-row > div:last-child { text-align: left; }
+  }
+</style>

@@ -7,13 +7,14 @@ interface Props {
 }
 
 const {
-  title = "Peter Hagen – GovCon Data Engineering & Analytics",
-  description = "NOVA/DMV-based data and analytics professional building SQL/Python pipelines, reporting layers, and explainable decision-support tools across GovCon, membership analytics, procurement intelligence, and AI workflows.",
+  title = "Peter Hagen – Data Engineering & Analytics",
+  description = "NOVA/DMV-based data and analytics professional who turns messy data into tested pipelines, reporting layers, and analysis people can act on. Flagship project: Recompete Radar.",
 } = Astro.props as Props;
 
 const NAV_ITEMS = [
   { id: "home", label: "Home", href: "/" },
   { id: "projects", label: "Projects", href: "/projects" },
+  { id: "recompete-radar", label: "Recompete Radar", href: "/recompete-radar" },
   { id: "resume", label: "Resume", href: "/resume" },
   { id: "consulting", label: "Consulting", href: "/consulting" },
   { id: "products", label: "Data Products", href: "/products", badge: "New" },
@@ -76,7 +77,7 @@ const isActive = (href: string) =>
         <div class="site-header-inner">
           <a href="/" class="brand">
             <span class="brand-name">Peter Hagen</span>
-            <span class="brand-sub">NOVA · DMV · GovCon Analytics</span>
+            <span class="brand-sub">Data & Analytics · NOVA/DMV</span>
           </a>
           <nav aria-label="Main navigation" class="site-nav">
             {NAV_ITEMS.map((item) => (
@@ -106,7 +107,7 @@ const isActive = (href: string) =>
           <div>
             <div class="footer-name">Peter Hagen</div>
             <div class="footer-tagline">
-              Fractional Data & Analytics Engineer · NOVA/DMV GovCon · Open to FTE roles
+              Data & Analytics Engineer · NOVA/DMV · Open to full-time roles
             </div>
           </div>
           <div class="footer-links">
@@ -224,6 +225,7 @@ const isActive = (href: string) =>
     position: relative;
   }
   .nav-link:hover { color: var(--ink); }
+  .nav-link, .nav-linkedin { white-space: nowrap; }
   .nav-active { color: var(--teal) !important; }
   .nav-badge {
     margin-left: 4px;
@@ -304,7 +306,7 @@ const isActive = (href: string) =>
     transform: translateY(0);
   }
 
-  @media (max-width: 760px) {
+  @media (max-width: 1000px) {
     .site-header-inner {
       height: auto;
       flex-wrap: wrap;

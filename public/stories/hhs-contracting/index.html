@@ -1,0 +1,483 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Medicare’s machinery runs on contractors</title>
+<meta name="description" content="HHS has obligated $170.5 billion for professional services; almost half went to CMS. Who does the work, and which big contracts are about to be competed again.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Public+Sans:ital,wght@0,400;0,600;0,800;1,400&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.8.5/d3.min.js"></script>
+<style>
+:root {
+  --paper: #F5F8FA;
+  --ink: #17293A;
+  --ink-2: #566675;
+  --grey: #9FAAB5;
+  --grey-light: #D3DAE0;
+  --rule: #DDE3E8;
+  --accent: #0A7486;
+  --accent-wash: rgba(10, 116, 134, 0.10);
+  --tip-bg: #FFFFFF;
+  color-scheme: light;
+  box-sizing: border-box;
+  padding-top: env(safe-area-inset-top, 0px);
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --paper: #111A22;
+    --ink: #E6ECF1;
+    --ink-2: #9AA9B6;
+    --grey: #5D6C79;
+    --grey-light: #2F3B46;
+    --rule: #26313B;
+    --accent: #3DB4C5;
+    --accent-wash: rgba(61, 180, 197, 0.14);
+    --tip-bg: #1A252F;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --paper: #111A22;
+  --ink: #E6ECF1;
+  --ink-2: #9AA9B6;
+  --grey: #5D6C79;
+  --grey-light: #2F3B46;
+  --rule: #26313B;
+  --accent: #3DB4C5;
+  --accent-wash: rgba(61, 180, 197, 0.14);
+  --tip-bg: #1A252F;
+  color-scheme: dark;
+}
+*, *::before, *::after { box-sizing: inherit; }
+html { scroll-padding-top: env(safe-area-inset-top, 0px); }
+body {
+  margin: 0;
+  background: var(--paper);
+  color: var(--ink);
+  font-family: "Public Sans", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  font-size: 18px;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+}
+main { padding: 56px 20px 80px; }
+.col { max-width: 640px; margin: 0 auto; }
+.wide { max-width: 940px; margin: 0 auto; }
+h1 {
+  font-weight: 800;
+  font-size: clamp(2.3rem, 6.4vw, 3.9rem);
+  line-height: 1.02;
+  letter-spacing: -0.025em;
+  margin: 0 0 22px;
+  max-width: 13ch;
+}
+.dek { font-size: 1.22rem; line-height: 1.5; color: var(--ink-2); margin: 0 0 18px; }
+.byline { font-size: 0.9rem; color: var(--ink-2); margin: 0 0 48px; }
+h2 {
+  font-weight: 800;
+  font-size: 1.55rem;
+  line-height: 1.2;
+  letter-spacing: -0.01em;
+  margin: 64px 0 12px;
+}
+p { margin: 0 0 18px; }
+.num { font-variant-numeric: tabular-nums; }
+figure { margin: 28px auto 8px; position: relative; }
+.fig-title { font-weight: 600; font-size: 1.05rem; line-height: 1.35; margin: 0 0 4px; }
+.fig-sub { font-size: 0.9rem; color: var(--ink-2); margin: 0 0 14px; }
+figcaption { font-size: 0.8rem; color: var(--ink-2); margin-top: 10px; line-height: 1.45; }
+.controls { display: flex; flex-wrap: wrap; gap: 6px; margin: 0 0 14px; }
+.controls button {
+  font: inherit; font-size: 0.85rem; font-weight: 600;
+  color: var(--ink); background: transparent;
+  border: 1px solid var(--grey-light); border-radius: 999px;
+  padding: 5px 14px; cursor: pointer;
+}
+.controls button[aria-pressed="true"] { background: var(--ink); color: var(--paper); border-color: var(--ink); }
+.controls button:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+svg { display: block; overflow: visible; font-family: inherit; }
+svg text { fill: var(--ink); font-size: 13px; font-variant-numeric: tabular-nums; }
+svg .muted { fill: var(--ink-2); }
+.bar { fill: var(--grey); }
+.row.is-cms .bar { fill: var(--accent); }
+.row.is-cms .lab, .row.is-cms .val { font-weight: 600; }
+.cell { fill: var(--grey); cursor: pointer; }
+.cell.other { fill: var(--grey-light); }
+.cell.hi { fill: var(--accent); }
+.readout { min-height: 3em; font-size: 0.95rem; margin-top: 12px; }
+.readout strong { font-weight: 600; }
+.axis line, .axis path { stroke: var(--rule); }
+.axis text { fill: var(--ink-2); font-size: 12px; }
+.grid line { stroke: var(--rule); }
+.band { fill: var(--accent-wash); }
+.dot { fill: var(--grey); stroke: var(--paper); stroke-width: 1.5; cursor: pointer; transition: opacity 0.25s; }
+.dot.weak { fill: var(--accent); }
+.dot.dim { opacity: 0.12; }
+.leader { stroke: var(--ink-2); stroke-width: 1; fill: none; }
+.legend { display: flex; flex-wrap: wrap; gap: 4px 18px; font-size: 0.85rem; color: var(--ink-2); margin: 0 0 8px; }
+.sw { display: inline-block; width: 10px; height: 10px; border-radius: 50%; margin-right: 6px; vertical-align: 0; }
+.tip {
+  position: absolute; pointer-events: none; opacity: 0;
+  background: var(--tip-bg); color: var(--ink);
+  border: 1px solid var(--rule); border-radius: 6px;
+  padding: 10px 12px; font-size: 0.82rem; line-height: 1.4;
+  max-width: 260px; box-shadow: 0 6px 18px rgba(0,0,0,0.12);
+  transition: opacity 0.12s;
+}
+.tip strong { display: block; font-size: 0.92rem; margin-bottom: 2px; }
+.note { border-top: 1px solid var(--rule); margin-top: 64px; padding-top: 20px; font-size: 0.85rem; color: var(--ink-2); line-height: 1.55; }
+.note h3 { font-size: 0.95rem; color: var(--ink); margin: 0 0 8px; }
+@media (max-width: 560px) {
+  body { font-size: 17px; }
+  main { padding-top: 36px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .dot, .tip { transition: none; }
+}
+footer.site { max-width: 640px; margin: 32px auto 0; padding-top: 18px; border-top: 1px solid var(--rule); display: flex; flex-wrap: wrap; justify-content: space-between; gap: 10px; font-size: 0.85rem; }
+footer.site a { color: var(--ink); font-weight: 600; text-decoration-color: var(--accent); text-underline-offset: 3px; }
+</style>
+</head>
+<body>
+<main>
+  <header class="col">
+    <h1>Medicare’s machinery runs on contractors</h1>
+    <p class="dek">HHS has obligated <span class="num">$170.5 billion</span> for professional services in this dataset. Almost half went to the agency that runs Medicare and Medicaid. Here’s who does that work, and which big contracts are about to be competed again.</p>
+    <p class="byline">By Peter Hagen, Recompete Radar. Data as of Nov. 4, 2026.</p>
+  </header>
+
+  <section class="col">
+    <p>The Centers for Medicare &amp; Medicaid Services pays out well over a trillion dollars a year in benefits with a staff of about 6,000. Nearly everything else, from processing claims to running healthcare.gov to answering 1‑800‑MEDICARE, is done by contractors.</p>
+    <p>That shows up as a lopsided pattern. Switch between dollars and number of awards below: CMS barely registers by count, but it dwarfs every other part of HHS by money.</p>
+  </section>
+
+  <figure class="wide" id="fig-bars">
+    <p class="fig-title">CMS takes <span class="num">44%</span> of HHS contract dollars from just <span class="num">6%</span> of its awards</p>
+    <p class="fig-sub">Professional services awards by HHS division</p>
+    <div class="controls" role="group" aria-label="Measure">
+      <button type="button" data-metric="b" aria-pressed="true">Dollars obligated</button>
+      <button type="button" data-metric="n" aria-pressed="false">Number of awards</button>
+    </div>
+    <div id="bars"></div>
+    <figcaption>Source: USAspending.gov via Recompete Radar. Lifetime obligations per award, all years in the dataset.</figcaption>
+  </figure>
+
+  <section class="col">
+    <h2>No single company runs Medicare</h2>
+    <p>You might expect one giant integrator to dominate. Instead, CMS spreads its work across more than 900 vendors. The largest, General Dynamics IT, holds about 8% of the agency’s contract dollars.</p>
+    <p>Each square below is <span class="num">$250 million</span>. The darker squares belong to the 25 biggest vendors; the pale block at the end is everyone else.</p>
+  </section>
+
+  <figure class="wide" id="fig-waffle">
+    <p class="fig-title">888 smaller vendors share nearly half of CMS’s <span class="num">$74.8 billion</span></p>
+    <p class="fig-sub">Hover or tap a square to see whose it is</p>
+    <div id="waffle"></div>
+    <div class="readout" id="readout" aria-live="polite"></div>
+    <figcaption>Source: USAspending.gov via Recompete Radar. Squares rounded to the nearest $250 million.</figcaption>
+  </figure>
+
+  <section class="col">
+    <h2>What’s coming up for grabs</h2>
+    <p>Most contracts in the data look like they’re ending soon, but many are just finishing an option year. The chart below keeps only HHS contracts of <span class="num">$50 million</span> or more that have no options left, so their end dates are real.</p>
+    <p id="scatter-stat"></p>
+  </section>
+
+  <figure class="wide" id="fig-scatter">
+    <p class="fig-title">Accenture’s <span class="num">$796 million</span> CMS contract is the biggest one ending, in January</p>
+    <p class="fig-sub">HHS contracts with no options left, by end date and lifetime value</p>
+    <div class="controls" role="group" aria-label="Filter by division">
+      <button type="button" data-group="All" aria-pressed="true">All HHS</button>
+      <button type="button" data-group="CMS" aria-pressed="false">CMS</button>
+      <button type="button" data-group="NIH" aria-pressed="false">NIH</button>
+      <button type="button" data-group="CDC" aria-pressed="false">CDC</button>
+      <button type="button" data-group="Other" aria-pressed="false">Other</button>
+    </div>
+    <div class="legend">
+      <span><span class="sw" style="background: var(--accent)"></span>Weak incumbent (strength score 10 or under)</span>
+      <span><span class="sw" style="background: var(--grey)"></span>Stronger incumbent</span>
+    </div>
+    <div id="scatter"></div>
+    <div class="tip" id="tip" role="status"></div>
+    <figcaption>Source: USAspending.gov via Recompete Radar. Incumbent strength is Recompete Radar’s 0–100 score of how firmly the current holder has kept similar work.</figcaption>
+  </figure>
+
+  <section class="col">
+    <p>A weak incumbent doesn’t guarantee an upset. But a large contract that’s truly ending, held by a company without a strong track record in that office, is exactly where challengers should be looking.</p>
+  </section>
+
+  <aside class="col note">
+    <h3>How this was made</h3>
+    <p>Award data comes from USAspending.gov, limited to professional services industry codes (IT, consulting, engineering and research), and processed through the Recompete Radar pipeline in dbt on Snowflake. Dollars are lifetime obligations per award. A contract counts as truly ending when its current end date is within three months of its latest possible end date. Descriptions of the work are inferred from industry codes and public reporting, since award descriptions aren’t yet in the pipeline.</p>
+  </aside>
+  <footer class="site">
+    <span>More federal contracting analysis at <a href="https://phizou.github.io" target="_blank" rel="noopener">phizou.github.io</a></span>
+    <a href="https://www.linkedin.com/in/peterhagen123" target="_blank" rel="noopener">Get in touch</a>
+  </footer>
+</main>
+
+<script>
+(function () {
+  const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  /* ---------- Chart 1: divisions, dollars vs awards ---------- */
+  const subs = [
+    { key: 'cms', label: 'Medicare & Medicaid (CMS)', short: 'CMS', b: 74.8, n: 5177 },
+    { key: 'nih', label: 'National Institutes of Health', short: 'NIH', b: 31.9, n: 32354 },
+    { key: 'cdc', label: 'Centers for Disease Control', short: 'CDC', b: 19.4, n: 14894 },
+    { key: 'asa', label: 'HHS headquarters', short: 'HHS HQ', b: 13.3, n: 8496 },
+    { key: 'fda', label: 'Food and Drug Administration', short: 'FDA', b: 11.3, n: 8546 },
+    { key: 'oth', label: 'Other HHS offices', short: 'Other', b: 10.4, n: 10756 },
+    { key: 'sam', label: 'Mental health agency (SAMHSA)', short: 'SAMHSA', b: 5.4, n: 785 },
+    { key: 'hrsa', label: 'Health Resources (HRSA)', short: 'HRSA', b: 4.0, n: 3657 }
+  ];
+  const fmtN = d3.format(',');
+  const barsHost = document.getElementById('bars');
+  let metric = 'b';
+  const barsSvg = d3.select(barsHost).append('svg').attr('role', 'img')
+    .attr('aria-label', 'HHS divisions by contract dollars or number of awards');
+
+  function drawBars(animate) {
+    const W = barsHost.clientWidth;
+    const narrow = W < 560;
+    const left = narrow ? 76 : 220, right = 84, rowH = 42, y0 = 4;
+    const H = y0 + subs.length * rowH;
+    barsSvg.attr('width', W).attr('height', H).attr('viewBox', `0 0 ${W} ${H}`);
+    const sorted = [...subs].sort((a, b) => b[metric] - a[metric]);
+    const x = d3.scaleLinear().domain([0, d3.max(subs, d => d[metric])]).range([0, W - left - right]);
+    const t = barsSvg.transition().duration(animate && !reduce ? 750 : 0).ease(d3.easeCubicInOut);
+
+    const rows = barsSvg.selectAll('g.row').data(subs, d => d.key).join(enter => {
+      const g = enter.append('g').attr('class', d => 'row' + (d.key === 'cms' ? ' is-cms' : ''));
+      g.append('text').attr('class', 'lab');
+      g.append('rect').attr('class', 'bar').attr('rx', 2);
+      g.append('text').attr('class', 'val');
+      g.append('title');
+      return g;
+    });
+    rows.transition(t).attr('transform', d => `translate(0,${y0 + sorted.indexOf(d) * rowH})`);
+    rows.select('.lab').attr('x', left - 12).attr('y', 22).attr('text-anchor', 'end')
+      .text(d => narrow ? d.short : d.label);
+    rows.select('rect').attr('x', left).attr('y', 7).attr('height', 22)
+      .transition(t).attr('width', d => Math.max(1, x(d[metric])));
+    rows.select('.val').attr('y', 23)
+      .text(d => metric === 'b' ? `$${d.b.toFixed(1)}B` : fmtN(d.n))
+      .transition(t).attr('x', d => left + x(d[metric]) + 8);
+    rows.select('title').text(d => `${d.label}: $${d.b.toFixed(1)} billion across ${fmtN(d.n)} awards`);
+  }
+
+  document.querySelectorAll('#fig-bars button').forEach(btn => {
+    btn.addEventListener('click', () => {
+      metric = btn.dataset.metric;
+      document.querySelectorAll('#fig-bars button').forEach(b => b.setAttribute('aria-pressed', String(b === btn)));
+      drawBars(true);
+    });
+  });
+
+  /* ---------- Chart 2: CMS vendor waffle ---------- */
+  const vendors = [
+    ['General Dynamics IT', 6.189, 97], ['Serco', 3.068, 4], ['Peraton', 2.556, 21],
+    ['Accenture Federal', 2.152, 16], ['Companion Data Services', 2.076, 17], ['Booz Allen Hamilton', 1.854, 88],
+    ['Leidos', 1.808, 20], ['CGI Federal', 1.637, 34], ['Mathematica', 1.636, 139],
+    ['Maximus Federal', 1.620, 35], ['Lockheed Martin', 1.494, 3], ['MITRE', 1.481, 190],
+    ['RTI International', 1.412, 137], ['Qlarant', 1.411, 20], ['OptumServe', 1.245, 43],
+    ['Wellpoint Federal', 1.115, 17], ['Ventech Solutions', 1.027, 7], ['Deloitte', 0.981, 83],
+    ['Acumen', 0.933, 134], ['Softrams', 0.866, 18], ['Northrop Grumman', 0.863, 20],
+    ['Highpoint Digital', 0.859, 3], ['Livanta', 0.834, 13], ['Health Services Advisory Group', 0.807, 56],
+    ['Ohio KePRO', 0.771, 9], ['888 other vendors', 34.146, 3953]
+  ].map(([name, b, n], i, arr) => ({ name, b, n, other: i === arr.length - 1, idx: i }));
+  const cmsTotal = d3.sum(vendors, v => v.b);
+  const unit = 0.25;
+  const cells = [];
+  vendors.forEach(v => { const k = Math.max(1, Math.round(v.b / unit)); for (let j = 0; j < k; j++) cells.push(v); });
+
+  const waffleHost = document.getElementById('waffle');
+  const readout = document.getElementById('readout');
+  const waffleSvg = d3.select(waffleHost).append('svg').attr('role', 'img')
+    .attr('aria-label', 'CMS contract dollars by vendor, one square per 250 million dollars');
+  let active = null;
+
+  function setReadout(v) {
+    if (!v) {
+      const top25 = cmsTotal - vendors[vendors.length - 1].b;
+      readout.innerHTML = `The top 25 vendors hold <strong class="num">$${top25.toFixed(1)}B</strong> (${Math.round(top25 / cmsTotal * 100)}%). Everyone else holds <strong class="num">$${vendors[vendors.length - 1].b.toFixed(1)}B</strong>.`;
+      return;
+    }
+    const share = (v.b / cmsTotal * 100).toFixed(1);
+    readout.innerHTML = `<strong>${v.name}</strong>: <span class="num">$${v.b.toFixed(2)}B</span>, ${share}% of CMS contract dollars, across ${fmtN(v.n)} award${v.n === 1 ? '' : 's'}.`;
+  }
+
+  function highlight(v) {
+    active = v;
+    waffleSvg.selectAll('rect.cell').classed('hi', d => v && d === v);
+    setReadout(v);
+  }
+
+  function drawWaffle() {
+    const W = waffleHost.clientWidth;
+    const cols = W < 560 ? 20 : 30, gap = 3;
+    const size = Math.floor((W - gap * (cols - 1)) / cols);
+    const rowsN = Math.ceil(cells.length / cols);
+    const H = rowsN * (size + gap) - gap;
+    waffleSvg.attr('width', W).attr('height', H).attr('viewBox', `0 0 ${W} ${H}`);
+    waffleSvg.selectAll('rect.cell').data(cells).join(enter => { const r = enter.append('rect'); r.append('title'); return r; })
+      .attr('class', d => 'cell' + (d.other ? ' other' : '') + (active && d === active ? ' hi' : ''))
+      .attr('x', (d, i) => (i % cols) * (size + gap))
+      .attr('y', (d, i) => Math.floor(i / cols) * (size + gap))
+      .attr('width', size).attr('height', size).attr('rx', 2)
+      .on('pointerenter', (e, d) => highlight(d))
+      .on('click', (e, d) => highlight(d))
+      .select('title').text(d => `${d.name}: $${d.b.toFixed(2)}B`);
+    waffleSvg.on('pointerleave', () => highlight(null));
+  }
+  setReadout(null);
+
+  /* ---------- Chart 3: contracts truly ending ---------- */
+  const raw = [
+    ['Accenture Federal Services','CMS','Systems design',796.2,'2027-01-10',2],
+    ['Livanta','CMS','Management consulting',596.8,'2029-04-30',8],
+    ['Ohio KePRO','CMS','Management consulting',512.3,'2029-04-30',12],
+    ['Wellpoint Federal Solutions','CMS','Systems design',505.3,'2027-03-31',16],
+    ['Noridian Healthcare Solutions','CMS','Professional and technical services',407.4,'2027-05-09',22],
+    ['CoventBridge (USA)','CMS','Professional and technical services',319.8,'2027-07-18',2],
+    ['Cognosante MVH','CMS','Custom programming',262.5,'2026-11-29',5],
+    ['CGI Federal','CMS','Systems design',261.9,'2026-11-30',46],
+    ['American Type Culture Collection','CDC','Professional and technical services',244.4,'2029-02-28',1],
+    ['Empower AI','CMS','Management consulting',230.2,'2027-11-21',22],
+    ['RTI International','SAMHSA','Professional and technical services',221.0,'2029-09-30',35],
+    ['Booz Allen Hamilton','NIH','Systems design',217.8,'2027-09-29',5],
+    ['General Dynamics IT','CMS','Management consulting',209.7,'2027-02-21',7],
+    ['A Square Group','CMS','Systems design',206.7,'2026-11-14',8],
+    ['Qlarant Integrity Solutions','CMS','Professional and technical services',206.1,'2027-11-30',7],
+    ['Westat','HHS finance office','Computing infrastructure',181.8,'2026-11-30',15],
+    ['Acumen','CMS','Management consulting',169.6,'2027-03-29',7],
+    ['Booz Allen Hamilton','CMS','Engineering',142.9,'2028-02-28',12],
+    ['Highrise Consulting','NIH','Systems design',138.6,'2027-09-15',8],
+    ['Peraton','CMS','Custom programming',133.8,'2027-03-14',5],
+    ['Karna','CDC','Professional and technical services',133.0,'2027-02-28',19],
+    ['Deloitte Consulting','NIH','Systems design',125.7,'2027-09-22',10],
+    ['Empower AI','CMS','Management consulting',124.8,'2027-02-28',4],
+    ['Peraton Enterprise Solutions','CMS','Systems design',122.4,'2027-01-31',2],
+    ['Think-Highpoint JV','CMS','Management consulting',117.5,'2027-09-21',1],
+    ['General Dynamics IT','CMS','Systems design',111.5,'2026-12-27',31],
+    ['Deloitte Consulting','CMS','Management consulting',89.4,'2026-11-28',25],
+    ['Leidos','NIH','Systems design',87.7,'2026-11-19',8],
+    ['CTIS','HHS finance office','Systems design',85.6,'2027-06-30',5],
+    ['Health Care Service Corporation','Indian Health Service','Professional and technical services',80.1,'2027-07-31',14],
+    ['eSimplicity','CMS','Systems design',80.1,'2027-02-17',5],
+    ['Samtek','CMS','Computing infrastructure',76.8,'2027-05-31',6],
+    ['Peraton','CDC','Systems design',73.4,'2027-02-15',7],
+    ['Oddball','CMS','Custom programming',73.0,'2026-11-30',6],
+    ['Softrams','CMS','Custom programming',71.6,'2029-04-19',7],
+    ['Novitas Solutions','CMS','Professional and technical services',71.1,'2027-08-07',2],
+    ['Booz Allen Hamilton','CMS','Management consulting',70.5,'2026-12-24',7],
+    ['Seneca Family of Agencies','SAMHSA','Professional and technical services',70.0,'2027-01-15',12],
+    ['Peraton Enterprise Solutions','HHS finance office','Systems design',69.5,'2027-03-30',66],
+    ['Accenture Federal Services','NIH','Systems design',68.8,'2027-05-14',8],
+    ['Nimbus Consulting','HHS finance office','Custom programming',65.8,'2026-11-20',4],
+    ['Guidehouse Digital','NIH','Systems design',63.2,'2027-03-21',24],
+    ['Omni Fed','CMS','Custom programming',60.6,'2027-05-11',2],
+    ['ComputerCraft','NIH','Engineering',58.3,'2027-01-20',7],
+    ['Mathematica','SAMHSA','Professional and technical services',57.8,'2027-02-09',10],
+    ['LMI Consulting','CMS','Management consulting',55.8,'2027-01-29',7],
+    ['Oddball','CMS','Custom programming',53.4,'2027-02-18',5],
+    ['Softrams','CMS','Custom programming',53.1,'2029-02-27',7],
+    ['Emmes Company','NIH','Management consulting',51.1,'2027-05-31',11]
+  ];
+  const parse = d3.timeParse('%Y-%m-%d');
+  const contracts = raw.map(([vendor, agency, work, m, end, inc], i) => ({
+    id: i, vendor, agency, work, m, end: parse(end), inc,
+    group: ['CMS', 'NIH', 'CDC'].includes(agency) ? agency : 'Other',
+    weak: inc <= 10
+  }));
+  const asOf = parse('2026-11-04');
+  const sixMo = d3.timeMonth.offset(asOf, 6);
+  const soon = contracts.filter(c => c.end <= sixMo);
+  document.getElementById('scatter-stat').innerHTML =
+    `That leaves <span class="num">${contracts.length}</span> contracts worth <span class="num">$${(d3.sum(contracts, c => c.m) / 1000).toFixed(1)} billion</span>. <span class="num">${soon.length}</span> of them end in the next six months, and <span class="num">${contracts.filter(c => c.weak).length}</span> are held by companies with a weak track record in that office.`;
+
+  const scHost = document.getElementById('scatter');
+  const tip = document.getElementById('tip');
+  const fig = document.getElementById('fig-scatter');
+  const scSvg = d3.select(scHost).append('svg').attr('role', 'img')
+    .attr('aria-label', 'HHS contracts with no options left, by end date and value');
+  let group = 'All';
+  const fmtDate = d3.timeFormat('%b. %-d, %Y');
+
+  function showTip(e, d) {
+    tip.innerHTML = `<strong>${d.vendor}</strong>${d.agency}, ${d.work.toLowerCase()}<br><span class="num">$${d.m.toFixed(1)}M</span> lifetime, ends ${fmtDate(d.end)}<br>Incumbent strength: <span class="num">${d.inc}</span> of 100`;
+    const [px, py] = d3.pointer(e, fig);
+    const fw = fig.clientWidth;
+    const tw = Math.min(260, fw - 16);
+    let lx = px + 14;
+    if (lx + tw > fw) lx = px - tw - 14;
+    tip.style.left = Math.max(0, lx) + 'px';
+    tip.style.top = Math.max(0, py - 20) + 'px';
+    tip.style.opacity = 1;
+  }
+  function hideTip() { tip.style.opacity = 0; }
+
+  function drawScatter() {
+    const W = scHost.clientWidth;
+    const narrow = W < 560;
+    const H = narrow ? 400 : 470;
+    const m = { t: 24, r: 16, b: 40, l: narrow ? 50 : 58 };
+    scSvg.attr('width', W).attr('height', H).attr('viewBox', `0 0 ${W} ${H}`);
+    scSvg.selectAll('*').remove();
+    const x = d3.scaleTime().domain([asOf, parse('2029-10-31')]).range([m.l, W - m.r]);
+    const y = d3.scaleLog().domain([45, 1000]).range([H - m.b, m.t]);
+
+    scSvg.append('rect').attr('class', 'band')
+      .attr('x', x(asOf)).attr('y', m.t).attr('width', x(sixMo) - x(asOf)).attr('height', H - m.b - m.t);
+    scSvg.append('text').attr('class', 'muted').attr('x', x(asOf) + 6).attr('y', m.t + 14)
+      .style('font-size', '12px').text('Next six months');
+
+    const yTicks = [50, 100, 250, 500, 1000];
+    scSvg.append('g').attr('class', 'grid')
+      .selectAll('line').data(yTicks).join('line')
+      .attr('x1', m.l).attr('x2', W - m.r).attr('y1', d => y(d)).attr('y2', d => y(d));
+    scSvg.append('g').attr('class', 'axis').attr('transform', `translate(${m.l},0)`)
+      .call(d3.axisLeft(y).tickValues(yTicks).tickFormat(d => d >= 1000 ? '$1B' : `$${d}M`).tickSize(0).tickPadding(8))
+      .call(g => g.select('.domain').remove());
+    scSvg.append('g').attr('class', 'axis').attr('transform', `translate(0,${H - m.b})`)
+      .call(d3.axisBottom(x).ticks(d3.timeMonth.every(narrow ? 12 : 6)).tickFormat(d3.timeFormat(narrow ? '%Y' : '%b %Y')).tickSizeOuter(0));
+
+    const r = narrow ? 5.5 : 7;
+    scSvg.append('g').selectAll('circle').data([...contracts].sort((a, b) => a.weak - b.weak)).join('circle')
+      .attr('class', d => 'dot' + (d.weak ? ' weak' : '') + (group !== 'All' && d.group !== group ? ' dim' : ''))
+      .attr('cx', d => x(d.end)).attr('cy', d => y(d.m)).attr('r', r)
+      .on('pointerenter pointermove', showTip)
+      .on('pointerdown', showTip)
+      .on('pointerleave', hideTip);
+
+    const acc = contracts[0];
+    if (group === 'All' || group === 'CMS') {
+      const ax = x(acc.end), ay = y(acc.m);
+      const tx = ax + (narrow ? 20 : 34), ty = ay + 4;
+      scSvg.append('path').attr('class', 'leader').attr('d', `M${ax + r + 2},${ay} L${tx - 4},${ay}`);
+      const lab = scSvg.append('text').attr('x', tx).attr('y', ty).style('font-weight', 600);
+      lab.append('tspan').text('Accenture, CMS');
+      lab.append('tspan').attr('x', tx).attr('dy', 16).attr('class', 'muted').style('font-weight', 400)
+        .text('$796M, ends Jan. 10, 2027');
+    }
+  }
+
+  document.querySelectorAll('#fig-scatter button').forEach(btn => {
+    btn.addEventListener('click', () => {
+      group = btn.dataset.group;
+      document.querySelectorAll('#fig-scatter button').forEach(b => b.setAttribute('aria-pressed', String(b === btn)));
+      hideTip();
+      drawScatter();
+    });
+  });
+
+  /* ---------- Layout ---------- */
+  function drawAll() { drawBars(false); drawWaffle(); drawScatter(); }
+  drawAll();
+  let rt;
+  window.addEventListener('resize', () => { clearTimeout(rt); rt = setTimeout(drawAll, 150); });
+})();
+</script>
+</body>
+</html>

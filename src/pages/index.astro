@@ -2,45 +2,85 @@
 import BaseLayout from "../layouts/BaseLayout.astro";
 
 const heroStats = [
-  { label: "Core stack", value: "Python · SQL · AWS · dbt" },
-  { label: "Background", value: "Defense & GovCon data" },
+  { label: "Core stack", value: "Python · SQL · Snowflake · dbt" },
+  { label: "Roles", value: "Data · Analytics · Implementation" },
   { label: "Availability", value: "Full-time now · consulting" },
 ];
 
-const pipelineSteps = [
-  { step: "Ingest", tool: "Python + GitHub Actions" },
-  { step: "Warehouse", tool: "Postgres (Neon)" },
-  { step: "Model & score", tool: "dbt-core, tested SQL" },
-  { step: "API", tool: "FastAPI" },
-  { step: "Product", tool: "Next.js 14" },
+// Recompete Radar figures. Verified against the warehouse on 11 Nov 2026;
+// sources and dates are documented on the case-study page.
+const radarFacts = [
+  { value: "484,242", label: "public contract records cleaned and modeled" },
+  { value: "27,673", label: "expiring contracts ranked, each with its reasons" },
+  { value: "4", label: "data traps found, fixed, and locked in with tests" },
 ];
 
-const roadmap = [
-  "Recalibrate incumbent-strength scoring from the retention backtest",
-  "SAM.gov solicitation data for forward-looking signals",
-  "Alerts and tracking for watched contracts",
-  "API access for BD teams",
+const radarQA = [
+  {
+    q: "Problem",
+    a: "Federal contract records are public but too messy to act on: half a million inconsistent rows and no way to tell which expiring contracts matter.",
+  },
+  {
+    q: "What I built",
+    a: "The whole path, solo: collection, a tested Snowflake and dbt warehouse, backtested scoring, an API, and a web app.",
+  },
+  {
+    q: "What it helps decide",
+    a: "Which contracts deserve a closer look, and how entrenched the current vendor appears to be.",
+  },
+  {
+    q: "Limits",
+    a: "It ranks research leads; it does not predict winners. Civilian IT and professional services only.",
+  },
+];
+
+// Total reported subcontract dollars under three counting rules ($B).
+// Warehouse analysis, 8 Nov 2026 (USAspending subaward reports).
+const subBars = [
+  { label: "Every report added up", value: 107.76, display: "$107.8B", muted: true },
+  { label: "Exact re-filings removed", value: 98.02, display: "$98.0B", muted: true },
+  { label: "Latest valid report per subcontract", value: 50.72, display: "$50.7B" },
+];
+
+const radarOutputs = [
+  {
+    kind: "Analytical brief",
+    status: "Finished",
+    cls: "badge-live",
+    title: "Four traps in public contract data",
+    desc: "What would have produced confident, wrong numbers, and how each was fixed.",
+    href: "/projects/sunlight-recompete-radar#brief",
+  },
+  {
+    kind: "Product walkthrough",
+    status: "Illustrative",
+    cls: "badge-premium",
+    title: "How a score is explained",
+    desc: "An invented contract scored with the real fitted weights, factor by factor.",
+    href: "/projects/sunlight-recompete-radar#score",
+  },
+  {
+    kind: "Implementation notes",
+    status: "Finished",
+    cls: "badge-live",
+    title: "Pipeline and checks",
+    desc: "Five steps, the tests that fail the build, and three decisions I would defend.",
+    href: "/projects/sunlight-recompete-radar#pipeline",
+  },
 ];
 
 const selectedProjects = [
   {
-    title: "Sunlight — Federal Recompete Radar",
-    type: "Analytics engineering, end to end",
-    desc: "Ingestion → Postgres → dbt → FastAPI → Next.js. Explainable recompete scoring on $56.0B at stake across six federal agencies.",
-    url: "https://recompete-radar.vercel.app/",
-    caseStudy: "/projects/sunlight-recompete-radar",
-  },
-  {
     title: "Obsidian RAG Chat",
     type: "AI pipeline / LLM",
-    desc: "Citation-grounded RAG on semantic chunking, embeddings, and vector retrieval.",
+    desc: "Citation-grounded RAG on heading-aware chunking, embeddings, and vector retrieval.",
     url: "https://obsidian-rag-7fzsf7xqbrkgxqw3c7xh2g.streamlit.app/",
     caseStudy: "/projects/obsidian-rag-chat",
   },
   {
     title: "Federal Procurement Intelligence Dashboard",
     type: "BI / analytics",
-    desc: "Live USASpending API → agency spend, contractor leaderboards, acquisition trends.",
+    desc: "Agency spend, contractor leaderboards, and acquisition trends in one BI app.",
     url: "https://govcon-analytics-dashboard.vercel.app",
     caseStudy: "/projects/govcon-procurement-dashboard",
   },
@@ -61,16 +101,17 @@ const selectedProjects = [
 ];
 
 const targetRoles = [
-  { role: "Data Engineer", note: "Pipelines · dbt · AWS" },
+  { role: "Data Engineer", note: "Pipelines · dbt · Snowflake" },
   { role: "Analytics Engineer", note: "SQL-heavy, stakeholder-facing models" },
   { role: "Business Intelligence Engineer", note: "KPI systems, reporting layers" },
+  { role: "Implementation / Technical Operations", note: "Data onboarding, QA, tooling" },
   { role: "AI / Data Workflow roles", note: "RAG pipelines, LLM orchestration" },
 ];
 
 const whyInterview = [
   "Has done the unglamorous parts — data quality, stakeholder reporting, metric definitions that stick — on 114K+ member records at a national organization.",
-  "Ships end to end. Sunlight is a deployed, working analytics-engineering stack with a weekly automated refresh, not slideware.",
-  "GovCon fluency from day one: procurement data, DLA fuel bid environments, and the DMV market.",
+  "Ships end to end and checks the result. Recompete Radar runs from raw government files to a ranked, explained list, with tests that caught his own mistakes.",
+  "Says what the data cannot support. The flagship case study dates every figure and lists its limits.",
 ];
 ---
 
@@ -84,19 +125,20 @@ const whyInterview = [
           <span class="hero-badge hero-badge-amber">Open to full-time roles</span>
         </div>
         <h1 class="hero-title">
-          GovCon Data Engineering & Analytics<br />
-          <span style="color: var(--teal-text);">for teams that need trusted metrics, useful pipelines, and clear decisions.</span>
+          I turn messy data into analysis people can act on.<br />
+          <span style="color: var(--teal-text);">Data engineering, analytics, and implementation.</span>
         </h1>
         <p class="hero-lede">
-          NOVA/DMV-based data and analytics professional building SQL/Python pipelines, reporting
-          layers, and explainable decision-support tools across GovCon, membership analytics,
-          procurement intelligence, and AI workflows.
+          Data and analytics professional with a systems-engineering background. I build SQL and
+          Python pipelines, tested reporting layers, and decision-support tools: most recently on
+          federal contracting data, and before that on 114K+ member records at a national
+          association.
           <strong style="color: var(--ink-2);">Open to full-time roles and select consulting work.</strong>
         </p>
         <div style="display: flex; gap: 10px; flex-wrap: wrap; align-items: center;">
           <a href="/resume" class="btn-primary">View resume</a>
-          <a href="#sunlight" class="btn-outline">Review flagship project</a>
           <a href="mailto:Peter.H.Hagen@gmail.com" class="btn-outline">Contact Peter</a>
+          <a href="#radar" class="btn-outline">See the flagship project</a>
           <a href="https://github.com/PHiZou" target="_blank" rel="noopener noreferrer" class="btn-ghost">GitHub ↗</a>
         </div>
         <div style="display: flex; gap: 28px; padding-top: 4px; flex-wrap: wrap;">
@@ -109,31 +151,25 @@ const whyInterview = [
         </div>
       </div>
 
-      <!-- Two pathways -->
       <div style="display: flex; flex-direction: column; gap: 14px;">
+        <a href="/projects/sunlight-recompete-radar" class="card card-glow-amber pathway-card hero-radar reveal">
+          <div class="pathway-label" style="color: var(--amber);">Flagship project</div>
+          <div class="hero-radar-title">Recompete Radar</div>
+          <div class="pathway-desc">
+            484,242 public contract records turned into a tested, explainable shortlist.
+          </div>
+          <span class="hero-radar-link">Read the case study →</span>
+        </a>
         <div class="card card-glow-teal pathway-card reveal">
           <div class="pathway-label" style="color: var(--teal-text);">Hiring Peter?</div>
           <div class="pathway-desc">
-            Resume, role fit, and strongest proof projects. Available now for full-time data and
-            analytics roles.
+            Available now for full-time data, analytics, and implementation roles.
           </div>
           <div style="display: flex; flex-direction: column; gap: 6px; margin-top: 2px;">
             <a href="/resume" class="btn-primary" style="justify-content: center;">View resume</a>
-            <a href="#projects" class="btn-outline" style="justify-content: center;">See strongest work</a>
-            <a href="https://www.linkedin.com/in/peterhagen123" target="_blank" rel="noopener noreferrer" class="btn-ghost" style="align-self: center; margin-top: 2px;">LinkedIn ↗</a>
-          </div>
-        </div>
-        <div class="card card-glow-amber pathway-card reveal">
-          <div class="pathway-label" style="color: var(--amber);">Evaluating his work?</div>
-          <div class="pathway-desc">
-            Start with Sunlight, then the data products and consulting offers built for the DMV
-            market.
-          </div>
-          <div style="display: flex; flex-direction: column; gap: 6px; margin-top: 2px;">
-            <a href="#sunlight" class="btn-primary btn-amber" style="justify-content: center;">Sunlight — flagship project</a>
             <div style="display: flex; gap: 6px;">
-              <a href="/products" class="btn-outline" style="flex: 1; justify-content: center;">Data products</a>
-              <a href="/consulting" class="btn-outline" style="flex: 1; justify-content: center;">Consulting</a>
+              <a href="mailto:Peter.H.Hagen@gmail.com" class="btn-outline" style="flex: 1; justify-content: center;">Email</a>
+              <a href="https://www.linkedin.com/in/peterhagen123" target="_blank" rel="noopener noreferrer" class="btn-outline" style="flex: 1; justify-content: center;">LinkedIn ↗</a>
             </div>
           </div>
         </div>
@@ -141,69 +177,80 @@ const whyInterview = [
     </div>
   </section>
 
-  <!-- SUNLIGHT FLAGSHIP -->
-  <section id="sunlight" class="amber-mesh section anchor-target">
+  <!-- RECOMPETE RADAR FLAGSHIP -->
+  <section id="radar" class="amber-mesh section anchor-target">
     <div class="wrap">
-      <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 24px; flex-wrap: wrap;">
+      <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 14px; flex-wrap: wrap;">
         <div class="eyebrow">Flagship project</div>
-        <span class="badge badge-live">Live</span>
-        <span class="badge badge-premium">Free early access</span>
-        <span class="badge badge-saas">6-agency scope</span>
+        <span class="badge badge-saas">Solo build · 2026</span>
       </div>
+      <h2 class="flagship-title">Recompete Radar</h2>
+      <p class="flagship-lede">
+        Federal contracts expire and get re-bid. The records are public, but they are too messy
+        to read. I built the pipeline that cleans them, tests them, and ranks what is expiring,
+        and I wrote up where the data could not be trusted.
+      </p>
+
+      <div class="radar-facts">
+        {radarFacts.map((f) => (
+          <div class="radar-fact">
+            <div class="radar-fact-value">{f.value}</div>
+            <div class="radar-fact-label">{f.label}</div>
+          </div>
+        ))}
+      </div>
+
       <div class="flagship-grid">
-        <div style="display: flex; flex-direction: column; gap: 16px;">
-          <h2 class="flagship-title">Sunlight — Federal Recompete Radar</h2>
-          <p class="flagship-lede">
-            GovCon BD and capture teams need to know which contracts are coming up for recompete,
-            how strong the incumbent is, and whether the market is winnable. That category of
-            intelligence is typically sold by commercial platforms at $20K+ per seat per year.
-            Sunlight rebuilds it from free public USASpending data — with
-            <strong style="color: var(--ink-2);">transparent, SQL-based scoring</strong> that
-            decomposes every number into the award-level evidence behind it.
-          </p>
-          <p class="flagship-scope">
-            Current scope: IT and data services (NAICS 541511 / 541512 / 518210) across HHS, VA,
-            DHS, Treasury, Commerce, and SSA —
-            <strong style="color: var(--ink-3);">4,287 recompete candidates</strong> and
-            <strong style="color: var(--ink-3);">$56.0B in at-stake obligated value</strong>
-            (Sept 2026), ranked by recompete likelihood and incumbent strength.
-          </p>
-          <!-- Pipeline strip -->
-          <div class="pipeline-strip">
-            {pipelineSteps.map((s, i) => (
-              <div class="pipeline-step" style={i > 0 ? "border-left: 1px solid var(--border);" : ""}>
-                <div class="pipeline-step-label">{i + 1} · {s.step}</div>
-                <div class="pipeline-step-tool">{s.tool}</div>
-              </div>
-            ))}
-          </div>
-          <p style="font-size: 0.8125rem; line-height: 1.7; color: var(--ink-3); max-width: 620px;">
-            <strong style="color: var(--ink);">Why it matters if you're hiring:</strong> this is the
-            full shape of analytics-engineering work — ingestion through product — built solo with
-            production discipline (orchestration, tested models, explainable scoring). It's the same
-            work a Data or Analytics Engineer does inside a team.
-          </p>
-          <div style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap;">
-            <a href="https://recompete-radar.vercel.app/" target="_blank" rel="noopener noreferrer" class="btn-primary btn-amber slow-demo-link">Launch Sunlight ↗</a>
-            <a href="https://github.com/PHiZou/recompete-radar" target="_blank" rel="noopener noreferrer" class="btn-outline">View repo</a>
-            <a href="/projects/sunlight-recompete-radar" class="btn-outline">Read the case study</a>
-            <a href="/products" class="btn-ghost">All data products →</a>
-          </div>
-        </div>
-        <div class="card reveal" style="padding: 20px; display: flex; flex-direction: column; gap: 12px;">
-          <div class="eyebrow" style="letter-spacing: 0.14em;">Roadmap</div>
-          {roadmap.map((f) => (
-            <div style="display: flex; align-items: flex-start; gap: 8px;">
-              <span style="color: var(--amber); margin-top: 2px; flex-shrink: 0;">→</span>
-              <span style="font-size: 0.72rem; color: var(--ink-3); line-height: 1.5;">{f}</span>
+        <div class="radar-qa">
+          {radarQA.map((r) => (
+            <div class="radar-qa-row">
+              <div class="radar-q">{r.q}</div>
+              <div class="radar-a">{r.a}</div>
             </div>
           ))}
-          <div class="divider"></div>
-          <div style="font-size: 0.72rem; color: var(--ink-4); line-height: 1.6;">
-            Interested in early B2B access or partnership?
-            <a href="mailto:Peter.H.Hagen@gmail.com" style="color: var(--amber); font-weight: 600;">Email Peter</a>.
-          </div>
         </div>
+
+        <figure class="card radar-chart reveal">
+          <figcaption>
+            <span class="radar-chart-kicker">One of the four traps</span>
+            Subcontract reports double-count. Adding them up overstates the total by more than 2×.
+          </figcaption>
+          {subBars.map((b) => (
+            <div class="rbar-row">
+              <div class="rbar-label">{b.label}</div>
+              <div class="rbar-line">
+                <div class="rbar-track">
+                  <div class:list={["rbar", { "rbar-muted": b.muted }]} style={`width:${(b.value / 107.76) * 100}%`}></div>
+                </div>
+                <div class="rbar-value mono">{b.display}</div>
+              </div>
+            </div>
+          ))}
+          <p class="radar-chart-note">
+            117,266 subcontract reports across 19 agencies. Warehouse analysis, 8 Nov 2026.
+          </p>
+        </figure>
+      </div>
+
+      <div class="eyebrow" style="margin: 32px 0 12px;">What came out of it</div>
+      <div class="radar-outputs">
+        {radarOutputs.map((o) => (
+          <a href={o.href} class="card radar-output reveal">
+            <div style="display: flex; justify-content: space-between; align-items: center; gap: 8px;">
+              <span class="radar-output-kind">{o.kind}</span>
+              <span class={`badge ${o.cls}`}>{o.status}</span>
+            </div>
+            <div class="radar-output-title">{o.title}</div>
+            <div class="radar-output-desc">{o.desc}</div>
+          </a>
+        ))}
+      </div>
+
+      <div style="display: flex; gap: 10px 16px; align-items: center; flex-wrap: wrap; margin-top: 24px;">
+        <a href="/projects/sunlight-recompete-radar" class="btn-primary btn-amber">Read the case study</a>
+        <a href="/recompete-radar" class="btn-outline">Data stories</a>
+        <a href="https://github.com/PHiZou/recompete-radar" target="_blank" rel="noopener noreferrer" class="btn-outline">View code</a>
+        <a href="https://recompete-radar.vercel.app/" target="_blank" rel="noopener noreferrer" class="btn-ghost slow-demo-link">Live app (earlier version) ↗</a>
       </div>
     </div>
   </section>
@@ -247,8 +294,8 @@ const whyInterview = [
     <div class="wrap">
       <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 20px;">
         <div>
-          <div class="eyebrow" style="margin-bottom: 8px;">Selected work</div>
-          <h2 style="font-size: 1.25rem; font-weight: 700; color: var(--ink);">Six projects, chosen for signal</h2>
+          <div class="eyebrow" style="margin-bottom: 8px;">Supporting work</div>
+          <h2 style="font-size: 1.25rem; font-weight: 700; color: var(--ink);">Four more projects</h2>
         </div>
         <a href="/projects" class="btn-ghost">Full catalog →</a>
       </div>
@@ -362,9 +409,10 @@ const whyInterview = [
 
   .flagship-grid {
     display: grid;
-    grid-template-columns: 1fr 300px;
-    gap: 40px;
+    grid-template-columns: 1fr 1fr;
+    gap: 32px;
     align-items: start;
+    margin-top: 28px;
   }
   .flagship-title {
     font-size: clamp(1.4rem, 3vw, 2rem);
@@ -373,7 +421,39 @@ const whyInterview = [
     color: var(--ink);
     letter-spacing: -0.02em;
   }
-  .flagship-lede { font-size: 0.875rem; line-height: 1.75; color: var(--ink-3); max-width: 620px; }
+  .flagship-lede { font-size: 1rem; line-height: 1.7; color: var(--ink-2); max-width: 680px; margin-top: 10px; }
+
+  .hero-radar { text-decoration: none; }
+  .hero-radar-title { font-family: var(--font-serif); font-size: 1.35rem; font-weight: 700; color: var(--ink); line-height: 1.15; }
+  .hero-radar-link { font-size: 0.8125rem; font-weight: 700; color: var(--amber); }
+
+  .radar-facts { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0; margin-top: 24px; border-top: 1px solid var(--border-strong); border-bottom: 1px solid var(--border-strong); }
+  .radar-fact { padding: 16px 20px 16px 0; }
+  .radar-fact + .radar-fact { padding-left: 20px; border-left: 1px solid var(--border); }
+  .radar-fact-value { font-family: var(--font-serif); font-size: clamp(1.6rem, 3.4vw, 2.2rem); font-weight: 700; color: var(--ink); line-height: 1.05; }
+  .radar-fact-label { font-size: 0.78rem; line-height: 1.45; color: var(--ink-2); margin-top: 6px; max-width: 240px; }
+
+  .radar-qa-row { display: grid; grid-template-columns: 120px 1fr; gap: 12px; padding: 12px 0; border-bottom: 1px solid var(--border); }
+  .radar-qa-row:first-child { padding-top: 0; }
+  .radar-q { font-size: 0.65rem; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: var(--amber); padding-top: 3px; }
+  .radar-a { font-size: 0.875rem; line-height: 1.6; color: var(--ink-2); }
+
+  .radar-chart { padding: 18px 20px; display: flex; flex-direction: column; gap: 12px; }
+  .radar-chart figcaption { font-size: 0.875rem; font-weight: 600; line-height: 1.45; color: var(--ink); }
+  .radar-chart-kicker { display: block; font-size: 0.62rem; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; color: var(--ink-3); margin-bottom: 4px; }
+  .rbar-label { font-size: 0.75rem; color: var(--ink-2); margin-bottom: 4px; }
+  .rbar-line { display: grid; grid-template-columns: 1fr 64px; gap: 10px; align-items: center; }
+  .rbar-track { height: 14px; }
+  .rbar { height: 100%; background: var(--teal); border-radius: 0 4px 4px 0; }
+  .rbar-muted { background: var(--border-strong); }
+  .rbar-value { font-size: 0.78rem; color: var(--ink); text-align: right; }
+  .radar-chart-note { font-size: 0.7rem; line-height: 1.5; color: var(--ink-3); }
+
+  .radar-outputs { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
+  .radar-output { padding: 16px 18px; display: flex; flex-direction: column; gap: 8px; text-decoration: none; }
+  .radar-output-kind { font-size: 0.62rem; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: var(--ink-3); }
+  .radar-output-title { font-family: var(--font-serif); font-size: 1rem; font-weight: 700; line-height: 1.3; color: var(--ink); }
+  .radar-output-desc { font-size: 0.78rem; line-height: 1.55; color: var(--ink-2); }
   .flagship-scope { font-size: 0.8125rem; line-height: 1.7; color: var(--ink-4); max-width: 620px; }
 
   .pipeline-strip {
@@ -457,7 +537,12 @@ const whyInterview = [
   }
 
   @media (max-width: 760px) {
-    .hero-grid, .flagship-grid, .two-col { grid-template-columns: 1fr; }
+    .hero-grid, .flagship-grid, .two-col, .radar-outputs { grid-template-columns: 1fr; }
+    .radar-facts { grid-template-columns: 1fr; }
+    .radar-fact { padding: 12px 0; }
+    .radar-fact + .radar-fact { padding-left: 0; border-left: none; border-top: 1px solid var(--border); }
+    .radar-qa-row { grid-template-columns: 1fr; gap: 2px; }
+    .role-row { flex-direction: column; align-items: flex-start; gap: 2px; }
     .project-row { grid-template-columns: 20px 1fr; }
     .project-launch { grid-column: 2; }
     .section, .hero-section { padding-left: 18px; padding-right: 18px; }

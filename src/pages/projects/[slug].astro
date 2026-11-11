@@ -5,7 +5,8 @@ import ProjectArticle from "../../components/projects/ProjectArticle.astro";
 export async function getStaticPaths() {
   const { getCollection } = await import("astro:content");
   const projects = await getCollection("projects");
-  return projects.map((project) => ({
+  // The flagship case study has its own hand-built page (sunlight-recompete-radar.astro).
+  return projects.filter((project) => project.slug !== "sunlight-recompete-radar").map((project) => ({
     params: { slug: project.slug },
     props: { project },
   }));
