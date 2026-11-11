@@ -1,553 +1,217 @@
 ---
+// Homepage. One message: Peter builds data products from messy public data,
+// and Recompete Radar is the main one. Everything else is secondary.
+// Story text is copied from the stories' own headlines and findings.
 import BaseLayout from "../layouts/BaseLayout.astro";
+import HireBridge from "../components/HireBridge.astro";
 
-const heroStats = [
-  { label: "Core stack", value: "Python · SQL · Snowflake · dbt" },
-  { label: "Roles", value: "Data · Analytics · Implementation" },
-  { label: "Availability", value: "Full-time now · consulting" },
-];
+const latestStory = {
+  href: "/stories/contracts-coming-due/",
+  title: "$62.9 billion in federal work comes up for grabs in the next 12 months",
+  finding:
+    "11,794 contracts at 20 civilian agencies reach the end of their final period by November 2027, and a quarter of the money ends in a single month: September.",
+  asOfLabel: "Nov. 8, 2026",
+};
 
-// Recompete Radar figures. Verified against the warehouse on 11 Nov 2026;
-// sources and dates are documented on the case-study page.
-const radarFacts = [
-  { value: "484,242", label: "public contract records cleaned and modeled" },
-  { value: "27,673", label: "expiring contracts ranked, each with its reasons" },
-  { value: "4", label: "data traps found, fixed, and locked in with tests" },
-];
-
-const radarQA = [
+const products = [
   {
-    q: "Problem",
-    a: "Federal contract records are public but too messy to act on: half a million inconsistent rows and no way to tell which expiring contracts matter.",
+    kind: "Data stories",
+    title: "Interactive stories on what the data shows",
+    desc: "Short pieces that ask one question and answer it with charts: contracts coming due, and who does HHS's contract work.",
+    cta: "See the stories",
+    href: "/recompete-radar#stories",
+    external: false,
   },
-  {
-    q: "What I built",
-    a: "The whole path, solo: collection, a tested Snowflake and dbt warehouse, backtested scoring, an API, and a web app.",
-  },
-  {
-    q: "What it helps decide",
-    a: "Which contracts deserve a closer look, and how entrenched the current vendor appears to be.",
-  },
-  {
-    q: "Limits",
-    a: "It ranks research leads; it does not predict winners. Civilian IT and professional services only.",
-  },
-];
-
-// Total reported subcontract dollars under three counting rules ($B).
-// Warehouse analysis, 8 Nov 2026 (USAspending subaward reports).
-const subBars = [
-  { label: "Every report added up", value: 107.76, display: "$107.8B", muted: true },
-  { label: "Exact re-filings removed", value: 98.02, display: "$98.0B", muted: true },
-  { label: "Latest valid report per subcontract", value: 50.72, display: "$50.7B" },
-];
-
-const radarOutputs = [
   {
     kind: "Analytical brief",
-    status: "Finished",
-    cls: "badge-live",
     title: "Four traps in public contract data",
-    desc: "What would have produced confident, wrong numbers, and how each was fixed.",
+    desc: "The data problems that would have produced confident, wrong numbers, and how each one was found and fixed.",
+    cta: "Read the brief",
     href: "/projects/sunlight-recompete-radar#brief",
+    external: false,
   },
   {
-    kind: "Product walkthrough",
-    status: "Illustrative",
-    cls: "badge-premium",
-    title: "How a score is explained",
-    desc: "An invented contract scored with the real fitted weights, factor by factor.",
-    href: "/projects/sunlight-recompete-radar#score",
+    kind: "Live app",
+    title: "Search expiring contracts yourself",
+    desc: "Browse ranked contracts by agency and vendor, with the factors behind each score.",
+    cta: "Open the app",
+    href: "https://recompete-radar.vercel.app/",
+    external: true,
   },
-  {
-    kind: "Implementation notes",
-    status: "Finished",
-    cls: "badge-live",
-    title: "Pipeline and checks",
-    desc: "Five steps, the tests that fail the build, and three decisions I would defend.",
-    href: "/projects/sunlight-recompete-radar#pipeline",
-  },
-];
-
-const selectedProjects = [
-  {
-    title: "Obsidian RAG Chat",
-    type: "AI pipeline / LLM",
-    desc: "Citation-grounded RAG on heading-aware chunking, embeddings, and vector retrieval.",
-    url: "https://obsidian-rag-7fzsf7xqbrkgxqw3c7xh2g.streamlit.app/",
-    caseStudy: "/projects/obsidian-rag-chat",
-  },
-  {
-    title: "Federal Procurement Intelligence Dashboard",
-    type: "BI / analytics",
-    desc: "Agency spend, contractor leaderboards, and acquisition trends in one BI app.",
-    url: "https://govcon-analytics-dashboard.vercel.app",
-    caseStudy: "/projects/govcon-procurement-dashboard",
-  },
-  {
-    title: "NOVA Data Center Energy",
-    type: "D3 storytelling",
-    desc: "Scrollytelling on Northern Virginia infrastructure data — the data center boom, made legible.",
-    url: "https://nova-data-center-energy.vercel.app",
-    caseStudy: "/projects/nova-data-center-energy",
-  },
-  {
-    title: "Iran Conflict Operational Intelligence Dashboard",
-    type: "Defense & intel analytics",
-    desc: "Multi-view OSINT dashboard: escalation index, force posture, scenario pathways.",
-    url: "https://iran-conflict-portfolio.vercel.app",
-    caseStudy: "/projects/iran-conflict-dashboard",
-  },
-];
-
-const targetRoles = [
-  { role: "Data Engineer", note: "Pipelines · dbt · Snowflake" },
-  { role: "Analytics Engineer", note: "SQL-heavy, stakeholder-facing models" },
-  { role: "Business Intelligence Engineer", note: "KPI systems, reporting layers" },
-  { role: "Implementation / Technical Operations", note: "Data onboarding, QA, tooling" },
-  { role: "AI / Data Workflow roles", note: "RAG pipelines, LLM orchestration" },
-];
-
-const whyInterview = [
-  "Has done the unglamorous parts — data quality, stakeholder reporting, metric definitions that stick — on 114K+ member records at a national organization.",
-  "Ships end to end and checks the result. Recompete Radar runs from raw government files to a ranked, explained list, with tests that caught his own mistakes.",
-  "Says what the data cannot support. The flagship case study dates every figure and lists its limits.",
 ];
 ---
 
 <BaseLayout>
   <!-- HERO -->
-  <section class="hero-mesh hero-section">
-    <div class="wrap hero-grid">
-      <div class="hero-copy">
-        <div style="display: flex; gap: 8px; flex-wrap: wrap;">
-          <span class="hero-badge hero-badge-teal">Northern Virginia · DMV</span>
-          <span class="hero-badge hero-badge-amber">Open to full-time roles</span>
-        </div>
-        <h1 class="hero-title">
-          I turn messy data into analysis people can act on.<br />
-          <span style="color: var(--teal-text);">Data engineering, analytics, and implementation.</span>
-        </h1>
-        <p class="hero-lede">
-          Data and analytics professional with a systems-engineering background. I build SQL and
-          Python pipelines, tested reporting layers, and decision-support tools: most recently on
-          federal contracting data, and before that on 114K+ member records at a national
-          association.
-          <strong style="color: var(--ink-2);">Open to full-time roles and select consulting work.</strong>
-        </p>
-        <div style="display: flex; gap: 10px; flex-wrap: wrap; align-items: center;">
-          <a href="/resume" class="btn-primary">View resume</a>
-          <a href="mailto:Peter.H.Hagen@gmail.com" class="btn-outline">Contact Peter</a>
-          <a href="#radar" class="btn-outline">See the flagship project</a>
-          <a href="https://github.com/PHiZou" target="_blank" rel="noopener noreferrer" class="btn-ghost">GitHub ↗</a>
-        </div>
-        <div style="display: flex; gap: 28px; padding-top: 4px; flex-wrap: wrap;">
-          {heroStats.map((item) => (
-            <div>
-              <div class="hero-stat-label">{item.label}</div>
-              <div class="hero-stat-value">{item.value}</div>
-            </div>
-          ))}
-        </div>
+  <section class="hero-mesh hero">
+    <div class="wrap">
+      <div class="hero-badges">
+        <span class="hero-badge hero-badge-teal">Northern Virginia · DMV</span>
+        <span class="hero-badge hero-badge-amber">Open to full-time roles</span>
       </div>
-
-      <div style="display: flex; flex-direction: column; gap: 14px;">
-        <a href="/projects/sunlight-recompete-radar" class="card card-glow-amber pathway-card hero-radar reveal">
-          <div class="pathway-label" style="color: var(--amber);">Flagship project</div>
-          <div class="hero-radar-title">Recompete Radar</div>
-          <div class="pathway-desc">
-            484,242 public contract records turned into a tested, explainable shortlist.
-          </div>
-          <span class="hero-radar-link">Read the case study →</span>
-        </a>
-        <div class="card card-glow-teal pathway-card reveal">
-          <div class="pathway-label" style="color: var(--teal-text);">Hiring Peter?</div>
-          <div class="pathway-desc">
-            Available now for full-time data, analytics, and implementation roles.
-          </div>
-          <div style="display: flex; flex-direction: column; gap: 6px; margin-top: 2px;">
-            <a href="/resume" class="btn-primary" style="justify-content: center;">View resume</a>
-            <div style="display: flex; gap: 6px;">
-              <a href="mailto:Peter.H.Hagen@gmail.com" class="btn-outline" style="flex: 1; justify-content: center;">Email</a>
-              <a href="https://www.linkedin.com/in/peterhagen123" target="_blank" rel="noopener noreferrer" class="btn-outline" style="flex: 1; justify-content: center;">LinkedIn ↗</a>
-            </div>
-          </div>
-        </div>
+      <h1 class="hero-title">I build data products from messy public data.</h1>
+      <p class="hero-lede">
+        My main one is <strong>Recompete Radar</strong>. It tracks which federal contracts are about
+        to be re-bid, who holds them, and how entrenched they are, and turns that into stories,
+        briefs and a searchable app.
+      </p>
+      <div class="hero-cta">
+        <a href="#radar" class="btn-primary btn-amber">See what it produces</a>
+        <a href="/resume" class="btn-outline">View resume</a>
+        <a href="mailto:Peter.H.Hagen@gmail.com" class="btn-outline">Contact Peter</a>
       </div>
+      <p class="hero-roles">
+        Looking for: Data Engineer · Analytics Engineer · BI Engineer · Implementation / Technical Operations
+      </p>
     </div>
   </section>
 
-  <!-- RECOMPETE RADAR FLAGSHIP -->
-  <section id="radar" class="amber-mesh section anchor-target">
+  <!-- WHAT RADAR PRODUCES -->
+  <section id="radar" class="section amber-mesh anchor-target">
     <div class="wrap">
-      <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 14px; flex-wrap: wrap;">
-        <div class="eyebrow">Flagship project</div>
-        <span class="badge badge-saas">Solo build · 2026</span>
-      </div>
-      <h2 class="flagship-title">Recompete Radar</h2>
-      <p class="flagship-lede">
-        Federal contracts expire and get re-bid. The records are public, but they are too messy
-        to read. I built the pipeline that cleans them, tests them, and ranks what is expiring,
-        and I wrote up where the data could not be trusted.
-      </p>
+      <div class="eyebrow">Recompete Radar</div>
+      <h2 class="sec-title">What it produces</h2>
 
-      <div class="radar-facts">
-        {radarFacts.map((f) => (
-          <div class="radar-fact">
-            <div class="radar-fact-value">{f.value}</div>
-            <div class="radar-fact-label">{f.label}</div>
-          </div>
-        ))}
-      </div>
-
-      <div class="flagship-grid">
-        <div class="radar-qa">
-          {radarQA.map((r) => (
-            <div class="radar-qa-row">
-              <div class="radar-q">{r.q}</div>
-              <div class="radar-a">{r.a}</div>
-            </div>
-          ))}
+      <a href={latestStory.href} class="card lead-card reveal">
+        <div class="lead-meta">
+          <span class="badge badge-live">Latest story</span>
+          <span class="lead-asof">Data as of {latestStory.asOfLabel}</span>
         </div>
+        <div class="lead-title">{latestStory.title}</div>
+        <p class="lead-finding">{latestStory.finding}</p>
+        <span class="lead-go">Read the story →</span>
+      </a>
 
-        <figure class="card radar-chart reveal">
-          <figcaption>
-            <span class="radar-chart-kicker">One of the four traps</span>
-            Subcontract reports double-count. Adding them up overstates the total by more than 2×.
-          </figcaption>
-          {subBars.map((b) => (
-            <div class="rbar-row">
-              <div class="rbar-label">{b.label}</div>
-              <div class="rbar-line">
-                <div class="rbar-track">
-                  <div class:list={["rbar", { "rbar-muted": b.muted }]} style={`width:${(b.value / 107.76) * 100}%`}></div>
-                </div>
-                <div class="rbar-value mono">{b.display}</div>
-              </div>
-            </div>
-          ))}
-          <p class="radar-chart-note">
-            117,266 subcontract reports across 19 agencies. Warehouse analysis, 8 Nov 2026.
-          </p>
-        </figure>
-      </div>
-
-      <div class="eyebrow" style="margin: 32px 0 12px;">What came out of it</div>
-      <div class="radar-outputs">
-        {radarOutputs.map((o) => (
-          <a href={o.href} class="card radar-output reveal">
-            <div style="display: flex; justify-content: space-between; align-items: center; gap: 8px;">
-              <span class="radar-output-kind">{o.kind}</span>
-              <span class={`badge ${o.cls}`}>{o.status}</span>
-            </div>
-            <div class="radar-output-title">{o.title}</div>
-            <div class="radar-output-desc">{o.desc}</div>
+      <div class="products">
+        {products.map((p) => (
+          <a
+            href={p.href}
+            class:list={["card", "product", "reveal", { "slow-demo-link": p.external }]}
+            {...(p.external ? { target: "_blank", rel: "noopener noreferrer" } : {})}
+          >
+            <span class="product-kind">{p.kind}</span>
+            <span class="product-title">{p.title}</span>
+            <span class="product-desc">{p.desc}</span>
+            <span class="product-go">{p.cta} {p.external ? "↗" : "→"}</span>
           </a>
         ))}
       </div>
 
-      <div style="display: flex; gap: 10px 16px; align-items: center; flex-wrap: wrap; margin-top: 24px;">
-        <a href="/projects/sunlight-recompete-radar" class="btn-primary btn-amber">Read the case study</a>
-        <a href="/recompete-radar" class="btn-outline">Data stories</a>
-        <a href="https://github.com/PHiZou/recompete-radar" target="_blank" rel="noopener noreferrer" class="btn-outline">View code</a>
-        <a href="https://recompete-radar.vercel.app/" target="_blank" rel="noopener noreferrer" class="btn-ghost slow-demo-link">Live app (earlier version) ↗</a>
-      </div>
+      <p class="how">
+        Built solo from 484,242 public contract records, cleaned and tested in Snowflake and dbt.
+        <a href="/projects/sunlight-recompete-radar">How it's built, and its limits →</a>
+      </p>
     </div>
   </section>
 
-  <!-- PROFESSIONAL EXPERIENCE -->
+  <!-- BACKGROUND -->
   <section class="section bg-alt">
-    <div class="wrap">
-      <div class="eyebrow" style="margin-bottom: 8px;">Professional experience</div>
-      <h2 class="section-title">Real organizational data, not just portfolio projects</h2>
-      <div class="two-col">
-        <div class="card reveal" style="padding: 22px;">
-          <div class="org-label">National Association of Home Builders</div>
-          <div class="org-role">Senior Data Analyst · previously Director, Membership Data</div>
-          <p class="org-desc">
-            Owned reporting and analytics on
-            <strong style="color: var(--ink-2);">114K+ member records</strong> — CRM-style data,
-            segmentation, dashboards, stakeholder reporting, and the operational data quality work
-            that makes leadership metrics trustworthy across a national organization.
-          </p>
-        </div>
-        <div class="card reveal" style="padding: 22px;">
-          <div class="org-label">DGCI — Defense logistics & procurement</div>
-          <div class="org-role">DLA fuel contract bid environments</div>
-          <p class="org-desc">
-            Supported federal fuel contract bidding: logistics constraints, procurement-facing
-            analysis, and
-            <strong style="color: var(--ink-2);">executive-ready pricing and business recommendations</strong>
-            — early grounding in how GovCon buyers and operators actually make decisions.
-          </p>
-        </div>
+    <div class="wrap bg-grid">
+      <div>
+        <div class="eyebrow" style="margin-bottom: 8px;">Background</div>
+        <h2 class="sec-title" style="margin-top: 0;">Real organizational data, not just portfolio projects</h2>
       </div>
-      <div style="margin-top: 16px; font-size: 0.75rem; color: var(--ink-4);">
-        M.S. Systems Engineering, George Mason University · B.S. Industrial & Systems Engineering,
-        Virginia Tech
-      </div>
-    </div>
-  </section>
-
-  <!-- SELECTED PROJECTS -->
-  <section id="projects" class="section anchor-target">
-    <div class="wrap">
-      <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 20px;">
+      <div class="bg-items">
         <div>
-          <div class="eyebrow" style="margin-bottom: 8px;">Supporting work</div>
-          <h2 style="font-size: 1.25rem; font-weight: 700; color: var(--ink);">Four more projects</h2>
+          <div class="org">National Association of Home Builders</div>
+          <p>
+            Senior Data Analyst, previously Director, Membership Data. Reporting, segmentation and
+            data-quality work on <strong>114K+ member records</strong> for a national organization.
+          </p>
         </div>
-        <a href="/projects" class="btn-ghost">Full catalog →</a>
-      </div>
-      <div style="display: flex; flex-direction: column;">
-        {selectedProjects.map((p, i) => (
-          <div class="project-row reveal">
-            <span class="mono project-num">0{i + 1}</span>
-            <div>
-              <div style="display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap;">
-                <a href={p.caseStudy} class="project-title">{p.title}</a>
-                <span class="mono project-type">{p.type}</span>
-              </div>
-              <div style="font-size: 0.75rem; color: var(--ink-4); margin-top: 2px;">{p.desc}</div>
-            </div>
-            {p.url && (
-              <a href={p.url} target="_blank" rel="noopener noreferrer" class="project-launch">Launch ↗</a>
-            )}
-          </div>
-        ))}
+        <div>
+          <div class="org">DGCI · Defense logistics &amp; procurement</div>
+          <p>
+            Supported DLA fuel contract bidding with procurement-facing analysis and
+            executive-ready pricing recommendations.
+          </p>
+        </div>
+        <p class="edu">
+          M.S. Systems Engineering, George Mason University · B.S. Industrial &amp; Systems
+          Engineering, Virginia Tech
+        </p>
       </div>
     </div>
   </section>
 
-  <!-- FOR RECRUITERS & HIRING MANAGERS -->
+  <!-- OTHER WORK -->
   <section class="section">
-    <div class="wrap">
-      <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 24px; flex-wrap: wrap; gap: 12px;">
-        <div>
-          <div class="eyebrow" style="margin-bottom: 8px;">For recruiters and hiring managers</div>
-          <h2 style="font-size: 1.25rem; font-weight: 700; color: var(--ink);">Where Peter fits</h2>
-        </div>
-        <div style="display: flex; gap: 8px; flex-wrap: wrap;">
-          <a href="/resume" class="btn-primary">Download resume</a>
-          <a href="https://www.linkedin.com/in/peterhagen123" target="_blank" rel="noopener noreferrer" class="btn-outline">LinkedIn ↗</a>
-          <a href="https://github.com/PHiZou" target="_blank" rel="noopener noreferrer" class="btn-outline">GitHub ↗</a>
-        </div>
+    <div class="wrap other">
+      <div>
+        <div class="eyebrow" style="margin-bottom: 6px;">Other work</div>
+        <p>Pipelines, dashboards, a RAG app and D3 visualizations, kept as supporting examples.</p>
       </div>
-      <div class="two-col">
-        <div class="card reveal" style="padding: 20px;">
-          <div class="card-label">Target roles</div>
-          <div style="display: flex; flex-direction: column;">
-            {targetRoles.map((r) => (
-              <div class="role-row">
-                <span style="font-size: 0.8125rem; font-weight: 600; color: var(--ink);">{r.role}</span>
-                <span style="font-size: 0.65rem; color: var(--ink-4);">{r.note}</span>
-              </div>
-            ))}
-          </div>
-        </div>
-        <div class="card reveal" style="padding: 20px;">
-          <div class="card-label">Why interview Peter</div>
-          <div style="display: flex; flex-direction: column; gap: 10px;">
-            {whyInterview.map((b) => (
-              <div style="display: flex; gap: 10px; align-items: flex-start;">
-                <span style="color: var(--teal-text); flex-shrink: 0; margin-top: 1px;">▸</span>
-                <span style="font-size: 0.78rem; line-height: 1.65; color: var(--ink-3);">{b}</span>
-              </div>
-            ))}
-          </div>
-        </div>
-      </div>
+      <a href="/projects" class="btn-outline">Browse other projects →</a>
     </div>
   </section>
+
+  <HireBridge />
 </BaseLayout>
 
 <style>
   .anchor-target { scroll-margin-top: 70px; }
 
-  .hero-section {
-    padding: 64px 24px 56px;
-    border-bottom: 1px solid var(--border);
-  }
-  .hero-grid {
-    display: grid;
-    grid-template-columns: 1fr 360px;
-    gap: 48px;
-    align-items: start;
-  }
-  .hero-copy { display: flex; flex-direction: column; gap: 20px; }
+  .hero { padding: 72px 24px 64px; border-bottom: 1px solid var(--border); }
+  .hero-badges { display: flex; gap: 8px; flex-wrap: wrap; }
   .hero-title {
-    font-size: clamp(1.9rem, 4vw, 2.9rem);
+    margin-top: 20px;
+    font-size: clamp(2rem, 5vw, 3.4rem);
     font-weight: 700;
-    line-height: 1.12;
+    line-height: 1.08;
     letter-spacing: -0.02em;
     color: var(--ink);
+    max-width: 820px;
   }
-  .hero-lede {
-    font-size: 0.9375rem;
-    line-height: 1.75;
-    color: var(--ink-3);
-    max-width: 560px;
-  }
-  .hero-stat-label {
-    font-size: 0.65rem;
-    color: var(--ink-5);
-    font-weight: 600;
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
-    margin-bottom: 2px;
-  }
-  .hero-stat-value { font-size: 0.75rem; color: var(--ink-3); font-weight: 500; }
+  .hero-lede { margin-top: 18px; font-size: 1.0625rem; line-height: 1.7; color: var(--ink-2); max-width: 640px; }
+  .hero-lede strong { color: var(--ink); }
+  .hero-cta { margin-top: 26px; display: flex; gap: 10px; flex-wrap: wrap; }
+  .hero-roles { margin-top: 22px; font-size: 0.75rem; color: var(--ink-3); }
 
-  .pathway-card { padding: 20px; display: flex; flex-direction: column; gap: 10px; }
-  .pathway-label {
-    font-size: 0.65rem;
+  .sec-title {
+    margin-top: 6px;
+    font-size: clamp(1.4rem, 3vw, 1.9rem);
     font-weight: 700;
-    letter-spacing: 0.14em;
-    text-transform: uppercase;
-  }
-  .pathway-desc { font-size: 0.8125rem; line-height: 1.6; color: var(--ink-3); }
-
-  .flagship-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 32px;
-    align-items: start;
-    margin-top: 28px;
-  }
-  .flagship-title {
-    font-size: clamp(1.4rem, 3vw, 2rem);
-    font-weight: 700;
-    line-height: 1.15;
+    letter-spacing: -0.01em;
     color: var(--ink);
-    letter-spacing: -0.02em;
-  }
-  .flagship-lede { font-size: 1rem; line-height: 1.7; color: var(--ink-2); max-width: 680px; margin-top: 10px; }
-
-  .hero-radar { text-decoration: none; }
-  .hero-radar-title { font-family: var(--font-serif); font-size: 1.35rem; font-weight: 700; color: var(--ink); line-height: 1.15; }
-  .hero-radar-link { font-size: 0.8125rem; font-weight: 700; color: var(--amber); }
-
-  .radar-facts { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0; margin-top: 24px; border-top: 1px solid var(--border-strong); border-bottom: 1px solid var(--border-strong); }
-  .radar-fact { padding: 16px 20px 16px 0; }
-  .radar-fact + .radar-fact { padding-left: 20px; border-left: 1px solid var(--border); }
-  .radar-fact-value { font-family: var(--font-serif); font-size: clamp(1.6rem, 3.4vw, 2.2rem); font-weight: 700; color: var(--ink); line-height: 1.05; }
-  .radar-fact-label { font-size: 0.78rem; line-height: 1.45; color: var(--ink-2); margin-top: 6px; max-width: 240px; }
-
-  .radar-qa-row { display: grid; grid-template-columns: 120px 1fr; gap: 12px; padding: 12px 0; border-bottom: 1px solid var(--border); }
-  .radar-qa-row:first-child { padding-top: 0; }
-  .radar-q { font-size: 0.65rem; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: var(--amber); padding-top: 3px; }
-  .radar-a { font-size: 0.875rem; line-height: 1.6; color: var(--ink-2); }
-
-  .radar-chart { padding: 18px 20px; display: flex; flex-direction: column; gap: 12px; }
-  .radar-chart figcaption { font-size: 0.875rem; font-weight: 600; line-height: 1.45; color: var(--ink); }
-  .radar-chart-kicker { display: block; font-size: 0.62rem; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; color: var(--ink-3); margin-bottom: 4px; }
-  .rbar-label { font-size: 0.75rem; color: var(--ink-2); margin-bottom: 4px; }
-  .rbar-line { display: grid; grid-template-columns: 1fr 64px; gap: 10px; align-items: center; }
-  .rbar-track { height: 14px; }
-  .rbar { height: 100%; background: var(--teal); border-radius: 0 4px 4px 0; }
-  .rbar-muted { background: var(--border-strong); }
-  .rbar-value { font-size: 0.78rem; color: var(--ink); text-align: right; }
-  .radar-chart-note { font-size: 0.7rem; line-height: 1.5; color: var(--ink-3); }
-
-  .radar-outputs { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
-  .radar-output { padding: 16px 18px; display: flex; flex-direction: column; gap: 8px; text-decoration: none; }
-  .radar-output-kind { font-size: 0.62rem; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: var(--ink-3); }
-  .radar-output-title { font-family: var(--font-serif); font-size: 1rem; font-weight: 700; line-height: 1.3; color: var(--ink); }
-  .radar-output-desc { font-size: 0.78rem; line-height: 1.55; color: var(--ink-2); }
-  .flagship-scope { font-size: 0.8125rem; line-height: 1.7; color: var(--ink-4); max-width: 620px; }
-
-  .pipeline-strip {
-    display: flex;
-    align-items: stretch;
-    flex-wrap: wrap;
-    border: 1px solid var(--border);
-    border-radius: 10px;
-    overflow: hidden;
-    background: var(--bg-card);
-  }
-  .pipeline-step { flex: 1; min-width: 120px; padding: 12px 14px; }
-  .pipeline-step-label {
-    font-size: 0.6rem;
-    font-weight: 700;
-    color: var(--amber);
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
-    margin-bottom: 3px;
-  }
-  .pipeline-step-tool { font-size: 0.7rem; color: var(--ink-3); }
-
-  .section-title { font-size: 1.25rem; font-weight: 700; color: var(--ink); margin-bottom: 24px; }
-  .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
-
-  .org-label {
-    font-size: 0.65rem;
-    font-weight: 700;
-    color: var(--teal-text);
-    letter-spacing: 0.12em;
-    text-transform: uppercase;
-    margin-bottom: 8px;
-  }
-  .org-role { font-size: 0.875rem; font-weight: 700; color: var(--ink); margin-bottom: 8px; }
-  .org-desc { font-size: 0.78rem; line-height: 1.7; color: var(--ink-3); }
-
-  .project-row {
-    display: grid;
-    grid-template-columns: 28px 1fr auto;
-    gap: 14px;
-    align-items: baseline;
-    padding: 14px 0;
-    border-bottom: 1px solid var(--border);
-  }
-  .project-num { font-size: 0.7rem; font-weight: 500; color: var(--border-strong); }
-  .project-title {
-    font-size: 0.875rem;
-    font-weight: 600;
-    color: var(--ink);
-    text-decoration: none;
-  }
-  .project-title:hover { color: var(--teal-text); }
-  .project-type {
-    font-size: 0.62rem;
-    color: var(--teal-text);
-    letter-spacing: 0.06em;
-    text-transform: uppercase;
-  }
-  .project-launch {
-    font-size: 0.7rem;
-    font-weight: 700;
-    color: var(--teal-text);
-    text-decoration: none;
-    white-space: nowrap;
+    line-height: 1.2;
   }
 
-  .card-label {
-    font-size: 0.65rem;
-    font-weight: 700;
-    color: var(--teal-text);
-    letter-spacing: 0.14em;
-    text-transform: uppercase;
-    margin-bottom: 12px;
-  }
-  .role-row {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 9px 0;
-    border-bottom: 1px solid var(--border);
-  }
+  .lead-card { display: flex; flex-direction: column; gap: 10px; margin-top: 22px; padding: 28px 30px; text-decoration: none; }
+  .lead-meta { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+  .lead-asof { font-size: 0.75rem; color: var(--ink-3); }
+  .lead-title { font-family: var(--font-serif); font-size: clamp(1.4rem, 3vw, 1.9rem); font-weight: 700; line-height: 1.2; color: var(--ink); max-width: 780px; }
+  .lead-finding { font-size: 0.95rem; line-height: 1.65; color: var(--ink-2); max-width: 700px; }
+  .lead-go { font-size: 0.875rem; font-weight: 700; color: var(--teal-text); }
+  .lead-card:hover .lead-title { color: var(--teal-text); }
 
+  .products { margin-top: 16px; display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+  .product { display: flex; flex-direction: column; gap: 8px; padding: 20px 22px; text-decoration: none; }
+  .product-kind { font-size: 0.65rem; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: var(--amber); }
+  .product-title { font-family: var(--font-serif); font-size: 1.1rem; font-weight: 700; line-height: 1.3; color: var(--ink); }
+  .product-desc { font-size: 0.82rem; line-height: 1.6; color: var(--ink-2); }
+  .product-go { margin-top: auto; padding-top: 6px; font-size: 0.8125rem; font-weight: 700; color: var(--teal-text); }
+
+  .how { margin-top: 22px; font-size: 0.85rem; line-height: 1.6; color: var(--ink-3); }
+  .how a { color: var(--teal-text); font-weight: 600; text-decoration: none; white-space: nowrap; }
+  .how a:hover { color: var(--teal-hover); }
+
+  .bg-grid { display: grid; grid-template-columns: 1fr 1.4fr; gap: 40px; align-items: start; }
+  .bg-items { display: flex; flex-direction: column; gap: 18px; }
+  .org { font-size: 0.68rem; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: var(--teal-text); margin-bottom: 4px; }
+  .bg-items p { font-size: 0.875rem; line-height: 1.65; color: var(--ink-2); }
+  .bg-items strong { color: var(--ink); }
+  .bg-items p.edu { font-size: 0.75rem; color: var(--ink-3); }
+
+  .other { display: flex; justify-content: space-between; align-items: center; gap: 20px; flex-wrap: wrap; }
+  .other p { font-size: 0.875rem; color: var(--ink-2); }
+
+  @media (max-width: 860px) {
+    .products { grid-template-columns: 1fr; }
+    .bg-grid { grid-template-columns: 1fr; gap: 16px; }
+  }
   @media (max-width: 760px) {
-    .hero-grid, .flagship-grid, .two-col, .radar-outputs { grid-template-columns: 1fr; }
-    .radar-facts { grid-template-columns: 1fr; }
-    .radar-fact { padding: 12px 0; }
-    .radar-fact + .radar-fact { padding-left: 0; border-left: none; border-top: 1px solid var(--border); }
-    .radar-qa-row { grid-template-columns: 1fr; gap: 2px; }
-    .role-row { flex-direction: column; align-items: flex-start; gap: 2px; }
-    .project-row { grid-template-columns: 20px 1fr; }
-    .project-launch { grid-column: 2; }
-    .section, .hero-section { padding-left: 18px; padding-right: 18px; }
-  }
-  @media (max-width: 460px) {
-    .hero-title { font-size: 1.9rem; line-height: 1.15; }
+    .hero { padding: 48px 18px 44px; }
+    .section { padding-left: 18px; padding-right: 18px; }
+    .lead-card { padding: 22px; }
   }
 </style>

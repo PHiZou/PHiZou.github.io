@@ -7,16 +7,9 @@ const allProjects = await getCollection("projects");
 
 const groups = [
   {
-    persona: "Hiring manager? Start with these five",
+    persona: "Start with these",
     color: "var(--teal-text)",
     projects: [
-      {
-        title: "Recompete Radar — flagship case study",
-        desc: "484,242 public contract records → tested Snowflake/dbt warehouse → explainable ranking.",
-        status: "Case study",
-        url: null,
-        caseStudy: "/projects/sunlight-recompete-radar",
-      },
       {
         title: "Obsidian RAG Chat",
         desc: "Citation-grounded RAG: semantic chunking, embeddings, vector retrieval.",
@@ -44,13 +37,6 @@ const groups = [
     persona: "GovCon / BD teams",
     color: "var(--amber)",
     projects: [
-      {
-        title: "Recompete Radar",
-        desc: "Expiring federal contracts ranked with backtested, explainable scores across 20 civilian agencies.",
-        status: "Case study",
-        url: null,
-        caseStudy: "/projects/sunlight-recompete-radar",
-      },
       {
         title: "DMV Company Research Vault",
         desc: "Knowledge graph of 20+ NOVA/DMV tech & GovCon companies.",
@@ -135,22 +121,26 @@ const curatedSlugs = new Set(
     .map((path) => path!.replace("/projects/", ""))
 );
 const moreProjects = allProjects
-  .filter((p) => !curatedSlugs.has(p.slug))
+  .filter((p) => !curatedSlugs.has(p.slug) && p.slug !== "sunlight-recompete-radar")
   .sort((a, b) => a.data.title.localeCompare(b.data.title));
 ---
 
 <BaseLayout
-  title="All Projects – Peter Hagen"
-  description="Pipelines, dashboards, RAG workflows, and procurement intelligence — most are live and clickable, each with a written case study."
+  title="Other work – Peter Hagen"
+  description="Supporting projects by Peter Hagen: pipelines, dashboards, RAG workflows and D3 visualizations. The main project is Recompete Radar."
 >
   <section style="border-bottom: 1px solid var(--border); padding: 48px 24px 32px;">
     <div class="wrap">
-      <div class="eyebrow" style="color: var(--ink-5); margin-bottom: 10px;">All projects</div>
-      <h1 style="font-size: 1.5rem; font-weight: 700; color: var(--ink); margin-bottom: 8px;">Selected work</h1>
-      <p style="font-size: 0.8125rem; color: var(--ink-4);">
-        Pipelines, dashboards, RAG workflows, and procurement intelligence — most are live and
-        clickable. Project titles open the written case study; Launch opens the live app.
+      <div class="eyebrow" style="margin-bottom: 10px;">Other work</div>
+      <h1 style="font-size: 1.5rem; font-weight: 700; color: var(--ink); margin-bottom: 8px;">Supporting projects</h1>
+      <p style="font-size: 0.8125rem; color: var(--ink-3); max-width: 640px;">
+        Pipelines, dashboards, RAG workflows and visualizations. Project titles open the written
+        case study; Launch opens the live app.
       </p>
+      <a href="/recompete-radar" class="card radar-banner">
+        <span><strong>Main project: Recompete Radar.</strong> Data stories, an analytical brief and a live app.</span>
+        <span class="radar-banner-go">Go to Recompete Radar →</span>
+      </a>
     </div>
   </section>
 
@@ -215,6 +205,9 @@ const moreProjects = allProjects
 </BaseLayout>
 
 <style>
+  .radar-banner { margin-top: 18px; padding: 14px 18px; display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap; text-decoration: none; font-size: 0.85rem; color: var(--ink-2); }
+  .radar-banner strong { color: var(--ink); }
+  .radar-banner-go { font-weight: 700; color: var(--amber); white-space: nowrap; }
   .group-label {
     font-size: 0.65rem;
     font-weight: 700;

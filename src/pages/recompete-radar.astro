@@ -1,13 +1,12 @@
 ---
-// Landing page for the Recompete Radar data stories.
-// The stories themselves are raw static files in public/stories/ and are
-// served as-is (their own styles, scripts and fonts). Do not edit them here.
-// Card text is taken from each story's own headline and findings; keep the
-// numbers in sync with the story if a story is ever replaced.
+// Product hub for Recompete Radar: data stories, the brief / case study,
+// and the live app. The stories are raw static files in public/stories/,
+// served as-is; do not edit them here. Card text is copied from each
+// story's own headline and findings; keep it in sync if a story changes.
 import BaseLayout from "../layouts/BaseLayout.astro";
 import HireBridge from "../components/HireBridge.astro";
 
-// Newest first (sorted below by asOf).
+// Newest first.
 const stories = [
   {
     href: "/stories/contracts-coming-due/",
@@ -29,22 +28,31 @@ const stories = [
 ---
 
 <BaseLayout
-  title="Recompete Radar – Data stories – Peter Hagen"
-  description="Federal contracting, explained with data. Interactive data stories from Recompete Radar by Peter Hagen."
+  title="Recompete Radar – Peter Hagen"
+  description="Federal contracting, explained with data. Data stories, an analytical brief and a live app built on Recompete Radar by Peter Hagen."
 >
   <section class="hero-mesh rr-hero">
     <div class="wrap">
-      <div class="eyebrow">Recompete Radar · Data stories</div>
+      <div class="eyebrow">Recompete Radar</div>
       <h1 class="rr-title">Federal contracting, explained with data.</h1>
       <p class="rr-lede">
-        Short interactive stories built on Recompete Radar, my pipeline for public federal contract
-        records. Each one asks a single question and answers it with charts you can explore.
+        Recompete Radar tracks which federal contracts are about to be re-bid, who holds them, and
+        how entrenched they are. It is built on 484,242 public contract records from 20 civilian
+        agencies. Here is what it produces.
       </p>
+      <nav class="rr-jump" aria-label="On this page">
+        <a href="#stories">Data stories</a>
+        <a href="#brief">Brief &amp; case study</a>
+        <a href="#app">Live app</a>
+      </nav>
     </div>
   </section>
 
-  <section class="section">
+  <!-- STORIES -->
+  <section id="stories" class="section anchor">
     <div class="wrap">
+      <h2 class="rr-h2">Data stories</h2>
+      <p class="rr-sub">Interactive pieces that ask one question and answer it with charts you can explore.</p>
       <div class="rr-list">
         {stories.map((s, i) => (
           <a href={s.href} class:list={["card", "rr-card", "reveal", { "rr-card-lead": i === 0 }]}>
@@ -52,7 +60,7 @@ const stories = [
               {i === 0 && <span class="badge badge-live">Newest</span>}
               <span class="rr-kind">Interactive data story</span>
             </div>
-            <h2 class="rr-card-title">{s.title}</h2>
+            <h3 class="rr-card-title">{s.title}</h3>
             <p class="rr-finding">{s.finding}</p>
             <div class="rr-foot">
               <span class="rr-asof">Data as of <time datetime={s.asOf}>{s.asOfLabel}</time></span>
@@ -61,26 +69,51 @@ const stories = [
           </a>
         ))}
       </div>
+    </div>
+  </section>
 
-      <div class="rr-about">
-        <div>
-          <div class="eyebrow" style="margin-bottom: 6px;">How these are made</div>
-          <p>
-            The data comes from USAspending.gov and is cleaned, tested and modeled in dbt on
-            Snowflake. Each story states its data date, scope and method at the end. The case study
-            covers the pipeline, the data problems I found along the way, and the limits.
-          </p>
-        </div>
-        <a href="/projects/sunlight-recompete-radar" class="btn-outline" style="white-space: nowrap;">Read the case study</a>
+  <!-- BRIEF -->
+  <section id="brief" class="section bg-alt anchor">
+    <div class="wrap rr-split">
+      <div>
+        <h2 class="rr-h2">Brief &amp; case study</h2>
+        <p class="rr-sub">
+          <strong>Four traps in public contract data:</strong> a date format that erased every
+          option date, subcontract reports that double the real total, bid counts that aren't bid
+          counts, and a first score that looked precise and wasn't. The case study also covers the
+          pipeline, its tests, and its limits.
+        </p>
+      </div>
+      <div class="rr-actions">
+        <a href="/projects/sunlight-recompete-radar#brief" class="btn-primary btn-amber">Read the brief</a>
+        <a href="/projects/sunlight-recompete-radar#pipeline" class="btn-outline">How it's built</a>
       </div>
     </div>
   </section>
 
-  <HireBridge note="These stories show how Peter works: take a large, messy public dataset, find the question worth asking, and answer it clearly." />
+  <!-- APP -->
+  <section id="app" class="section anchor">
+    <div class="wrap rr-split">
+      <div>
+        <h2 class="rr-h2">Live app</h2>
+        <p class="rr-sub">
+          Browse ranked expiring contracts by agency and vendor, with the factors behind each
+          score. Hosted on free tiers, so the first load can take a few seconds.
+        </p>
+      </div>
+      <div class="rr-actions">
+        <a href="https://recompete-radar.vercel.app/" target="_blank" rel="noopener noreferrer" class="btn-primary slow-demo-link">Open the app ↗</a>
+        <a href="https://github.com/PHiZou/recompete-radar" target="_blank" rel="noopener noreferrer" class="btn-outline">Code ↗</a>
+      </div>
+    </div>
+  </section>
+
+  <HireBridge note="Recompete Radar shows how Peter works: take a large, messy public dataset, test it, find the question worth asking, and answer it clearly." />
 </BaseLayout>
 
 <style>
-  .rr-hero { padding: 56px 24px 44px; border-bottom: 1px solid var(--border); }
+  .anchor { scroll-margin-top: 70px; }
+  .rr-hero { padding: 56px 24px 40px; border-bottom: 1px solid var(--border); }
   .rr-title {
     font-size: clamp(1.9rem, 4.4vw, 2.9rem);
     font-weight: 700;
@@ -90,9 +123,16 @@ const stories = [
     margin-top: 10px;
     max-width: 760px;
   }
-  .rr-lede { margin-top: 14px; font-size: 1rem; line-height: 1.7; color: var(--ink-2); max-width: 640px; }
+  .rr-lede { margin-top: 14px; font-size: 1rem; line-height: 1.7; color: var(--ink-2); max-width: 660px; }
+  .rr-jump { margin-top: 22px; display: flex; gap: 8px 20px; flex-wrap: wrap; }
+  .rr-jump a { font-size: 0.8125rem; font-weight: 700; color: var(--teal-text); text-decoration: none; }
+  .rr-jump a:hover { color: var(--teal-hover); }
 
-  .rr-list { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  .rr-h2 { font-size: clamp(1.35rem, 3vw, 1.75rem); font-weight: 700; color: var(--ink); letter-spacing: -0.01em; }
+  .rr-sub { margin-top: 6px; font-size: 0.9rem; line-height: 1.65; color: var(--ink-2); max-width: 640px; }
+  .rr-sub strong { color: var(--ink); }
+
+  .rr-list { margin-top: 20px; display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
   .rr-card { padding: 22px 24px; display: flex; flex-direction: column; gap: 10px; text-decoration: none; }
   .rr-card-lead { grid-column: 1 / -1; padding: 28px 30px; }
   .rr-meta { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
@@ -114,22 +154,13 @@ const stories = [
   .rr-read { font-size: 0.8125rem; font-weight: 700; color: var(--teal-text); }
   .rr-card:hover .rr-card-title { color: var(--teal-text); }
 
-  .rr-about {
-    margin-top: 32px;
-    padding-top: 24px;
-    border-top: 1px solid var(--border);
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    gap: 20px;
-    flex-wrap: wrap;
-  }
-  .rr-about p { font-size: 0.8125rem; line-height: 1.7; color: var(--ink-3); max-width: 640px; }
+  .rr-split { display: flex; justify-content: space-between; align-items: center; gap: 24px; flex-wrap: wrap; }
+  .rr-actions { display: flex; gap: 10px; flex-wrap: wrap; }
 
   @media (max-width: 760px) {
     .rr-hero { padding: 40px 18px 32px; }
     .section { padding-left: 18px; padding-right: 18px; }
     .rr-list { grid-template-columns: 1fr; }
-    .rr-card-lead { padding: 22px 22px; }
+    .rr-card-lead { padding: 22px; }
   }
 </style>

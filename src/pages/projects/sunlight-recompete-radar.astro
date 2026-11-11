@@ -101,7 +101,7 @@ const decisions = [
 
 const status = [
   { where: "Public code repository", what: "Warehouse move, 20-agency scope, backtested scorecards, weekly refresh workflow.", state: "Public", cls: "badge-live" },
-  { where: "Live web app", what: "An earlier, smaller slice. Its Insights page is dated August 2026 and covers five agencies.", state: "Public, older", cls: "badge-premium" },
+  { where: "Live web app", what: "The ranked view runs on the 20-agency data. Its Insights page still shows an August 2026 analysis of five agencies.", state: "Public", cls: "badge-live" },
   { where: "Warehouse and local branch", what: "Option-date fix and backfill, subcontract de-duplication, description cleanup, enrichment jobs (written, not yet scheduled).", state: "Not yet released", cls: "badge-saas" },
   { where: "Additional sources", what: "SAM.gov notices and vendor registrations are loaded for analysis. Nothing derived from them appears on this page until I finish reviewing the source's terms of use.", state: "Held", cls: "badge-defense" },
 ];
@@ -452,8 +452,8 @@ const upNext = [
     <section id="status" class="block">
       <h2 class="block-title">What is public and what is not</h2>
       <p class="lede">
-        The warehouse is ahead of the public app. This page describes the current work; the live
-        app shows an earlier version.
+        The warehouse is ahead of the public app. This page describes the current work, including
+        pieces that are not released yet.
       </p>
       <div class="status-list">
         {status.map((s) => (
@@ -465,7 +465,7 @@ const upNext = [
         ))}
       </div>
       <p class="live-link">
-        Optional: <a href="https://recompete-radar.vercel.app/" target="_blank" rel="noopener noreferrer" class="slow-demo-link">open the live app (earlier version) ↗</a>
+        Optional: <a href="https://recompete-radar.vercel.app/" target="_blank" rel="noopener noreferrer" class="slow-demo-link">open the live app ↗</a>
       </p>
     </section>
 
