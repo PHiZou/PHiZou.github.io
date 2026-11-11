@@ -1,0 +1,877 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Recompete Radar: System Schematics – Peter Hagen</title>
+<meta name="description" content="Five systems-engineering views of the Recompete Radar data pipeline: block diagram, coloured Petri net, dbt lineage, scoring model and freshness checks.">
+<link rel="canonical" href="https://phizou.github.io/recompete-radar/architecture/">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Recompete Radar: System Schematics">
+<meta property="og:description" content="Five systems-engineering views of how public procurement data becomes a ranked list of contracts about to be re-bid.">
+<meta property="og:url" content="https://phizou.github.io/recompete-radar/architecture/">
+<meta property="og:image" content="https://phizou.github.io/recompete-radar/architecture/og-image.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Internal block diagram of the Recompete Radar data path, from public sources through Snowflake to the web app.">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans+Condensed:wght@500;600&family=IBM+Plex+Sans:wght@400;500;600&display=swap">
+<style>
+/* Layout: one engineering notebook — each view sits in a SysML-style frame with its diagram-kind tag, prose beside or below. */
+:root {
+  --bg: #eef2f3; --panel: #fbfcfc; --ink: #142630; --muted: #56686f; --line: #c3ced2; --grid: #dde5e8;
+  --wire: #3a5664; --accent: #c2620a; --data: #1d5f8a; --ok: #2c7a4b; --bad: #b23a30;
+  --c-src: #8a7340; --c-seed: #6a5a92; --c-stg: #1d5f8a; --c-int: #3f7a55; --c-mart: #c2620a; --c-enr: #9a4a78;
+  --cond: "IBM Plex Sans Condensed", "Arial Narrow", sans-serif;
+  --sans: "IBM Plex Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --mono: "IBM Plex Mono", ui-monospace, "SF Mono", Menlo, monospace;
+}
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
+  --bg: #0f171b; --panel: #16222a; --ink: #dce7ea; --muted: #90a3aa; --line: #34474f; --grid: #1f2d34;
+  --wire: #8fb0bf; --accent: #f0a24a; --data: #6fb0dc; --ok: #6cc28f; --bad: #ef7b6f;
+  --c-src: #c9ad6a; --c-seed: #a996d8; --c-stg: #6fb0dc; --c-int: #6cc28f; --c-mart: #f0a24a; --c-enr: #d98fb6;
+  color-scheme: dark; } }
+:root[data-theme="dark"] {
+  --bg: #0f171b; --panel: #16222a; --ink: #dce7ea; --muted: #90a3aa; --line: #34474f; --grid: #1f2d34;
+  --wire: #8fb0bf; --accent: #f0a24a; --data: #6fb0dc; --ok: #6cc28f; --bad: #ef7b6f;
+  --c-src: #c9ad6a; --c-seed: #a996d8; --c-stg: #6fb0dc; --c-int: #6cc28f; --c-mart: #f0a24a; --c-enr: #d98fb6;
+  color-scheme: dark; }
+
+* { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; }
+body { margin: 0; background: var(--bg); color: var(--ink); font-family: var(--sans); font-size: 15px; line-height: 1.55; }
+.wrap { max-width: 1200px; margin: 0 auto; padding-block: 40px 64px;
+  padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px));
+  display: grid; gap: 56px; }
+header { display: grid; gap: 14px; max-width: 760px; }
+.eyebrow { font-family: var(--mono); font-size: 12px; letter-spacing: .08em; color: var(--muted); text-transform: uppercase; }
+h1 { font-family: var(--cond); font-weight: 600; font-size: clamp(30px, 5vw, 46px); line-height: 1.05; margin: 0; text-wrap: balance; letter-spacing: -.01em; }
+h2 { font-family: var(--cond); font-weight: 600; font-size: 26px; line-height: 1.15; margin: 0; text-wrap: balance; }
+h3 { font-family: var(--cond); font-weight: 600; font-size: 18px; margin: 0; }
+p { margin: 0; max-width: 68ch; }
+code, .mono { font-family: var(--mono); font-size: .88em; }
+nav.toc { display: flex; flex-wrap: wrap; gap: 8px; }
+nav.toc a { font-family: var(--mono); font-size: 12.5px; color: var(--ink); text-decoration: none; border: 1px solid var(--line); background: var(--panel); padding: 5px 10px; border-radius: 3px; }
+nav.toc a:hover, nav.toc a:focus-visible { border-color: var(--accent); outline: none; }
+nav.toc b { color: var(--accent); font-weight: 500; margin-right: 6px; }
+
+section { display: grid; gap: 18px; scroll-margin-top: 16px; }
+.sec-head { display: grid; gap: 8px; }
+.kind { font-family: var(--mono); font-size: 12px; color: var(--accent); }
+.frame { background: var(--panel); border: 1px solid var(--line); border-radius: 4px; overflow-x: auto; }
+.frame svg { display: block; }
+.cols { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 28px; }
+.cols > * { min-width: 0; }
+@media (max-width: 820px) { .cols { grid-template-columns: 1fr; } }
+.notes { display: grid; gap: 10px; }
+.notes p { font-size: 14.5px; }
+ul.facts { margin: 0; padding-left: 18px; display: grid; gap: 6px; font-size: 14.5px; max-width: 68ch; }
+
+/* SVG vocabulary */
+svg text { font-family: var(--mono); fill: var(--ink); }
+.f-frame { fill: none; stroke: var(--line); }
+.f-tag { fill: var(--bg); stroke: var(--line); }
+.f-tagtext { font-size: 11.5px; fill: var(--muted); }
+.lane { font-family: var(--cond); font-size: 12px; letter-spacing: .12em; fill: var(--muted); font-weight: 600; }
+.box { fill: var(--panel); stroke: var(--wire); stroke-width: 1.2; }
+.box-sf { fill: color-mix(in srgb, var(--data) 6%, var(--panel)); stroke: var(--data); stroke-width: 1.4; }
+.box-ctl { fill: color-mix(in srgb, var(--wire) 6%, var(--panel)); stroke: var(--wire); stroke-dasharray: 4 3; }
+.chip { fill: var(--panel); stroke: var(--data); }
+.t-title { font-family: var(--sans); font-weight: 600; font-size: 13px; }
+.t-sub { font-size: 10.5px; fill: var(--muted); }
+.t-lab { font-size: 10px; fill: var(--muted); }
+.t-warn { font-size: 10px; fill: var(--bad); }
+.wire { stroke: var(--wire); fill: none; stroke-width: 1.3; }
+.ctl { stroke-dasharray: 5 4; }
+.ahead { fill: var(--wire); }
+
+/* Petri net */
+.pn-place { fill: var(--panel); stroke: var(--wire); stroke-width: 1.5; cursor: pointer; }
+.pn-place.sel { stroke: var(--accent); stroke-width: 2.5; }
+.pn-res { stroke-dasharray: 3 2; }
+.pn-trans rect { fill: var(--panel); stroke: var(--wire); stroke-width: 1.5; transition: fill .15s; }
+.pn-trans { outline: none; }
+.pn-trans.on { cursor: pointer; }
+.pn-trans.on rect { fill: var(--accent); stroke: var(--accent); }
+.pn-trans.on:hover rect, .pn-trans.on:focus-visible rect { stroke: var(--ink); stroke-width: 2.5; }
+.pn-trans.flash rect { fill: var(--ink); }
+.pn-group { fill: none; stroke: var(--line); stroke-dasharray: 6 4; }
+.pn-label { font-size: 10.5px; fill: var(--muted); }
+.pn-count { font-size: 15px; font-weight: 500; }
+.pn-weight { font-size: 11px; fill: var(--accent); font-weight: 500; }
+.k-agency { fill: var(--data); } .k-ok { fill: var(--data); } .k-kept { fill: var(--bad); }
+.k-slot { fill: var(--muted); } .k-data { fill: var(--accent); } .k-run { fill: var(--ok); }
+.controls { display: flex; flex-wrap: wrap; align-items: center; gap: 10px 16px; padding: 12px 14px; border-top: 1px solid var(--line); }
+button { font-family: var(--mono); font-size: 13px; color: var(--ink); background: var(--panel); border: 1px solid var(--wire); padding: 6px 14px; border-radius: 3px; cursor: pointer; }
+button:hover { border-color: var(--accent); }
+button:focus-visible, input:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+button.primary { background: var(--accent); border-color: var(--accent); color: var(--panel); }
+.ctl-field { display: flex; align-items: center; gap: 8px; font-family: var(--mono); font-size: 12.5px; color: var(--muted); }
+.ctl-field input { accent-color: var(--accent); width: 130px; }
+.ctl-field output { color: var(--ink); min-width: 9ch; font-variant-numeric: tabular-nums; }
+.pn-side { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 0; border-top: 1px solid var(--line); }
+.pn-side > div { padding: 12px 14px; min-width: 0; }
+.pn-side > div + div { border-left: 1px solid var(--line); }
+@media (max-width: 720px) { .pn-side { grid-template-columns: 1fr; } .pn-side > div + div { border-left: 0; border-top: 1px solid var(--line); } }
+.side-h { font-family: var(--mono); font-size: 11px; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); margin-bottom: 8px; }
+#pn-log { list-style: none; margin: 0; padding: 0; font-family: var(--mono); font-size: 12px; display: grid; gap: 4px; max-height: 190px; overflow-y: auto; }
+#pn-log li { color: var(--muted); } #pn-log li:first-child { color: var(--ink); }
+#pn-log .bad { color: var(--bad); }
+.chips { display: flex; flex-wrap: wrap; gap: 5px; font-family: var(--mono); font-size: 11.5px; }
+.chips span { padding: 2px 7px; border-radius: 10px; border: 1px solid var(--line); }
+.chips .c-agency, .chips .c-ok { border-color: var(--data); color: var(--data); }
+.chips .c-kept { border-color: var(--bad); color: var(--bad); }
+.chips .c-slot { color: var(--muted); }
+.chips .c-data { border-color: var(--accent); color: var(--accent); }
+.chips .c-run { border-color: var(--ok); color: var(--ok); }
+.empty { font-family: var(--mono); font-size: 12px; color: var(--muted); }
+
+/* Lineage */
+.ln-node rect { stroke-width: 1.3; }
+.ln-node { cursor: pointer; outline: none; }
+.ln-node:focus-visible rect { stroke-width: 2.6; }
+.ln-node .nk { font-size: 9.5px; fill: var(--muted); }
+.ln-node .nn { font-size: 11px; }
+.ln-node .neon { font-size: 9px; fill: var(--panel); }
+.ln-node .neonbg { fill: var(--data); }
+.L-src rect.b { fill: color-mix(in srgb, var(--c-src) 12%, var(--panel)); stroke: var(--c-src); }
+.L-seed rect.b { fill: color-mix(in srgb, var(--c-seed) 12%, var(--panel)); stroke: var(--c-seed); }
+.L-stg rect.b { fill: color-mix(in srgb, var(--c-stg) 12%, var(--panel)); stroke: var(--c-stg); }
+.L-int rect.b { fill: color-mix(in srgb, var(--c-int) 12%, var(--panel)); stroke: var(--c-int); }
+.L-mart rect.b { fill: color-mix(in srgb, var(--c-mart) 14%, var(--panel)); stroke: var(--c-mart); }
+.L-enr rect.b { fill: color-mix(in srgb, var(--c-enr) 12%, var(--panel)); stroke: var(--c-enr); }
+.ln-edge { fill: none; stroke: var(--line); stroke-width: 1.3; transition: stroke .15s, opacity .15s; }
+.ln-edge.offline { stroke: var(--accent); stroke-dasharray: 5 4; }
+#lineage.focus .ln-node.dim { opacity: .22; }
+#lineage.focus .ln-edge.dim { opacity: .12; }
+#lineage.focus .ln-edge.hot { stroke: var(--ink); stroke-width: 1.8; }
+#lineage.focus .ln-node.sel rect.b { stroke-width: 2.8; }
+.legend { display: flex; flex-wrap: wrap; gap: 8px 16px; font-family: var(--mono); font-size: 12px; color: var(--muted); padding: 10px 14px; border-top: 1px solid var(--line); }
+.legend i { display: inline-block; width: 12px; height: 12px; border-radius: 2px; vertical-align: -2px; margin-right: 6px; border: 1.3px solid; }
+.ln-info { padding: 12px 14px; border-top: 1px solid var(--line); display: grid; gap: 4px; min-height: 76px; }
+.ln-info .nm { font-family: var(--mono); font-size: 13px; font-weight: 500; }
+.ln-info p { font-size: 14px; }
+
+/* Scoring */
+.score-grid { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 28px; align-items: start; }
+@media (max-width: 760px) { .score-grid { grid-template-columns: 1fr; } }
+.heat { display: grid; grid-template-columns: auto auto; grid-template-rows: auto auto; gap: 6px; justify-content: start; }
+.heat canvas { width: 280px; height: 280px; max-width: 100%; border: 1px solid var(--line); border-radius: 2px; cursor: crosshair; touch-action: none; }
+.heat .ylab { writing-mode: vertical-rl; transform: rotate(180deg); font-family: var(--mono); font-size: 11.5px; color: var(--muted); text-align: center; }
+.heat .xlab { grid-column: 2; font-family: var(--mono); font-size: 11.5px; color: var(--muted); text-align: center; }
+.readout { font-family: var(--mono); font-size: 13px; font-variant-numeric: tabular-nums; padding: 10px 12px; border: 1px solid var(--line); border-radius: 3px; background: var(--panel); }
+.readout b { color: var(--accent); font-weight: 500; }
+.formula { font-family: var(--mono); font-size: 14px; padding: 12px 14px; background: var(--panel); border: 1px solid var(--line); border-radius: 3px; display: grid; gap: 4px; overflow-x: auto; }
+.formula .c { color: var(--muted); }
+table.feat { border-collapse: collapse; font-size: 13.5px; width: 100%; }
+table.feat td { padding: 5px 8px 5px 0; border-bottom: 1px solid var(--grid); vertical-align: top; }
+table.feat td:first-child { font-family: var(--mono); font-size: 12.5px; white-space: nowrap; color: var(--accent); }
+
+/* Freshness matrix */
+.matrix { display: grid; grid-template-columns: auto minmax(0, 1fr) minmax(0, 1fr); gap: 1px; background: var(--line); border: 1px solid var(--line); border-radius: 4px; overflow: hidden; }
+.matrix > div { background: var(--panel); padding: 12px 14px; font-size: 14px; min-width: 0; }
+.matrix .hd { font-family: var(--mono); font-size: 11.5px; color: var(--muted); background: var(--bg); text-transform: uppercase; letter-spacing: .06em; }
+.matrix .verdict { font-family: var(--mono); font-size: 12px; font-weight: 500; display: inline-block; padding: 1px 8px; border-radius: 10px; margin-bottom: 4px; }
+.v-ok { color: var(--ok); border: 1px solid var(--ok); }
+.v-warn { color: var(--accent); border: 1px solid var(--accent); }
+.v-bad { color: var(--bad); border: 1px solid var(--bad); }
+@media (max-width: 640px) { .matrix { grid-template-columns: 1fr; } .matrix .corner { display: none; } }
+footer { font-size: 13px; color: var(--muted); border-top: 1px solid var(--line); padding-top: 16px; display: grid; gap: 6px; }
+footer p { max-width: 90ch; }
+footer .site { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 8px 20px; padding-top: 10px; }
+a { color: var(--data); }
+.back { font-family: var(--mono); font-size: 12.5px; color: var(--muted); text-decoration: none; justify-self: start; }
+.back:hover, .back:focus-visible { color: var(--accent); }
+@media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
+</style>
+</head>
+<body>
+<div class="wrap">
+<header>
+  <a class="back" href="/recompete-radar">← Recompete Radar</a>
+  <div class="eyebrow">recompete radar · architecture notebook · nov 2026</div>
+  <h1>Recompete Radar Schematics</h1>
+  <p>Five views of the same system. Public procurement data is downloaded, loaded into Snowflake, modeled by dbt, scored, copied into a small Postgres database, and served by an API to the web app. Each view uses a different systems-engineering notation because each answers a different question about that path. The Petri net, lineage graph and score map are interactive.</p>
+  <nav class="toc" aria-label="Views">
+    <a href="#context"><b>ibd</b>What talks to what</a>
+    <a href="#refresh"><b>pn</b>How a refresh runs</a>
+    <a href="#lineage-sec"><b>dbt</b>How tables depend on each other</a>
+    <a href="#scoring"><b>calc</b>How a contract gets scored</a>
+    <a href="#freshness"><b>stm</b>How staleness is detected</a>
+  </nav>
+</header>
+
+<!-- ============ 1. CONTEXT ============ -->
+<section id="context">
+  <div class="sec-head">
+    <div class="kind">ibd · internal block diagram</div>
+    <h2>What talks to what</h2>
+    <p>Solid arrows carry data, labeled with the script that moves it. Dashed arrows are control: which scheduler starts the work. The data plane is on top and the schedulers sit underneath.</p>
+  </div>
+  <div class="frame">
+  <svg viewBox="0 0 1240 600" width="1240" height="600" role="img" aria-label="System block diagram: public sources feed Snowflake, dbt builds marts, marts sync to Neon Postgres, a FastAPI service serves the Next.js app">
+    <defs><marker id="ah1" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="ahead" d="M0,0 L10,5 L0,10 z"/></marker></defs>
+    <rect class="f-frame" x="4" y="4" width="1232" height="592" rx="3"/>
+    <path class="f-tag" d="M4 4 H 318 V 22 L 306 34 H 4 Z"/>
+    <text class="f-tagtext" x="14" y="24">ibd [System] Recompete Radar data path</text>
+
+    <text class="lane" x="30" y="64">PUBLIC SOURCES</text>
+    <text class="lane" x="350" y="64">SNOWFLAKE · SUNLIGHT_DB</text>
+    <text class="lane" x="850" y="64">SERVING</text>
+    <text class="lane" x="1080" y="64">PEOPLE</text>
+
+    <!-- sources -->
+    <g>
+      <rect class="box" x="30" y="80" width="190" height="50" rx="3"/><text class="t-title" x="42" y="100">USASpending</text><text class="t-sub" x="42" y="118">award-summary downloads</text>
+      <rect class="box" x="30" y="142" width="190" height="50" rx="3"/><text class="t-title" x="42" y="162">USASpending</text><text class="t-sub" x="42" y="180">subaward reports</text>
+      <rect class="box" x="30" y="204" width="190" height="50" rx="3"/><text class="t-title" x="42" y="224">SAM.gov</text><text class="t-sub" x="42" y="242">notices + entity registrations</text>
+      <rect class="box" x="30" y="266" width="190" height="50" rx="3"/><text class="t-title" x="42" y="286">DHS APFS · retired</text><text class="t-sub" x="42" y="304">frozen snapshot · 16 Oct 2026</text>
+      <rect class="box" x="30" y="328" width="190" height="50" rx="3"/><text class="t-title" x="42" y="348">GSA eLibrary</text><text class="t-sub" x="42" y="366">contract-vehicle lookups</text>
+    </g>
+
+    <!-- source -> snowflake -->
+    <path class="wire" d="M220 105 L 364 105" marker-end="url(#ah1)"/>
+    <text class="t-lab" x="292" y="88" text-anchor="middle">ingest_usaspending</text>
+    <text class="t-lab" x="292" y="99" text-anchor="middle">load_to_snowflake</text>
+    <path class="wire" d="M220 167 L 252 248 M220 229 L 252 248 M220 291 L 252 248 M220 353 L 252 248"/>
+    <path class="wire" d="M252 248 L 364 248" marker-end="url(#ah1)"/>
+    <text class="t-lab" x="308" y="230" text-anchor="middle">ingest_enrichment</text>
+    <text class="t-lab" x="308" y="241" text-anchor="middle">load_enrichment</text>
+    <text class="t-lab" x="250" y="398">20 agencies × 12 NAICS,</text>
+    <text class="t-lab" x="250" y="410">contracts only (A–D)</text>
+
+    <!-- snowflake -->
+    <rect class="box-sf" x="350" y="74" width="380" height="316" rx="4"/>
+    <rect class="chip" x="366" y="90" width="140" height="34" rx="2"/><text class="t-title" x="378" y="111">RAW</text>
+    <rect class="chip" x="366" y="231" width="140" height="34" rx="2"/><text class="t-title" x="378" y="252">RAW_ENRICHMENT</text>
+    <rect class="chip" x="366" y="320" width="140" height="52" rx="2"/><text class="t-title" x="378" y="340">DEV_REFERENCE</text><text class="t-sub" x="378" y="354">seeds +</text><text class="t-sub" x="378" y="366">PIPELINE_RUNS</text>
+    <rect class="chip" x="574" y="90" width="140" height="34" rx="2"/><text class="t-title" x="586" y="111">DEV_STAGING</text>
+    <rect class="chip" x="574" y="146" width="140" height="34" rx="2"/><text class="t-title" x="586" y="167">DEV_INTERMEDIATE</text>
+    <rect class="chip" x="574" y="202" width="140" height="34" rx="2"/><text class="t-title" x="586" y="223">DEV_MARTS</text>
+    <rect class="chip" x="574" y="262" width="140" height="34" rx="2"/><text class="t-title" x="586" y="283">DEV_ENRICHMENT</text>
+    <path class="wire" d="M506 107 L 572 107" marker-end="url(#ah1)"/>
+    <text class="t-lab" x="540" y="100" text-anchor="middle">dbt</text>
+    <path class="wire" d="M506 248 L 572 276" marker-end="url(#ah1)"/>
+    <text class="t-lab" x="540" y="250" text-anchor="middle">dbt</text>
+    <path class="wire" d="M644 124 L 644 144" marker-end="url(#ah1)"/>
+    <path class="wire" d="M644 180 L 644 200" marker-end="url(#ah1)"/>
+    <path class="wire" d="M644 236 L 644 260" marker-end="url(#ah1)"/>
+    <path class="wire" d="M506 336 L 540 336 L 540 224 L 572 224" marker-end="url(#ah1)"/>
+    <text class="t-lab" x="546" y="312">seeds</text>
+    <text class="t-sub" x="586" y="322">staging = views</text>
+    <text class="t-sub" x="586" y="336">marts = tables</text>
+    <text class="t-sub" x="586" y="350">enrichment = views</text>
+
+    <!-- snowflake -> neon -->
+    <path class="wire" d="M714 214 C 780 214, 790 130, 848 130" marker-end="url(#ah1)"/>
+    <text class="t-lab" x="782" y="150" text-anchor="middle">sync_marts_to_neon</text>
+    <path class="wire" d="M714 279 C 790 279, 790 172, 848 172" marker-end="url(#ah1)"/>
+    <text class="t-lab" x="792" y="292" text-anchor="middle">sync_discovery_to_neon</text>
+    <text class="t-lab" x="792" y="303" text-anchor="middle">(manual --apply)</text>
+
+    <!-- serving -->
+    <rect class="box" x="850" y="80" width="180" height="112" rx="3"/>
+    <text class="t-title" x="862" y="100">Neon Postgres</text><text class="t-sub" x="862" y="116">free tier, 0.5 GB</text>
+    <text class="t-lab" x="862" y="138">award table + mart_awards view</text>
+    <text class="t-lab" x="862" y="152">3 small marts</text>
+    <text class="t-lab" x="862" y="166">discovery_signals</text>
+    <text class="t-lab" x="862" y="180">no raw data</text>
+    <path class="wire" d="M940 192 L 940 238" marker-end="url(#ah1)"/>
+    <text class="t-lab" x="948" y="219">SQL</text>
+    <rect class="box" x="850" y="240" width="180" height="100" rx="3"/>
+    <text class="t-title" x="862" y="260">FastAPI · Fly.io</text><text class="t-sub" x="862" y="276">read API</text>
+    <text class="t-lab" x="862" y="296">/summary /recompetes</text>
+    <text class="t-lab" x="862" y="310">/vendors /agencies /signals</text>
+    <rect class="box" x="850" y="372" width="180" height="50" rx="3"/>
+    <text class="t-title" x="862" y="392">export_outreach.py</text><text class="t-sub" x="862" y="410">CSV straight from marts</text>
+    <path class="wire" d="M730 380 C 790 380, 800 397, 848 397" marker-end="url(#ah1)"/>
+
+    <!-- people -->
+    <path class="wire" d="M1030 290 L 1078 290" marker-end="url(#ah1)"/>
+    <text class="t-lab" x="1054" y="282" text-anchor="middle">JSON</text>
+    <rect class="box" x="1080" y="240" width="140" height="100" rx="3"/>
+    <text class="t-title" x="1092" y="260">Next.js 14</text><text class="t-sub" x="1092" y="276">on Vercel</text>
+    <text class="t-lab" x="1092" y="296">agencies, vendors,</text>
+    <text class="t-lab" x="1092" y="310">signals, insights,</text>
+    <text class="t-lab" x="1092" y="324">contracts</text>
+    <path class="wire" d="M1150 340 L 1150 370" marker-end="url(#ah1)"/>
+    <path class="wire" d="M1030 397 L 1078 397" marker-end="url(#ah1)"/>
+    <rect class="box" x="1080" y="372" width="140" height="50" rx="3"/>
+    <text class="t-title" x="1092" y="392">Users</text><text class="t-sub" x="1092" y="410">browser + CSV</text>
+
+    <!-- control plane -->
+    <line x1="20" y1="446" x2="1220" y2="446" stroke="var(--line)" stroke-dasharray="2 4"/>
+    <text class="lane" x="30" y="474">SCHEDULERS · CONTROL</text>
+    <rect class="box-ctl" x="350" y="490" width="260" height="84" rx="3"/>
+    <text class="t-title" x="362" y="510">GitHub Actions</text><text class="t-sub" x="362" y="526">configured: Mon 08:00 UTC</text>
+    <text class="t-lab" x="362" y="546">refresh.sh → dbt build</text>
+    <text class="t-lab" x="362" y="560">→ sync_marts_to_neon</text>
+    <rect class="box-ctl" x="630" y="490" width="330" height="84" rx="3"/>
+    <text class="t-title" x="642" y="510">Airflow · local Mac</text>
+    <text class="t-lab" x="642" y="530">sunlight_awards      manual (schedule=None)</text>
+    <text class="t-lab" x="642" y="545">sunlight_enrichment  daily 06:00 ET*</text>
+    <text class="t-lab" x="642" y="560">sunlight_freshness   daily 09:00 ET*</text>
+    <path class="wire ctl" d="M440 490 L 440 392" marker-end="url(#ah1)"/>
+    <text class="t-lab" x="448" y="430">weekly award refresh</text>
+    <path class="wire ctl" d="M680 490 L 680 392" marker-end="url(#ah1)"/>
+    <text class="t-lab" x="688" y="420">enrichment + audit</text>
+    <text class="t-lab" x="688" y="432">rows in PIPELINE_RUNS</text>
+  </svg>
+  </div>
+  <div class="cols">
+    <div class="notes">
+      <h3>Why two databases</h3>
+      <p>Snowflake holds everything: about 484k raw award rows plus every dbt model. Neon's free tier is 0.5 GB, so it only gets the tables the API reads. The award table goes over once, and <code>mart_awards</code> is recreated in Neon as a view over it so the same rows aren't stored twice.</p>
+    </div>
+    <div class="notes">
+      <h3>Why two schedulers</h3>
+      <p>The repository configures GitHub Actions for weekly award refreshes. The Airflow awards DAG is manual to avoid two schedulers running <code>refresh.sh --replace</code> against the same tables at once. *Airflow is configured for daily enrichment and freshness checks, plus monthly entity registrations. These are configured schedules; successful automatic runs and current pause states have not been verified here. The DHS APFS feed was retired on 30 Oct 2026, so its last snapshot is frozen.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 2. PETRI NET ============ -->
+<section id="refresh">
+  <div class="sec-head">
+    <div class="kind">pn · coloured Petri net · interactive</div>
+    <h2>How a refresh runs</h2>
+    <p>This is the <code>sunlight_awards</code> DAG modeled as a coloured Petri net. Circles are states, bars are steps, and dots are tokens. Each token carries a colour: an agency, a download outcome, or the dataset. An orange bar is enabled. Click it to fire, or press Run. Click any circle to see its tokens.</p>
+  </div>
+  <div class="frame" id="pn-frame">
+    <svg id="pn" viewBox="0 0 980 400" width="980" height="400" role="img" aria-label="Petri net of the award refresh"></svg>
+    <div class="controls">
+      <button id="pn-step" class="primary" type="button">Step</button>
+      <button id="pn-run" type="button">Run</button>
+      <button id="pn-reset" type="button">Reset</button>
+      <label class="ctl-field" for="pn-q">FY attempt fails
+        <input id="pn-q" type="range" min="0" max="85" step="5" value="35">
+        <output id="pn-qv" for="pn-q">35%</output>
+      </label>
+      <span class="ctl-field">agency gets nothing <output id="pn-p6">0.18%</output></span>
+    </div>
+    <div class="pn-side">
+      <div><div class="side-h">Firing log</div><ol id="pn-log"><li>Ready. 20 agency tokens queued, 4 download slots free.</li></ol></div>
+      <div><div class="side-h" id="pn-insp-h">Place · agencies queued</div><div id="pn-insp" class="chips"></div></div>
+    </div>
+  </div>
+  <div class="cols">
+    <ul class="facts">
+      <li><b>The slots place is a resource.</b> <code>xargs -P 4</code> in <code>refresh.sh</code> lets at most four USASpending downloads generate at once. A slot token goes back only when a download lands or gives up.</li>
+      <li><b>“download lands” hides a retry loop.</b> Each agency tries up to six fiscal-year windows (2024, 2023, 2025, 2022, 2021, 2026), pausing 60s between them. Any one success is the full all-time history, so only six failures in a row leave an agency with nothing. The slider shows how rare that is.</li>
+    </ul>
+    <ul class="facts">
+      <li><b>×20 is a barrier.</b> The load waits for every agency to finish, whatever the outcome. <code>--replace</code> is per-agency safe: a red token means that agency keeps last week's rows instead of being emptied. The delete and COPY run in one transaction.</li>
+      <li><b>record_* never blocks.</b> Each writes a row to <code>PIPELINE_RUNS</code> through <code>record_run()</code>, wrapped in <code>|| true</code>. The GitHub Actions path runs the same chain without the record steps.</li>
+    </ul>
+  </div>
+</section>
+
+<!-- ============ 3. LINEAGE ============ -->
+<section id="lineage-sec">
+  <div class="sec-head">
+    <div class="kind">dbt · model lineage · click a node</div>
+    <h2>How tables depend on each other</h2>
+    <p>These are the 26 objects in the 17 Oct 2026 inventory, traced through the <code>ref()</code> and <code>source()</code> calls in each model. Click a node to trace everything upstream and downstream of it. The dashed orange edge is the dependency that runs outside dbt: <code>fit_scores.py</code> reads the backtest table and writes the weights seed, which is committed to the repo. This is a dated snapshot; the models have since evolved.</p>
+  </div>
+  <div class="frame">
+    <svg id="lineage" viewBox="0 0 1340 600" width="1340" height="600" role="img" aria-label="dbt lineage graph"></svg>
+    <div class="ln-info" id="ln-info"><div class="nm">Nothing selected</div><p>Click a model. Row counts come from the 2026-10-17 inventory, not a live query.</p></div>
+    <div class="legend">
+      <span><i style="border-color:var(--c-src);background:color-mix(in srgb,var(--c-src) 12%,var(--panel))"></i>source table</span>
+      <span><i style="border-color:var(--c-seed);background:color-mix(in srgb,var(--c-seed) 12%,var(--panel))"></i>seed (CSV in repo)</span>
+      <span><i style="border-color:var(--c-stg);background:color-mix(in srgb,var(--c-stg) 12%,var(--panel))"></i>staging view</span>
+      <span><i style="border-color:var(--c-int);background:color-mix(in srgb,var(--c-int) 12%,var(--panel))"></i>intermediate</span>
+      <span><i style="border-color:var(--c-mart);background:color-mix(in srgb,var(--c-mart) 14%,var(--panel))"></i>core mart table</span>
+      <span><i style="border-color:var(--c-enr);background:color-mix(in srgb,var(--c-enr) 12%,var(--panel))"></i>enrichment view</span>
+      <span><i style="border-color:var(--data);background:var(--data)"></i>copied to Neon</span>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 4. SCORING ============ -->
+<section id="scoring">
+  <div class="sec-head">
+    <div class="kind">calc · scoring model</div>
+    <h2>How a contract gets scored</h2>
+    <p>USASpending never says which contract replaced which, so the project infers it. An ended award's follow-on is the award from the same office and PSC that starts within −180 to +365 days of the end date and is closest in size. Two logistic regressions are trained on ended awards (about 94k rows in <code>int_score_backtest</code>), then applied to live ones.</p>
+  </div>
+  <div class="frame">
+  <svg viewBox="0 0 1100 170" width="1100" height="170" role="img" aria-label="Scoring flow">
+    <defs><marker id="ah3" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="ahead" d="M0,0 L10,5 L0,10 z"/></marker></defs>
+    <rect class="f-frame" x="4" y="4" width="1092" height="162" rx="3"/>
+    <path class="f-tag" d="M4 4 H 238 V 22 L 226 34 H 4 Z"/>
+    <text class="f-tagtext" x="14" y="24">act [Scoring] train → apply</text>
+    <rect class="box" x="24" y="58" width="170" height="70" rx="3"/><text class="t-title" x="36" y="80">mart_awards</text><text class="t-sub" x="36" y="98">every award,</text><text class="t-sub" x="36" y="112">one row each</text>
+    <rect class="box" x="234" y="58" width="190" height="70" rx="3"/><text class="t-title" x="246" y="80">int_score_backtest</text><text class="t-sub" x="246" y="98">ended &gt;$250K, 2012 – 1yr ago</text><text class="t-sub" x="246" y="112">+ inferred follow-on</text>
+    <rect class="box" x="464" y="58" width="190" height="70" rx="3"/><text class="t-title" x="476" y="80">fit_scores.py</text><text class="t-sub" x="476" y="98">2 binned logistic models</text><text class="t-sub" x="476" y="112">fit pre-2021, test after</text>
+    <rect class="box" x="694" y="58" width="160" height="70" rx="3"/><text class="t-title" x="706" y="80">score_weights</text><text class="t-sub" x="706" y="98">39 log-odds rows</text><text class="t-sub" x="706" y="112">committed seed</text>
+    <rect class="box" x="894" y="58" width="186" height="70" rx="3"/><text class="t-title" x="906" y="80">mart_recompete_</text><text class="t-title" x="906" y="96">candidates</text><text class="t-sub" x="906" y="114">POP end −3 … +36 months</text>
+    <path class="wire" d="M194 93 L 232 93" marker-end="url(#ah3)"/>
+    <path class="wire" d="M424 93 L 462 93" marker-end="url(#ah3)"/>
+    <path class="wire" d="M654 93 L 692 93" marker-end="url(#ah3)"/>
+    <path class="wire" d="M854 93 L 892 93" marker-end="url(#ah3)"/>
+    <path class="wire" d="M109 128 L 109 150 L 987 150 L 987 130" marker-end="url(#ah3)"/>
+    <text class="t-lab" x="420" y="146">live contracts joined to the same feature bins</text>
+  </svg>
+  </div>
+  <div class="score-grid">
+    <div class="heat">
+      <div class="ylab">follow-on probability f →</div>
+      <canvas id="heat" width="280" height="280" aria-label="recompete score heat map"></canvas>
+      <div class="xlab">retention probability r →</div>
+    </div>
+    <div class="notes">
+      <div class="formula">
+        <div><span class="c">incumbent_strength =</span> 100 · r</div>
+        <div><span class="c">recompete_score    =</span> 100 · f · (1 − r)</div>
+        <div class="c">r = P(incumbent wins the follow-on | there is one)</div>
+        <div class="c">f = P(a follow-on happens at all)</div>
+      </div>
+      <div class="readout" id="heat-out">Hover the map. The score is highest in the top-left corner, where a follow-on is likely and the incumbent is weak.</div>
+      <p>The score combines the two fitted model outputs to rank contracts for follow-up; it is not a calibrated probability that a <em>new</em> vendor wins. Timing is left out on purpose, so filter on <code>months_to_pop_end</code> separately. The follow-on links are inferred. A placebo window (follow-ons 3–5 years out) measures how much of the signal is matching noise.</p>
+      <table class="feat">
+        <tr><td>f_share</td><td>incumbent's share of that office + PSC over the trailing 5 years</td></tr>
+        <tr><td>f_rivals</td><td>distinct vendors in that office + PSC</td></tr>
+        <tr><td>f_tenure</td><td>prior awards the incumbent has there</td></tr>
+        <tr><td>f_sole</td><td>sole-source vs competed</td></tr>
+        <tr><td>f_vehicle</td><td>contract award type</td></tr>
+        <tr><td>f_dur_*</td><td>period-of-performance length</td></tr>
+        <tr><td>f_size · f_pricing</td><td>award size bin, pricing type</td></tr>
+      </table>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 5. FRESHNESS ============ -->
+<section id="freshness">
+  <div class="sec-head">
+    <div class="kind">stm · two clocks</div>
+    <h2>How staleness is detected</h2>
+    <p><code>pipelines/freshness.py</code> keeps two separate clocks per source. <b>Recorded</b> is what the scheduler says happened, from <code>PIPELINE_RUNS</code>. <b>Observed</b> is what the data itself shows, from <code>OBSERVED_AT</code> on each record or <code>LAST_ALTERED</code> on each table. Each source becomes stale once it has clearly missed its cadence: SAM after 72 h, awards after 240 h, GSA after 1,440 h. Comparing the two clocks is what makes the check useful.</p>
+  </div>
+  <div class="matrix">
+    <div class="hd corner"></div>
+    <div class="hd">observed timestamp moved</div>
+    <div class="hd">observed timestamp unchanged</div>
+    <div class="hd">recorded success</div>
+    <div><span class="verdict v-ok">healthy</span><br>The job ran and new data landed.</div>
+    <div><span class="verdict v-warn">ran, fetched nothing</span><br>The task succeeded but no rows changed. This is the case the two-clock design exists to catch.</div>
+    <div class="hd">no recent record</div>
+    <div><span class="verdict v-warn">loaded outside Airflow</span><br>Someone ran the script by hand, or CI did. The data is fine, but the audit trail missed it.</div>
+    <div><span class="verdict v-bad">stale</span><br>Nothing ran, or the scheduler stopped. A separate daily freshness DAG flags this, because a check inside the same DAG would stop too.</div>
+  </div>
+</section>
+
+<footer>
+  <p>Built from the Recompete Radar source in November 2026. Row counts are from the 2026-10-17 warehouse inventory, not a live query. The Petri net is a model with simulated download outcomes; nothing on this page queries Snowflake or reflects live scheduler health.</p>
+  <div class="site">
+    <span>Code on <a href="https://github.com/PHiZou/recompete-radar" target="_blank" rel="noopener">GitHub</a> · More at <a href="/recompete-radar">Recompete Radar</a> and <a href="/">phizou.github.io</a></span>
+    <a href="https://www.linkedin.com/in/peterhagen123" target="_blank" rel="noopener">Get in touch</a>
+  </div>
+</footer>
+</div>
+
+<script>
+(() => {
+  const NS = 'http://www.w3.org/2000/svg';
+  const el = (tag, attrs = {}, parent) => {
+    const e = document.createElementNS(NS, tag);
+    for (const k in attrs) e.setAttribute(k, attrs[k]);
+    if (parent) parent.appendChild(e);
+    return e;
+  };
+  const text = (parent, x, y, str, cls, anchor = 'middle') => {
+    const t = el('text', { x, y, class: cls, 'text-anchor': anchor }, parent);
+    t.textContent = str;
+    return t;
+  };
+
+  /* ---------------- Petri net ---------------- */
+  const svg = document.getElementById('pn');
+  const AG = ['hhs','va','dhs','treas','doj','dos','doc','usda','dot','doi','doe','ssa','ed','nasa','dol','sec','sba','opm','hud','nsf'];
+  const FY = [2024, 2023, 2025, 2022, 2021, 2026];
+  const R = 27;
+  const PL = {
+    queue:   { x: 60,  y: 150, l: ['agencies', 'queued'] },
+    slots:   { x: 270, y: 70,  l: ['download slots', '(xargs -P 4)'], lp: 'right', res: true },
+    dl:      { x: 270, y: 150, l: ['generating', 'download'] },
+    done:    { x: 480, y: 150, l: ['agency', 'finished'] },
+    raw:     { x: 690, y: 150, l: ['RAW', 'loaded'] },
+    ready:   { x: 900, y: 150, l: ['ingest', 'recorded'] },
+    marts:   { x: 795, y: 330, l: ['marts built', '+ tested'] },
+    built:   { x: 585, y: 330, l: ['dbt', 'recorded'] },
+    serving: { x: 375, y: 330, l: ['Neon', 'serving'] },
+    runs:    { x: 742, y: 246, l: ['PIPELINE_', 'RUNS'], lp: 'right', r: 22 },
+  };
+  const TR = {
+    request: { x: 165, y: 150, in: { queue: 1, slots: 1 }, out: ['dl'], l: ['request', 'download'] },
+    land:    { x: 375, y: 150, in: { dl: 1 }, out: ['done', 'slots'], l: ['download', 'lands'] },
+    load:    { x: 585, y: 150, in: { done: 20 }, out: ['raw'], l: ['load_to_', 'snowflake'] },
+    rec1:    { x: 795, y: 150, in: { raw: 1 }, out: ['ready', 'runs'], l: ['record_', 'ingest'] },
+    dbt:     { x: 900, y: 330, in: { ready: 1 }, out: ['marts'], l: ['dbt deps', '+ build'] },
+    rec2:    { x: 690, y: 330, in: { marts: 1 }, out: ['built', 'runs'], l: ['record_', 'dbt'] },
+    sync:    { x: 480, y: 330, in: { built: 1 }, out: ['serving'], l: ['sync_marts', '_to_neon'] },
+  };
+  const HW = 8, HH = 26;
+
+  const defs = el('defs', {}, svg);
+  const mk = el('marker', { id: 'ah2', viewBox: '0 0 10 10', refX: 9, refY: 5, markerWidth: 7, markerHeight: 7, orient: 'auto-start-reverse' }, defs);
+  el('path', { class: 'ahead', d: 'M0,0 L10,5 L0,10 z' }, mk);
+
+  el('rect', { class: 'f-frame', x: 4, y: 4, width: 972, height: 392, rx: 3 }, svg);
+  el('path', { class: 'f-tag', d: 'M4 4 H 270 V 22 L 258 34 H 4 Z' }, svg);
+  text(svg, 14, 24, 'pn [DAG] sunlight_awards', 'f-tagtext', 'start');
+  el('rect', { class: 'pn-group', x: 24, y: 40, width: 712, height: 168, rx: 4 }, svg);
+  text(svg, 726, 56, 'task ingest_usaspending = bash pipelines/refresh.sh', 'pn-label', 'end');
+
+  const edgePt = (node, isPlace, tx, ty) => {
+    const dx = tx - node.x, dy = ty - node.y, len = Math.hypot(dx, dy) || 1;
+    if (isPlace) { const r = (node.r || R) + 1; return [node.x + dx / len * r, node.y + dy / len * r]; }
+    const s = Math.min((HW + 2) / Math.abs(dx || 1e-9), (HH + 2) / Math.abs(dy || 1e-9));
+    return [node.x + dx * s, node.y + dy * s];
+  };
+  const arcs = el('g', {}, svg);
+  const drawArc = (a, aPlace, b, bPlace, weight) => {
+    const [x1, y1] = edgePt(a, aPlace, b.x, b.y);
+    const [x2, y2] = edgePt(b, bPlace, a.x, a.y);
+    el('path', { class: 'wire', d: `M${x1} ${y1} L${x2} ${y2}`, 'marker-end': 'url(#ah2)' }, arcs);
+    if (weight) text(arcs, (x1 + x2) / 2, (y1 + y2) / 2 - 8, weight, 'pn-weight');
+  };
+  for (const [tid, t] of Object.entries(TR)) {
+    for (const [pid, w] of Object.entries(t.in)) drawArc(PL[pid], true, t, false, w > 1 ? '×' + w : '');
+    for (const pid of t.out) drawArc(t, false, PL[pid], true);
+  }
+
+  const placeG = {};
+  for (const [pid, p] of Object.entries(PL)) {
+    const g = el('g', { tabindex: 0, role: 'button', 'aria-label': 'Inspect ' + p.l.join(' ') }, svg);
+    const c = el('circle', { class: 'pn-place' + (p.res ? ' pn-res' : ''), cx: p.x, cy: p.y, r: p.r || R }, g);
+    const r = p.r || R;
+    if (p.lp === 'above') { text(g, p.x, p.y - r - 20, p.l[0], 'pn-label'); text(g, p.x, p.y - r - 8, p.l[1], 'pn-label'); }
+    else if (p.lp === 'right') { text(g, p.x + r + 6, p.y - 2, p.l[0], 'pn-label', 'start'); text(g, p.x + r + 6, p.y + 10, p.l[1], 'pn-label', 'start'); }
+    else { text(g, p.x, p.y + r + 15, p.l[0], 'pn-label'); text(g, p.x, p.y + r + 27, p.l[1], 'pn-label'); }
+    const tok = el('g', { 'pointer-events': 'none' }, g);
+    placeG[pid] = { g, c, tok };
+    const pick = () => { selected = pid; renderInspector(); renderTokens(); };
+    g.addEventListener('click', pick);
+    g.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); pick(); } });
+  }
+
+  const transG = {};
+  for (const [tid, t] of Object.entries(TR)) {
+    const g = el('g', { class: 'pn-trans', tabindex: 0, role: 'button', 'aria-label': 'Fire ' + t.l.join('') }, svg);
+    el('rect', { x: t.x - HW, y: t.y - HH, width: HW * 2, height: HH * 2, rx: 1.5 }, g);
+    text(g, t.x, t.y + HH + 16, t.l[0], 'pn-label');
+    text(g, t.x, t.y + HH + 28, t.l[1], 'pn-label');
+    transG[tid] = g;
+    g.addEventListener('click', () => fire(tid));
+    g.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); fire(tid); } });
+  }
+
+  let M, selected = 'queue', timer = null, cycle = 0;
+  const logEl = document.getElementById('pn-log');
+  const qIn = document.getElementById('pn-q');
+  const log = (msg, bad) => {
+    const li = document.createElement('li');
+    li.textContent = msg; if (bad) li.className = 'bad';
+    logEl.prepend(li);
+    while (logEl.children.length > 40) logEl.lastChild.remove();
+  };
+  const reset = () => {
+    M = {};
+    for (const pid in PL) M[pid] = [];
+    M.queue = AG.map(id => ({ k: 'agency', id }));
+    M.slots = [1, 2, 3, 4].map(i => ({ k: 'slot', id: 'slot ' + i }));
+    cycle++;
+    logEl.innerHTML = '';
+    log('Reset. 20 agency tokens queued, 4 download slots free.');
+    stop(); render();
+  };
+  const enabled = tid => Object.entries(TR[tid].in).every(([pid, w]) => M[pid].length >= w);
+
+  const ACT = {
+    request(c) {
+      const a = c.queue[0];
+      log(`${a.id}: download requested (${M.dl.length + 1}/4 slots busy)`);
+      return { dl: [a] };
+    },
+    land(c) {
+      const a = c.dl[0], q = qIn.value / 100;
+      const failed = [];
+      let got = null;
+      for (const fy of FY) { if (Math.random() >= q) { got = fy; break; } failed.push(fy); }
+      const slot = { k: 'slot', id: 'slot' };
+      if (got) {
+        const note = failed.length ? ` after ${failed.map(f => 'FY' + f).join(', ')} timed out` : '';
+        log(`${a.id}: landed on FY${got} window${note}`);
+        return { done: [{ k: 'ok', id: a.id }], slots: [slot] };
+      }
+      log(`${a.id}: all 6 FY windows failed, keeps last week's rows`, true);
+      return { done: [{ k: 'kept', id: a.id }], slots: [slot] };
+    },
+    load(c) {
+      const ok = c.done.filter(t => t.k === 'ok').length;
+      const kept = c.done.filter(t => t.k === 'kept').map(t => t.id);
+      log(`load --replace: ${ok} agencies replaced${kept.length ? ', ' + kept.join(', ') + ' kept' : ''} (one transaction)`, kept.length > 0);
+      return { raw: [{ k: 'data', id: `award data · ${ok}/20 fresh` }] };
+    },
+    rec1(c) { log('record_run("usaspending_awards", "success")'); return { ready: c.raw, runs: [{ k: 'run', id: 'usaspending_awards ✓' }] }; },
+    dbt(c) { log('dbt deps + dbt build: models built, tests pass'); return { marts: c.ready }; },
+    rec2(c) { log('record_run("dbt_models", "success")'); return { built: c.marts, runs: [{ k: 'run', id: 'dbt_models ✓' }] }; },
+    sync(c) { log('sync_marts_to_neon: 3 marts swapped together, award table reloaded'); return { serving: c.built }; },
+  };
+
+  function fire(tid) {
+    if (!enabled(tid)) return false;
+    const c = {};
+    for (const [pid, w] of Object.entries(TR[tid].in)) {
+      if (pid === 'dl') { const i = Math.floor(Math.random() * M.dl.length); c.dl = M.dl.splice(i, 1); }
+      else c[pid] = M[pid].splice(0, w);
+    }
+    const out = ACT[tid](c);
+    for (const pid in out) M[pid].push(...out[pid]);
+    const g = transG[tid];
+    g.classList.add('flash'); setTimeout(() => g.classList.remove('flash'), 160);
+    render();
+    return true;
+  }
+  const step = () => {
+    const on = Object.keys(TR).filter(enabled);
+    if (!on.length) { log('Net is dead: serving holds the new snapshot. Reset to run again.'); stop(); return false; }
+    return fire(on[Math.floor(Math.random() * on.length)]);
+  };
+  const runBtn = document.getElementById('pn-run');
+  function stop() { clearInterval(timer); timer = null; runBtn.textContent = 'Run'; }
+  runBtn.addEventListener('click', () => {
+    if (timer) return stop();
+    runBtn.textContent = 'Pause';
+    timer = setInterval(() => { if (!step()) stop(); }, 320);
+  });
+  document.getElementById('pn-step').addEventListener('click', step);
+  document.getElementById('pn-reset').addEventListener('click', reset);
+  const updQ = () => {
+    const q = qIn.value / 100;
+    document.getElementById('pn-qv').textContent = qIn.value + '%';
+    const p = Math.pow(q, 6) * 100;
+    document.getElementById('pn-p6').textContent = (p < 0.01 && p > 0 ? '<0.01' : p.toFixed(p < 1 ? 2 : 1)) + '%';
+  };
+  qIn.addEventListener('input', updQ);
+
+  const DOT = [[0, 0], [-11, -8], [11, -8], [-11, 8], [11, 8], [0, -15], [0, 15]];
+  function renderTokens() {
+    for (const [pid, p] of Object.entries(PL)) {
+      const { tok, c } = placeG[pid];
+      tok.innerHTML = '';
+      c.classList.toggle('sel', pid === selected);
+      const toks = M[pid];
+      if (!toks.length) continue;
+      if (toks.length <= 6 &&!(toks.length > 1 && toks[0].k === 'data')) {
+        const n = toks.length;
+        toks.forEach((t, i) => {
+          const [dx, dy] = n === 1 ? [0, 0] : DOT[i + (n >= 2 ? 1 : 0)] || DOT[i];
+          el('circle', { class: 'k-' + t.k, cx: p.x + dx, cy: p.y + dy, r: t.k === 'data' ? 8 : 5 }, tok);
+        });
+      } else {
+        const kept = toks.filter(t => t.k === 'kept').length;
+        text(tok, p.x, p.y + 5, String(toks.length), 'pn-count');
+        if (kept) {
+          el('circle', { class: 'k-kept', cx: p.x + 19, cy: p.y - 19, r: 9 }, tok);
+          const t = text(tok, p.x + 19, p.y - 15.5, String(kept), 'pn-label');
+          t.style.fill = 'var(--panel)';
+        }
+      }
+    }
+  }
+  function renderInspector() {
+    const p = PL[selected];
+    document.getElementById('pn-insp-h').textContent = 'Place · ' + p.l.join(' ').replace('_ ', '_');
+    const box = document.getElementById('pn-insp');
+    box.innerHTML = '';
+    if (!M[selected].length) { box.innerHTML = '<span class="empty">no tokens</span>'; return; }
+    for (const t of M[selected]) {
+      const s = document.createElement('span');
+      s.className = 'c-' + t.k;
+      s.textContent = t.k === 'kept' ? t.id + ' · kept old' : t.id;
+      box.appendChild(s);
+    }
+  }
+  function render() {
+    for (const tid in TR) {
+      const on = enabled(tid);
+      transG[tid].classList.toggle('on', on);
+      transG[tid].setAttribute('aria-disabled', String(!on));
+    }
+    renderTokens(); renderInspector();
+  }
+  updQ(); reset();
+
+  /* ---------------- Lineage ---------------- */
+  const LN = document.getElementById('lineage');
+  const NODES = [
+    ['score_weights', 0, -1, 'seed', 'seed · csv', 'score_weights', '39 log-odds weights written by pipelines/fit_scores.py and committed to the repo. Loaded by dbt seed.', '39 rows'],
+    ['raw', 0, 0, 'src', 'source · RAW', 'AWARD_TRANSACTIONS', 'One row per award from the USASpending award-summary download. 20 agencies × 12 NAICS, contracts only.', '484,242 rows'],
+    ['s_sub', 0, 2, 'src', 'source · RAW_ENRICHMENT', 'USASPENDING_SUBAWARDS', 'Append-only JSON snapshots (payload + observed_at) written by load_enrichment.py.'],
+    ['s_gsa', 0, 3, 'src', 'source · RAW_ENRICHMENT', 'GSA_VEHICLES', 'Append-only JSON snapshots from explicit GSA eLibrary contract-number lookups.'],
+    ['s_ven', 0, 4, 'src', 'source · RAW_ENRICHMENT', 'VENDOR_ENTITIES', 'Append-only JSON snapshots of public SAM.gov entity registrations.'],
+    ['s_sam', 0, 5, 'src', 'source · RAW_ENRICHMENT', 'SAM_OPPORTUNITIES', 'Append-only JSON snapshots of SAM.gov notices. The API pilot shown in this inventory was replaced by public nightly bulk files in November.'],
+    ['target', 0, 6, 'seed', 'seed · csv', 'target_sam_agencies', 'Maps SAM department names to the 20 portfolio agencies.', '20 rows'],
+    ['s_fc', 0, 7, 'src', 'source · RAW_ENRICHMENT', 'PROCUREMENT_FORECASTS', 'Append-only JSON snapshots of the DHS APFS forecast feed. The feed was retired on 30 Oct 2026; its last snapshot is frozen.'],
+    ['stg', 1, 0, 'stg', 'stg_usaspending · view', 'award_transactions', 'Renames and types the raw columns. dbt tests award_unique_key unique. Copied to Neon as the award table behind the contract pages.', null, true],
+    ['g_sub', 1, 2, 'stg', 'stg_enrichment · view', 'subawards', 'Unpacks the JSON payload and keeps the newest snapshot per record_id (qualify row_number() = 1).'],
+    ['g_gsa', 1, 3, 'stg', 'stg_enrichment · view', 'gsa_vehicles', 'Unpacks the JSON payload and keeps the newest snapshot per record_id.'],
+    ['g_ven', 1, 4, 'stg', 'stg_enrichment · view', 'vendor_entities', 'Unpacks the JSON payload and keeps the newest snapshot per record_id.'],
+    ['g_sam', 1, 5, 'stg', 'stg_enrichment · view', 'sam_opportunities', 'Unpacks the JSON payload and keeps the newest snapshot per record_id.'],
+    ['g_fc', 1, 7, 'stg', 'stg_enrichment · view', 'forecasts', 'Unpacks the JSON payload and keeps the newest snapshot per record_id. Statuses include NEW, REC and NLR, so not every row is active.'],
+    ['awards', 2, 0, 'mart', 'mart · table', 'mart_awards', 'Award grain. Feeds every scoring and vendor model. In Neon it is a view over the copied award table.', '484,242 rows', true],
+    ['links', 2, 2, 'enr', 'mart_enrichment · view', 'subaward_links', 'Each reported subaward, flagged by whether its exact prime-award key matches an award here.'],
+    ['vctx', 2, 3.5, 'enr', 'mart_enrichment · view', 'vendor_context', 'Award recipients joined by exact UEI to SAM registrations and GSA vehicle counts. No fuzzy name matching.', '54,881 rows'],
+    ['opp', 2, 5.5, 'enr', 'mart_enrichment · view', 'opportunity_signals', 'SAM notices limited to the 20 agencies through target_sam_agencies, labeled by procurement stage.'],
+    ['bt', 3, -1, 'int', 'intermediate · table', 'int_score_backtest', 'Ended awards over $250K with an inferred follow-on (same office + PSC, start within −180…+365 days). Training data for fit_scores.py.', '94,048 rows'],
+    ['vend', 3, 0, 'mart', 'mart · table', 'mart_vendors', 'One row per vendor UEI. Copied to Neon.', '54,881 rows', true],
+    ['rc', 3, 1, 'mart', 'mart · table', 'mart_recompete_candidates', 'Live contracts ending between 3 months ago and 36 months out, joined to score_weights. The core product table. Copied to Neon.', '28,595 rows', true],
+    ['port', 3, 6.5, 'enr', 'mart_enrichment · view', 'portfolio_signals', 'Forecasts and SAM notices in one table. Deliberately not linked to awards yet.'],
+    ['agsum', 4, 0, 'mart', 'mart · table', 'mart_agency_summary', 'Agency-level rollup of awards and candidates. Copied to Neon.', '128 rows', true],
+    ['sctx', 4, 2, 'enr', 'mart_enrichment · view', 'candidate_supplier_context', 'Recompete candidates plus counts of reported subawards and subcontractors. Same grain as candidates.', '28,595 rows'],
+    ['dsig', 4, 6.5, 'enr', 'mart_enrichment · view', 'discovery_signals', 'portfolio_signals without DHS, so the one forecast feed doesn\'t dominate. Copied to Neon by sync_discovery_to_neon.py --apply.', null, true],
+    ['dcand', 5, 2, 'enr', 'mart_enrichment · view', 'discovery_candidates', 'Candidates without DHS, tagged by customer sector. This is the 9.3% drop from 28,595.', '25,944 rows'],
+  ];
+  const EDGES = [
+    ['raw','stg'],['stg','awards'],['awards','bt'],['awards','vend'],['awards','rc'],['score_weights','rc'],
+    ['awards','agsum'],['rc','agsum'],['rc','sctx'],['g_sub','sctx'],['sctx','dcand'],
+    ['s_sub','g_sub'],['s_gsa','g_gsa'],['s_ven','g_ven'],['s_sam','g_sam'],['s_fc','g_fc'],
+    ['g_sub','links'],['raw','links'],['g_gsa','vctx'],['g_ven','vctx'],['raw','vctx'],
+    ['g_sam','opp'],['target','opp'],['opp','port'],['g_fc','port'],['port','dsig'],
+    ['bt','score_weights','offline'],
+  ];
+  const NW = 192, NH = 46, CX = 222, X0 = 20, Y0 = 40, RY = 60;
+  const N = {};
+  NODES.forEach(([id, col, row, layer, kind, name, note, rows, neon]) => {
+    N[id] = { id, layer, kind, name, note, rows, neon, x: X0 + col * CX, y: Y0 + (row + 1) * RY };
+  });
+  const lnEdges = el('g', {}, LN);
+  const lnNodes = el('g', {}, LN);
+  const ldefs = el('defs', {}, LN);
+  const m2 = el('marker', { id: 'ah4', viewBox: '0 0 10 10', refX: 9, refY: 5, markerWidth: 6, markerHeight: 6, orient: 'auto-start-reverse' }, ldefs);
+  el('path', { class: 'ahead', d: 'M0,0 L10,5 L0,10 z' }, m2);
+  el('rect', { class: 'f-frame', x: 4, y: 4, width: 1332, height: 592, rx: 3 }, LN);
+  el('path', { class: 'f-tag', d: 'M4 4 H 262 V 22 L 250 34 H 4 Z' }, LN);
+  text(LN, 14, 24, 'pkg [dbt] SUNLIGHT_DB models', 'f-tagtext', 'start');
+
+  const edgeEls = EDGES.map(([a, b, kind]) => {
+    const A = N[a], B = N[b];
+    let d;
+    if (kind === 'offline') {
+      const x1 = A.x, y1 = A.y + NH / 2, x2 = B.x + NW, y2 = B.y + NH / 2;
+      d = `M${x1} ${y1} L${x2 + 2} ${y2}`;
+      const lab = text(lnEdges, (x1 + x2) / 2, y1 - 8, 'fit_scores.py → commit seed (outside dbt)', 'pn-weight');
+    } else {
+      const x1 = A.x + NW, y1 = A.y + NH / 2, x2 = B.x - 2, y2 = B.y + NH / 2, k = Math.max(40, (x2 - x1) * .45);
+      d = `M${x1} ${y1} C${x1 + k} ${y1}, ${x2 - k} ${y2}, ${x2} ${y2}`;
+    }
+    const p = el('path', { class: 'ln-edge' + (kind ? ' offline' : ''), d, 'marker-end': 'url(#ah4)' }, lnEdges);
+    return { a, b, p };
+  });
+  const nodeEls = {};
+  for (const n of Object.values(N)) {
+    const g = el('g', { class: 'ln-node L-' + n.layer, tabindex: 0, role: 'button', 'aria-label': n.name }, lnNodes);
+    el('rect', { class: 'b', x: n.x, y: n.y, width: NW, height: NH, rx: 3 }, g);
+    text(g, n.x + 10, n.y + 17, n.kind, 'nk', 'start');
+    text(g, n.x + 10, n.y + 34, n.name, 'nn', 'start');
+    if (n.neon) {
+      el('rect', { class: 'neonbg', x: n.x + NW - 40, y: n.y - 7, width: 36, height: 14, rx: 7 }, g);
+      text(g, n.x + NW - 22, n.y + 3.5, 'NEON', 'neon');
+    }
+    nodeEls[n.id] = g;
+    const pick = () => select(n.id);
+    g.addEventListener('click', e => { e.stopPropagation(); pick(); });
+    g.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); pick(); } });
+  }
+  const walk = (start, dir) => {
+    const seen = new Set([start]), stack = [start];
+    while (stack.length) {
+      const cur = stack.pop();
+      for (const e of edgeEls) {
+        const [from, to] = dir === 'up' ? [e.b, e.a] : [e.a, e.b];
+        if (from === cur && !seen.has(to)) { seen.add(to); stack.push(to); }
+      }
+    }
+    return seen;
+  };
+  let lnSel = null;
+  function select(id) {
+    const info = document.getElementById('ln-info');
+    if (lnSel === id || id === null) {
+      lnSel = null; LN.classList.remove('focus');
+      info.innerHTML = '<div class="nm">Nothing selected</div><p>Click a model. Row counts come from the 2026-10-17 inventory, not a live query.</p>';
+      return;
+    }
+    lnSel = id;
+    const up = walk(id, 'up'), down = walk(id, 'down'), all = new Set([...up, ...down]);
+    LN.classList.add('focus');
+    for (const k in nodeEls) {
+      nodeEls[k].classList.toggle('dim', !all.has(k));
+      nodeEls[k].classList.toggle('sel', k === id);
+    }
+    for (const e of edgeEls) {
+      const hot = (up.has(e.a) && up.has(e.b)) || (down.has(e.a) && down.has(e.b));
+      e.p.classList.toggle('hot', hot); e.p.classList.toggle('dim', !hot);
+    }
+    const n = N[id];
+    info.innerHTML = '';
+    const nm = document.createElement('div'); nm.className = 'nm';
+    nm.textContent = `${n.name}  ·  ${n.kind}${n.rows ? '  ·  ' + n.rows : ''}`;
+    const p = document.createElement('p');
+    p.textContent = `${n.note} Upstream: ${up.size - 1}. Downstream: ${down.size - 1}.`;
+    info.append(nm, p);
+  }
+  LN.addEventListener('click', () => select(null));
+
+  /* ---------------- Heat map ---------------- */
+  const cv = document.getElementById('heat');
+  const out = document.getElementById('heat-out');
+  const hex = s => { s = s.trim().replace('#', ''); return [0, 2, 4].map(i => parseInt(s.slice(i, i + 2), 16)); };
+  function drawHeat() {
+    const cs = getComputedStyle(document.documentElement);
+    const a = hex(cs.getPropertyValue('--panel')), b = hex(cs.getPropertyValue('--accent')), ink = cs.getPropertyValue('--wire').trim();
+    const dpr = Math.min(window.devicePixelRatio || 1, 2), W = 280;
+    cv.width = W * dpr; cv.height = W * dpr;
+    const ctx = cv.getContext('2d');
+    ctx.scale(dpr, dpr);
+    const C = 56, s = W / C;
+    for (let i = 0; i < C; i++) for (let j = 0; j < C; j++) {
+      const r = (i + .5) / C, f = 1 - (j + .5) / C;
+      const band = Math.floor(f * (1 - r) * 10) / 10;
+      const t = Math.min(1, band * 1.15);
+      ctx.fillStyle = `rgb(${a.map((v, k) => Math.round(v + (b[k] - v) * t)).join(',')})`;
+      ctx.fillRect(i * s, j * s, s + .5, s + .5);
+    }
+    ctx.strokeStyle = ink; ctx.globalAlpha = .5; ctx.lineWidth = 1;
+    for (const c of [.2, .4, .6]) {
+      ctx.beginPath();
+      for (let x = 0; x <= W; x += 2) {
+        const r = x / W; if (1 - r <= c) break;
+        const y = (1 - c / (1 - r)) * W;
+        x === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
+      }
+      ctx.stroke();
+    }
+    ctx.globalAlpha = 1;
+  }
+  const readAt = e => {
+    const rect = cv.getBoundingClientRect();
+    const r = Math.min(1, Math.max(0, (e.clientX - rect.left) / rect.width));
+    const f = Math.min(1, Math.max(0, 1 - (e.clientY - rect.top) / rect.height));
+    out.innerHTML = `r = ${r.toFixed(2)}   f = ${f.toFixed(2)}<br>incumbent_strength <b>${Math.round(100 * r)}</b>   recompete_score <b>${Math.round(100 * f * (1 - r))}</b>`;
+  };
+  cv.addEventListener('pointermove', readAt);
+  cv.addEventListener('pointerdown', readAt);
+  drawHeat();
+  try { matchMedia('(prefers-color-scheme: dark)').addEventListener('change', drawHeat); } catch (_) {}
+  new MutationObserver(drawHeat).observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
+})();
+</script>
+
+</body></html>
