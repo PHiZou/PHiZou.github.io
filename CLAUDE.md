@@ -21,7 +21,7 @@ Peter Hagen's portfolio, live at https://phizou.github.io (repo PHiZou/PHiZou.gi
 
 ## Audience & positioning
 - Primary: recruiters / hiring managers for data, analytics, and BI engineering roles. They should understand within 5 seconds what Peter builds, and the main CTA is resume or contact.
-- Secondary: consulting / data-product clients (GovCon, defense & intel). Keep these pages, but they come after the hiring path in nav and CTAs.
+- Secondary: consulting / data-product clients (GovCon, defense & intel). Recompete Radar is the main example across audiences; the legacy `/consulting` and `/defense` pages have been removed.
 
 ## House rules
 - Make no unsupported claims. Every metric, title, and "in production"/"live" claim must be backed by real work and match the resume (see commit 763bea3). If unsure, ask.

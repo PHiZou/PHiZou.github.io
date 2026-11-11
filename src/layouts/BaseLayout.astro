@@ -18,9 +18,8 @@ const NAV_ITEMS = [
   { id: "resume", label: "Resume", href: "/resume" },
   { id: "contact", label: "Contact", href: "mailto:Peter.H.Hagen@gmail.com" },
 ];
-// Consulting, Defense & Intel and the old Data Products page were taken out
-// of the nav to keep the site focused on Recompete Radar. /products now
-// redirects to /recompete-radar; /consulting and /defense still build.
+// The old Data Products page redirects to /recompete-radar.
+// Consulting and Defense & Intel were removed to keep the site focused.
 
 const pathname = Astro.url.pathname.replace(/\/$/, "") || "/";
 const isActive = (href: string) =>
