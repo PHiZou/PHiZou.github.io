@@ -1,0 +1,50 @@
+---
+interface Props {
+  href: string;
+  title: string;
+  finding: string;
+  asOf: string;
+  asOfLabel: string;
+  image: string;
+  imageAlt: string;
+  label?: string;
+  eager?: boolean;
+  headingLevel?: "h2" | "h3";
+}
+
+const { href, title, finding, asOf, asOfLabel, image, imageAlt, label = "Data story", eager = false } = Astro.props;
+const Heading = Astro.props.headingLevel ?? "h3";
+---
+
+<a href={href} class="story-card">
+  <div class="story-art">
+    <img src={image} alt={imageAlt} width="1008" height="550" loading={eager ? "eager" : "lazy"} decoding="async" />
+  </div>
+  <div class="story-copy">
+    <div class="story-meta">
+      <span class="story-kind">{label}</span>
+      <span>Data as of <time datetime={asOf}>{asOfLabel}</time></span>
+    </div>
+    <Heading class="story-title">{title}</Heading>
+    <p>{finding}</p>
+    <span class="story-go">Read the story <span aria-hidden="true">→</span></span>
+  </div>
+</a>
+
+<style>
+  .story-card { min-width: 0; display: flex; flex-direction: column; background: var(--bg-card); border-radius: 12px; overflow: hidden; text-decoration: none; box-shadow: 0 0 0 1px var(--border); transition: box-shadow .3s cubic-bezier(.16,1,.3,1); }
+  .story-art { padding: 10px 10px 0; }
+  .story-art img { display: block; width: 100%; height: auto; aspect-ratio: 1.84; object-fit: contain; background: #f6f7f8; border-radius: 5px; }
+  .story-copy { flex: 1; display: flex; flex-direction: column; align-items: flex-start; padding: 22px 24px 24px; }
+  .story-meta { display: flex; flex-wrap: wrap; gap: 6px 14px; font-size: .6875rem; color: var(--ink-3); }
+  .story-kind { font-weight: 600; color: var(--teal-text); }
+  .story-title { margin-top: 12px; font-size: clamp(1.25rem, 2.1vw, 1.6rem); line-height: 1.2; letter-spacing: -.015em; font-weight: 600; color: var(--ink); text-wrap: pretty; }
+  p { margin-top: 12px; font-size: .875rem; line-height: 1.65; color: var(--ink-2); }
+  .story-go { margin-top: auto; padding-top: 20px; font-size: .8125rem; font-weight: 600; color: var(--teal-text); display: inline-flex; gap: 10px; align-items: center; }
+  .story-go span { transition: transform .3s cubic-bezier(.16,1,.3,1); }
+  .story-card:hover { box-shadow: 0 0 0 1px var(--border-strong), 0 12px 36px oklch(.42 .03 200 / .07); }
+  .story-card:hover .story-go span { transform: translateX(4px); }
+  .story-card:focus-visible { outline: 2px solid var(--teal-text); outline-offset: 5px; }
+  @media (max-width: 760px) { .story-copy { padding: 20px; } .story-title { font-size: 1.4rem; } }
+  @media (prefers-reduced-motion: reduce) { .story-card, .story-go span { transition: none; } .story-card:hover .story-go span { transform: none; } }
+</style>

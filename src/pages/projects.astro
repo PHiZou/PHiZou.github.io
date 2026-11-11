@@ -7,7 +7,7 @@ const allProjects = await getCollection("projects");
 
 const groups = [
   {
-    persona: "Start with these",
+    persona: "Selected earlier work",
     color: "var(--teal-text)",
     projects: [
       {
@@ -34,7 +34,7 @@ const groups = [
     ],
   },
   {
-    persona: "GovCon / BD teams",
+    persona: "Research & analysis",
     color: "var(--amber)",
     projects: [
       {
@@ -54,7 +54,7 @@ const groups = [
     ],
   },
   {
-    persona: "Data engineering & AI",
+    persona: "Search & data applications",
     color: "var(--purple-text)",
     projects: [
       {
@@ -74,7 +74,7 @@ const groups = [
     ],
   },
   {
-    persona: "BI, analytics & visualization",
+    persona: "Dashboards & visualizations",
     color: "var(--red-text)",
     projects: [
       {
@@ -115,6 +115,18 @@ const statusClass: Record<string, string> = {
   Prototype: "badge-premium",
 };
 
+// Each project appears once in the archive, even when it spans several topics.
+const seenProjects = new Set<string>();
+const archiveGroups = groups.map((group) => ({
+  ...group,
+  projects: group.projects.filter((project) => {
+    const key = project.caseStudy ?? project.url;
+    if (seenProjects.has(key)) return false;
+    seenProjects.add(key);
+    return true;
+  }),
+})).filter((group) => group.projects.length > 0);
+
 // Everything else in the content collection, so no case study becomes unreachable
 const curatedSlugs = new Set(
   groups.flatMap((g) => g.projects.map((p) => p.caseStudy)).filter(Boolean)
@@ -126,19 +138,19 @@ const moreProjects = allProjects
 ---
 
 <BaseLayout
-  title="Other work – Peter Hagen"
-  description="Supporting projects by Peter Hagen: pipelines, dashboards, RAG workflows and D3 visualizations. The main project is Recompete Radar."
+  title="Project archive – Peter Hagen"
+  description="Earlier projects, visual essays and experiments by Peter Hagen. Browse applications, research and data visualizations; explore Recompete Radar for the main project."
 >
-  <section style="border-bottom: 1px solid var(--border); padding: 48px 24px 32px;">
+  <section class="archive-hero">
     <div class="wrap">
       <div class="eyebrow" style="margin-bottom: 10px;">Other work</div>
-      <h1 style="font-size: 1.5rem; font-weight: 700; color: var(--ink); margin-bottom: 8px;">Supporting projects</h1>
-      <p style="font-size: 0.8125rem; color: var(--ink-3); max-width: 640px;">
-        Pipelines, dashboards, RAG workflows and visualizations. Project titles open the written
-        case study; Launch opens the live app.
+      <h1>Project archive</h1>
+      <p class="archive-intro">
+        Earlier applications, visual essays and experiments, kept here to explore and reference.
+        Project titles open the case study; demo links open the project itself.
       </p>
       <a href="/recompete-radar" class="card radar-banner">
-        <span><strong>Main project: Recompete Radar.</strong> Data stories, an analytical brief and a live app.</span>
+        <span><strong>Start with Recompete Radar</strong> for the main project: data stories, the analytical brief and a working app.</span>
         <span class="radar-banner-go">Go to Recompete Radar →</span>
       </a>
     </div>
@@ -146,7 +158,7 @@ const moreProjects = allProjects
 
   <section style="padding: 32px 24px;">
     <div class="wrap" style="display: flex; flex-direction: column; gap: 32px;">
-      {groups.map((group) => (
+      {archiveGroups.map((group) => (
         <div>
           <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 12px;">
             <div style={`width: 3px; height: 14px; background: ${group.color}; border-radius: 2px;`}></div>
@@ -181,7 +193,7 @@ const moreProjects = allProjects
         <div>
           <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 12px;">
             <div style="width: 3px; height: 14px; background: var(--ink-4); border-radius: 2px;"></div>
-            <div class="mono group-label">More builds & case studies</div>
+            <div class="mono group-label">More from the archive</div>
           </div>
           <div style="display: flex; flex-direction: column;">
             {moreProjects.map((p) => (
@@ -205,6 +217,9 @@ const moreProjects = allProjects
 </BaseLayout>
 
 <style>
+  .archive-hero { border-bottom: 1px solid var(--border); padding: 56px 24px 36px; }
+  .archive-hero h1 { margin-bottom: 12px; font-size: clamp(2rem, 4vw, 2.8rem); font-weight: 600; line-height: 1.1; color: var(--ink); }
+  .archive-intro { max-width: 640px; font-size: .9375rem; line-height: 1.7; color: var(--ink-2); }
   .radar-banner { margin-top: 18px; padding: 14px 18px; display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap; text-decoration: none; font-size: 0.85rem; color: var(--ink-2); }
   .radar-banner strong { color: var(--ink); }
   .radar-banner-go { font-weight: 700; color: var(--amber); white-space: nowrap; }
@@ -213,13 +228,13 @@ const moreProjects = allProjects
     font-weight: 700;
     letter-spacing: 0.12em;
     text-transform: uppercase;
-    color: var(--ink-4);
+    color: var(--ink-3);
   }
   .catalog-row {
     display: flex;
     justify-content: space-between;
     align-items: baseline;
-    padding: 11px 0;
+    padding: 16px 0;
     border-bottom: 1px solid var(--border);
     gap: 16px;
   }
@@ -230,22 +245,13 @@ const moreProjects = allProjects
     text-decoration: none;
   }
   a.catalog-title:hover { color: var(--teal-text); }
-  .catalog-desc { margin-left: 12px; font-size: 0.72rem; color: var(--ink-5); }
+  .catalog-desc { display: block; margin-top: 4px; font-size: .8125rem; line-height: 1.6; color: var(--ink-3); }
   .catalog-launch {
     font-size: 0.7rem;
     font-weight: 700;
     color: var(--teal-text);
     text-decoration: none;
     white-space: nowrap;
-  }
-  .catalog-launch::after {
-    content: " may take a moment";
-    display: block;
-    font-size: 0.58rem;
-    font-weight: 500;
-    color: var(--ink-5);
-    letter-spacing: 0;
-    margin-top: 1px;
   }
   @media (max-width: 760px) {
     section { padding-left: 18px; padding-right: 18px; }
