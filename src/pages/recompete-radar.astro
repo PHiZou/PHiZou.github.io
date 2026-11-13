@@ -7,6 +7,7 @@ import BaseLayout from "../layouts/BaseLayout.astro";
 import HireBridge from "../components/HireBridge.astro";
 import StoryCard from "../components/StoryCard.astro";
 import ReportCard from "../components/ReportCard.astro";
+import HowItsBuilt from "../components/HowItsBuilt.astro";
 
 // Newest first.
 const stories = [
@@ -35,7 +36,7 @@ const stories = [
 
 <BaseLayout
   title="Recompete Radar – Peter Hagen"
-  description="Federal contracting, explained with data. Interactive stories, a visual report, an analytical brief and a live app built on Recompete Radar by Peter Hagen."
+  description="Federal contracting, explained with data. Interactive stories, a visual report, an analytical brief and the pipeline behind them, built by Peter Hagen."
 >
   <section class="hero-mesh rr-hero">
     <div class="wrap">
@@ -43,16 +44,18 @@ const stories = [
       <h1 class="rr-title">Federal contracting, explained with data.</h1>
       <p class="rr-lede">
         Which contracts are ending, which companies hold them, and what deserves a closer look?
-        I built Recompete Radar to make those questions easier to explore, using 484,242 public
-        contract records from 20 civilian agencies.
+        I built Recompete Radar to make those questions easier to explore. Federal contracting is
+        the subject matter. The work is the transferable part.
       </p>
-      <p class="rr-role">My work: data collection, cleaning and testing, analysis, and the tools below.</p>
+      <p class="rr-role">
+        Scope today: 484,242 prime contract awards at 20 civilian agencies, FY2008 onward. No DoD.
+        My work: data collection, cleaning and testing, analysis, and everything below.
+      </p>
       <nav class="rr-jump" aria-label="On this page">
         <a href="#stories">Data stories</a>
         <a href="#report">Visual report</a>
         <a href="#brief">Brief &amp; case study</a>
-        <a href="#schematics">System schematics</a>
-        <a href="#app">Live app</a>
+        <a href="#built">How it's built</a>
       </nav>
     </div>
   </section>
@@ -91,35 +94,41 @@ const stories = [
     </div>
   </section>
 
-  <!-- SCHEMATICS -->
-  <section id="schematics" class="section anchor">
-    <div class="wrap rr-split">
-      <div>
-        <h2 class="rr-h2">System schematics</h2>
-        <p class="rr-sub">
-          Follow the data from source to web app. Step through a simulated refresh, trace how
-          tables depend on each other, and explore the scoring and freshness checks.
-        </p>
+  <!-- HOW IT'S BUILT -->
+  <section id="built" class="section anchor">
+    <div class="wrap">
+      <div class="rr-split">
+        <div>
+          <h2 class="rr-h2">How it's built</h2>
+          <p class="rr-sub">From a public download to a web app, with tests at each step.</p>
+        </div>
+        <div class="rr-actions">
+          <a href="/recompete-radar/architecture/" class="btn-outline">Interactive schematics →</a>
+        </div>
       </div>
-      <div class="rr-actions">
-        <a href="/recompete-radar/architecture/" class="btn-outline">See the schematics →</a>
-      </div>
+      <HowItsBuilt />
     </div>
   </section>
 
-  <!-- APP -->
+  <!-- APP AND WHAT'S NEXT -->
   <section id="app" class="section bg-alt anchor">
-    <div class="wrap rr-split">
+    <div class="wrap rr-foot">
       <div>
-        <h2 class="rr-h2">Live app</h2>
+        <h2 class="rr-h3">The live app</h2>
         <p class="rr-sub">
-          Explore contracts approaching their end dates, filter by agency or vendor, and see
-          what contributes to each ranking. The first load can take a few seconds.
+          Filter contracts nearing their end dates by agency or vendor and see what contributes
+          to each ranking. The first load can take a few seconds.
+        </p>
+        <p class="rr-footlinks">
+          <a href="https://recompete-radar.vercel.app/" target="_blank" rel="noopener noreferrer" class="slow-demo-link">Open the app ↗</a>
+          <a href="https://github.com/PHiZou/recompete-radar" target="_blank" rel="noopener noreferrer">Code on GitHub ↗</a>
         </p>
       </div>
-      <div class="rr-actions">
-        <a href="https://recompete-radar.vercel.app/" target="_blank" rel="noopener noreferrer" class="btn-primary slow-demo-link">Open the app ↗</a>
-        <a href="https://github.com/PHiZou/recompete-radar" target="_blank" rel="noopener noreferrer" class="btn-outline">Code ↗</a>
+      <div>
+        <h2 class="rr-h3">Up next</h2>
+        <p class="rr-sub">
+          Federal grants are the next data source I plan to look at. Nothing is built yet.
+        </p>
       </div>
     </div>
   </section>
@@ -152,6 +161,11 @@ const stories = [
   .rr-list { margin-top: 24px; display: grid; grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr); gap: 28px; }
   .rr-report { margin-top: 28px; }
 
+  .rr-h3 { font-size: 1.125rem; font-weight: 600; color: var(--ink); }
+  .rr-foot { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 40px; }
+  .rr-footlinks { margin-top: 12px; display: flex; flex-wrap: wrap; gap: 10px 24px; }
+  .rr-footlinks a { font-size: .8125rem; font-weight: 600; color: var(--teal-text); text-decoration: none; }
+  .rr-footlinks a:hover { text-decoration: underline; text-underline-offset: 4px; }
   .rr-split { display: flex; justify-content: space-between; align-items: center; gap: 24px; flex-wrap: wrap; }
   .rr-actions { display: flex; gap: 10px; flex-wrap: wrap; }
 
@@ -159,5 +173,6 @@ const stories = [
     .rr-hero { padding: 40px 18px 32px; }
     .section { padding-left: 18px; padding-right: 18px; }
     .rr-list { grid-template-columns: 1fr; }
+    .rr-foot { grid-template-columns: 1fr; gap: 28px; }
   }
 </style>
