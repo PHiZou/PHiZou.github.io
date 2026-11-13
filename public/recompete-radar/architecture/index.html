@@ -4,12 +4,12 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Recompete Radar: System Schematics – Peter Hagen</title>
-<meta name="description" content="Five systems-engineering views of the Recompete Radar data pipeline: block diagram, coloured Petri net, dbt lineage, scoring model and freshness checks.">
+<meta name="description" content="Four systems-engineering views of the Recompete Radar data pipeline: block diagram, coloured Petri net, dbt lineage and scoring model.">
 <link rel="canonical" href="https://phizou.github.io/recompete-radar/architecture/">
 <link rel="icon" href="/favicon.svg" type="image/svg+xml">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Recompete Radar: System Schematics">
-<meta property="og:description" content="Five systems-engineering views of how public procurement data becomes a ranked list of contracts about to be re-bid.">
+<meta property="og:description" content="Four systems-engineering views of how public procurement data becomes a ranked list of contracts about to be re-bid.">
 <meta property="og:url" content="https://phizou.github.io/recompete-radar/architecture/">
 <meta property="og:image" content="https://phizou.github.io/recompete-radar/architecture/og-image.png">
 <meta property="og:image:width" content="1200">
@@ -194,13 +194,12 @@ a { color: var(--data); }
   <a class="back" href="/recompete-radar">← Recompete Radar</a>
   <div class="eyebrow">recompete radar · architecture notebook · nov 2026</div>
   <h1>Recompete Radar Schematics</h1>
-  <p>Five views of the same system. Public procurement data is downloaded, loaded into Snowflake, modeled by dbt, scored, copied into a small Postgres database, and served by an API to the web app. Each view uses a different systems-engineering notation because each answers a different question about that path. The Petri net, lineage graph and score map are interactive.</p>
+  <p>Four views of the same system. Public procurement data is downloaded, loaded into Snowflake, modeled by dbt, scored, copied into a small Postgres database, and served by an API to the web app. Each view uses a different systems-engineering notation because each answers a different question about that path. The Petri net, lineage graph and score map are interactive.</p>
   <nav class="toc" aria-label="Views">
     <a href="#context"><b>ibd</b>What talks to what</a>
     <a href="#refresh"><b>pn</b>How a refresh runs</a>
     <a href="#lineage-sec"><b>dbt</b>How tables depend on each other</a>
     <a href="#scoring"><b>calc</b>How a contract gets scored</a>
-    <a href="#freshness"><b>stm</b>How staleness is detected</a>
   </nav>
 </header>
 
@@ -209,7 +208,7 @@ a { color: var(--data); }
   <div class="sec-head">
     <div class="kind">ibd · internal block diagram</div>
     <h2>What talks to what</h2>
-    <p>Solid arrows carry data, labeled with the script that moves it. Dashed arrows are control: which scheduler starts the work. The data plane is on top and the schedulers sit underneath.</p>
+    <p>Solid arrows carry data, labeled with the script that moves it. The dashed arrow is control: the scheduler that starts the work. The data plane is on top and the scheduler sits underneath.</p>
   </div>
   <div class="frame">
   <svg viewBox="0 0 1240 600" width="1240" height="600" role="img" aria-label="System block diagram: public sources feed Snowflake, dbt builds marts, marts sync to Neon Postgres, a FastAPI service serves the Next.js app">
@@ -226,68 +225,50 @@ a { color: var(--data); }
     <!-- sources -->
     <g>
       <rect class="box" x="30" y="80" width="190" height="50" rx="3"/><text class="t-title" x="42" y="100">USASpending</text><text class="t-sub" x="42" y="118">award-summary downloads</text>
-      <rect class="box" x="30" y="142" width="190" height="50" rx="3"/><text class="t-title" x="42" y="162">USASpending</text><text class="t-sub" x="42" y="180">subaward reports</text>
-      <rect class="box" x="30" y="204" width="190" height="50" rx="3"/><text class="t-title" x="42" y="224">SAM.gov</text><text class="t-sub" x="42" y="242">notices + entity registrations</text>
-      <rect class="box" x="30" y="266" width="190" height="50" rx="3"/><text class="t-title" x="42" y="286">DHS APFS · retired</text><text class="t-sub" x="42" y="304">frozen snapshot · 16 Oct 2026</text>
-      <rect class="box" x="30" y="328" width="190" height="50" rx="3"/><text class="t-title" x="42" y="348">GSA eLibrary</text><text class="t-sub" x="42" y="366">contract-vehicle lookups</text>
     </g>
+    <text class="t-lab" x="42" y="152">20 agencies × 12 NAICS,</text>
+    <text class="t-lab" x="42" y="164">contracts only (A–D)</text>
 
     <!-- source -> snowflake -->
     <path class="wire" d="M220 105 L 364 105" marker-end="url(#ah1)"/>
     <text class="t-lab" x="292" y="88" text-anchor="middle">ingest_usaspending</text>
     <text class="t-lab" x="292" y="99" text-anchor="middle">load_to_snowflake</text>
-    <path class="wire" d="M220 167 L 252 248 M220 229 L 252 248 M220 291 L 252 248 M220 353 L 252 248"/>
-    <path class="wire" d="M252 248 L 364 248" marker-end="url(#ah1)"/>
-    <text class="t-lab" x="308" y="230" text-anchor="middle">ingest_enrichment</text>
-    <text class="t-lab" x="308" y="241" text-anchor="middle">load_enrichment</text>
-    <text class="t-lab" x="250" y="398">20 agencies × 12 NAICS,</text>
-    <text class="t-lab" x="250" y="410">contracts only (A–D)</text>
 
     <!-- snowflake -->
-    <rect class="box-sf" x="350" y="74" width="380" height="316" rx="4"/>
+    <rect class="box-sf" x="350" y="74" width="380" height="232" rx="4"/>
     <rect class="chip" x="366" y="90" width="140" height="34" rx="2"/><text class="t-title" x="378" y="111">RAW</text>
-    <rect class="chip" x="366" y="231" width="140" height="34" rx="2"/><text class="t-title" x="378" y="252">RAW_ENRICHMENT</text>
-    <rect class="chip" x="366" y="320" width="140" height="52" rx="2"/><text class="t-title" x="378" y="340">DEV_REFERENCE</text><text class="t-sub" x="378" y="354">seeds +</text><text class="t-sub" x="378" y="366">PIPELINE_RUNS</text>
+    <rect class="chip" x="366" y="202" width="140" height="48" rx="2"/><text class="t-title" x="378" y="222">DEV_REFERENCE</text><text class="t-sub" x="378" y="238">seed: score_weights</text>
     <rect class="chip" x="574" y="90" width="140" height="34" rx="2"/><text class="t-title" x="586" y="111">DEV_STAGING</text>
     <rect class="chip" x="574" y="146" width="140" height="34" rx="2"/><text class="t-title" x="586" y="167">DEV_INTERMEDIATE</text>
     <rect class="chip" x="574" y="202" width="140" height="34" rx="2"/><text class="t-title" x="586" y="223">DEV_MARTS</text>
-    <rect class="chip" x="574" y="262" width="140" height="34" rx="2"/><text class="t-title" x="586" y="283">DEV_ENRICHMENT</text>
     <path class="wire" d="M506 107 L 572 107" marker-end="url(#ah1)"/>
     <text class="t-lab" x="540" y="100" text-anchor="middle">dbt</text>
-    <path class="wire" d="M506 248 L 572 276" marker-end="url(#ah1)"/>
-    <text class="t-lab" x="540" y="250" text-anchor="middle">dbt</text>
     <path class="wire" d="M644 124 L 644 144" marker-end="url(#ah1)"/>
     <path class="wire" d="M644 180 L 644 200" marker-end="url(#ah1)"/>
-    <path class="wire" d="M644 236 L 644 260" marker-end="url(#ah1)"/>
-    <path class="wire" d="M506 336 L 540 336 L 540 224 L 572 224" marker-end="url(#ah1)"/>
-    <text class="t-lab" x="546" y="312">seeds</text>
-    <text class="t-sub" x="586" y="322">staging = views</text>
-    <text class="t-sub" x="586" y="336">marts = tables</text>
-    <text class="t-sub" x="586" y="350">enrichment = views</text>
+    <path class="wire" d="M506 220 L 572 220" marker-end="url(#ah1)"/>
+    <text class="t-lab" x="540" y="213" text-anchor="middle">seed</text>
+    <text class="t-sub" x="586" y="268">staging = views</text>
+    <text class="t-sub" x="586" y="282">marts = tables</text>
 
     <!-- snowflake -> neon -->
     <path class="wire" d="M714 214 C 780 214, 790 130, 848 130" marker-end="url(#ah1)"/>
     <text class="t-lab" x="782" y="150" text-anchor="middle">sync_marts_to_neon</text>
-    <path class="wire" d="M714 279 C 790 279, 790 172, 848 172" marker-end="url(#ah1)"/>
-    <text class="t-lab" x="792" y="292" text-anchor="middle">sync_discovery_to_neon</text>
-    <text class="t-lab" x="792" y="303" text-anchor="middle">(manual --apply)</text>
 
     <!-- serving -->
     <rect class="box" x="850" y="80" width="180" height="112" rx="3"/>
     <text class="t-title" x="862" y="100">Neon Postgres</text><text class="t-sub" x="862" y="116">free tier, 0.5 GB</text>
     <text class="t-lab" x="862" y="138">award table + mart_awards view</text>
     <text class="t-lab" x="862" y="152">3 small marts</text>
-    <text class="t-lab" x="862" y="166">discovery_signals</text>
-    <text class="t-lab" x="862" y="180">no raw data</text>
+    <text class="t-lab" x="862" y="166">no raw data</text>
     <path class="wire" d="M940 192 L 940 238" marker-end="url(#ah1)"/>
     <text class="t-lab" x="948" y="219">SQL</text>
     <rect class="box" x="850" y="240" width="180" height="100" rx="3"/>
     <text class="t-title" x="862" y="260">FastAPI · Fly.io</text><text class="t-sub" x="862" y="276">read API</text>
     <text class="t-lab" x="862" y="296">/summary /recompetes</text>
-    <text class="t-lab" x="862" y="310">/vendors /agencies /signals</text>
+    <text class="t-lab" x="862" y="310">/vendors /agencies /contracts</text>
     <rect class="box" x="850" y="372" width="180" height="50" rx="3"/>
     <text class="t-title" x="862" y="392">export_outreach.py</text><text class="t-sub" x="862" y="410">CSV straight from marts</text>
-    <path class="wire" d="M730 380 C 790 380, 800 397, 848 397" marker-end="url(#ah1)"/>
+    <path class="wire" d="M730 290 C 790 290, 790 397, 848 397" marker-end="url(#ah1)"/>
 
     <!-- people -->
     <path class="wire" d="M1030 290 L 1078 290" marker-end="url(#ah1)"/>
@@ -295,8 +276,7 @@ a { color: var(--data); }
     <rect class="box" x="1080" y="240" width="140" height="100" rx="3"/>
     <text class="t-title" x="1092" y="260">Next.js 14</text><text class="t-sub" x="1092" y="276">on Vercel</text>
     <text class="t-lab" x="1092" y="296">agencies, vendors,</text>
-    <text class="t-lab" x="1092" y="310">signals, insights,</text>
-    <text class="t-lab" x="1092" y="324">contracts</text>
+    <text class="t-lab" x="1092" y="310">insights, contracts</text>
     <path class="wire" d="M1150 340 L 1150 370" marker-end="url(#ah1)"/>
     <path class="wire" d="M1030 397 L 1078 397" marker-end="url(#ah1)"/>
     <rect class="box" x="1080" y="372" width="140" height="50" rx="3"/>
@@ -304,21 +284,13 @@ a { color: var(--data); }
 
     <!-- control plane -->
     <line x1="20" y1="446" x2="1220" y2="446" stroke="var(--line)" stroke-dasharray="2 4"/>
-    <text class="lane" x="30" y="474">SCHEDULERS · CONTROL</text>
-    <rect class="box-ctl" x="350" y="490" width="260" height="84" rx="3"/>
+    <text class="lane" x="30" y="474">SCHEDULER · CONTROL</text>
+    <rect class="box-ctl" x="350" y="490" width="380" height="84" rx="3"/>
     <text class="t-title" x="362" y="510">GitHub Actions</text><text class="t-sub" x="362" y="526">configured: Mon 08:00 UTC</text>
     <text class="t-lab" x="362" y="546">refresh.sh → dbt build</text>
     <text class="t-lab" x="362" y="560">→ sync_marts_to_neon</text>
-    <rect class="box-ctl" x="630" y="490" width="330" height="84" rx="3"/>
-    <text class="t-title" x="642" y="510">Airflow · local Mac</text>
-    <text class="t-lab" x="642" y="530">sunlight_awards      manual (schedule=None)</text>
-    <text class="t-lab" x="642" y="545">sunlight_enrichment  daily 06:00 ET*</text>
-    <text class="t-lab" x="642" y="560">sunlight_freshness   daily 09:00 ET*</text>
-    <path class="wire ctl" d="M440 490 L 440 392" marker-end="url(#ah1)"/>
-    <text class="t-lab" x="448" y="430">weekly award refresh</text>
-    <path class="wire ctl" d="M680 490 L 680 392" marker-end="url(#ah1)"/>
-    <text class="t-lab" x="688" y="420">enrichment + audit</text>
-    <text class="t-lab" x="688" y="432">rows in PIPELINE_RUNS</text>
+    <path class="wire ctl" d="M540 490 L 540 308" marker-end="url(#ah1)"/>
+    <text class="t-lab" x="548" y="404">weekly award refresh</text>
   </svg>
   </div>
   <div class="cols">
@@ -327,8 +299,8 @@ a { color: var(--data); }
       <p>Snowflake holds everything: about 484k raw award rows plus every dbt model. Neon's free tier is 0.5 GB, so it only gets the tables the API reads. The award table goes over once, and <code>mart_awards</code> is recreated in Neon as a view over it so the same rows aren't stored twice.</p>
     </div>
     <div class="notes">
-      <h3>Why two schedulers</h3>
-      <p>The repository configures GitHub Actions for weekly award refreshes. The Airflow awards DAG is manual to avoid two schedulers running <code>refresh.sh --replace</code> against the same tables at once. *Airflow is configured for daily enrichment and freshness checks, plus monthly entity registrations. These are configured schedules; successful automatic runs and current pause states have not been verified here. The DHS APFS feed was retired on 30 Oct 2026, so its last snapshot is frozen.</p>
+      <h3>How the refresh is scheduled</h3>
+      <p>One GitHub Actions workflow is configured to run every Monday at 08:00 UTC. It runs <code>refresh.sh</code>, then <code>dbt build</code>, then <code>sync_marts_to_neon.py</code>, in that order. This is the configured schedule. Nothing on this page reports whether recent runs succeeded.</p>
     </div>
   </div>
 </section>
@@ -338,7 +310,7 @@ a { color: var(--data); }
   <div class="sec-head">
     <div class="kind">pn · coloured Petri net · interactive</div>
     <h2>How a refresh runs</h2>
-    <p>This is the <code>sunlight_awards</code> DAG modeled as a coloured Petri net. Circles are states, bars are steps, and dots are tokens. Each token carries a colour: an agency, a download outcome, or the dataset. An orange bar is enabled. Click it to fire, or press Run. Click any circle to see its tokens.</p>
+    <p>This is the weekly refresh workflow (<code>refresh-data.yml</code>) modeled as a coloured Petri net. Circles are states, bars are steps, and dots are tokens. Each token carries a colour: an agency, a download outcome, or the dataset. An orange bar is enabled. Click it to fire, or press Run. Click any circle to see its tokens.</p>
   </div>
   <div class="frame" id="pn-frame">
     <svg id="pn" viewBox="0 0 980 400" width="980" height="400" role="img" aria-label="Petri net of the award refresh"></svg>
@@ -364,7 +336,7 @@ a { color: var(--data); }
     </ul>
     <ul class="facts">
       <li><b>×20 is a barrier.</b> The load waits for every agency to finish, whatever the outcome. <code>--replace</code> is per-agency safe: a red token means that agency keeps last week's rows instead of being emptied. The delete and COPY run in one transaction.</li>
-      <li><b>record_* never blocks.</b> Each writes a row to <code>PIPELINE_RUNS</code> through <code>record_run()</code>, wrapped in <code>|| true</code>. The GitHub Actions path runs the same chain without the record steps.</li>
+      <li><b>The workflow is three steps in order.</b> <code>refresh.sh</code> downloads and loads, <code>dbt build</code> rebuilds and tests the models, and <code>sync_marts_to_neon.py</code> copies the served tables. If a dbt test fails, the run stops before anything reaches Neon.</li>
     </ul>
   </div>
 </section>
@@ -374,10 +346,10 @@ a { color: var(--data); }
   <div class="sec-head">
     <div class="kind">dbt · model lineage · click a node</div>
     <h2>How tables depend on each other</h2>
-    <p>These are the 26 objects in the 17 Oct 2026 inventory, traced through the <code>ref()</code> and <code>source()</code> calls in each model. Click a node to trace everything upstream and downstream of it. The dashed orange edge is the dependency that runs outside dbt: <code>fit_scores.py</code> reads the backtest table and writes the weights seed, which is committed to the repo. This is a dated snapshot; the models have since evolved.</p>
+    <p>These are the eight objects dbt works with on the main branch: one source table, one seed, one staging view, the backtest model and four marts. They are traced through the <code>ref()</code> and <code>source()</code> calls in each model. Click a node to trace everything upstream and downstream of it. The dashed orange edge is the dependency that runs outside dbt: <code>fit_scores.py</code> reads the backtest table and writes the weights seed, which is committed to the repo. Row counts are from a 17 Oct 2026 warehouse inventory.</p>
   </div>
   <div class="frame">
-    <svg id="lineage" viewBox="0 0 1340 600" width="1340" height="600" role="img" aria-label="dbt lineage graph"></svg>
+    <svg id="lineage" viewBox="0 0 1140 270" width="1140" height="270" role="img" aria-label="dbt lineage graph"></svg>
     <div class="ln-info" id="ln-info"><div class="nm">Nothing selected</div><p>Click a model. Row counts come from the 2026-10-17 inventory, not a live query.</p></div>
     <div class="legend">
       <span><i style="border-color:var(--c-src);background:color-mix(in srgb,var(--c-src) 12%,var(--panel))"></i>source table</span>
@@ -385,7 +357,6 @@ a { color: var(--data); }
       <span><i style="border-color:var(--c-stg);background:color-mix(in srgb,var(--c-stg) 12%,var(--panel))"></i>staging view</span>
       <span><i style="border-color:var(--c-int);background:color-mix(in srgb,var(--c-int) 12%,var(--panel))"></i>intermediate</span>
       <span><i style="border-color:var(--c-mart);background:color-mix(in srgb,var(--c-mart) 14%,var(--panel))"></i>core mart table</span>
-      <span><i style="border-color:var(--c-enr);background:color-mix(in srgb,var(--c-enr) 12%,var(--panel))"></i>enrichment view</span>
       <span><i style="border-color:var(--data);background:var(--data)"></i>copied to Neon</span>
     </div>
   </div>
@@ -445,28 +416,8 @@ a { color: var(--data); }
   </div>
 </section>
 
-<!-- ============ 5. FRESHNESS ============ -->
-<section id="freshness">
-  <div class="sec-head">
-    <div class="kind">stm · two clocks</div>
-    <h2>How staleness is detected</h2>
-    <p><code>pipelines/freshness.py</code> keeps two separate clocks per source. <b>Recorded</b> is what the scheduler says happened, from <code>PIPELINE_RUNS</code>. <b>Observed</b> is what the data itself shows, from <code>OBSERVED_AT</code> on each record or <code>LAST_ALTERED</code> on each table. Each source becomes stale once it has clearly missed its cadence: SAM after 72 h, awards after 240 h, GSA after 1,440 h. Comparing the two clocks is what makes the check useful.</p>
-  </div>
-  <div class="matrix">
-    <div class="hd corner"></div>
-    <div class="hd">observed timestamp moved</div>
-    <div class="hd">observed timestamp unchanged</div>
-    <div class="hd">recorded success</div>
-    <div><span class="verdict v-ok">healthy</span><br>The job ran and new data landed.</div>
-    <div><span class="verdict v-warn">ran, fetched nothing</span><br>The task succeeded but no rows changed. This is the case the two-clock design exists to catch.</div>
-    <div class="hd">no recent record</div>
-    <div><span class="verdict v-warn">loaded outside Airflow</span><br>Someone ran the script by hand, or CI did. The data is fine, but the audit trail missed it.</div>
-    <div><span class="verdict v-bad">stale</span><br>Nothing ran, or the scheduler stopped. A separate daily freshness DAG flags this, because a check inside the same DAG would stop too.</div>
-  </div>
-</section>
-
 <footer>
-  <p>Built from the Recompete Radar source in November 2026. Row counts are from the 2026-10-17 warehouse inventory, not a live query. The Petri net is a model with simulated download outcomes; nothing on this page queries Snowflake or reflects live scheduler health.</p>
+  <p>This page reflects the main branch of the Recompete Radar repository as of November 2026. Row counts are from the 2026-10-17 warehouse inventory, not a live query. The Petri net is a model with simulated download outcomes. Nothing on this page queries Snowflake or reports whether scheduled runs succeeded.</p>
   <div class="site">
     <span>Code on <a href="https://github.com/PHiZou/recompete-radar" target="_blank" rel="noopener">GitHub</a> · More at <a href="/recompete-radar">Recompete Radar</a> and <a href="/">phizou.github.io</a></span>
     <a href="https://www.linkedin.com/in/peterhagen123" target="_blank" rel="noopener">Get in touch</a>
@@ -500,20 +451,15 @@ a { color: var(--data); }
     dl:      { x: 270, y: 150, l: ['generating', 'download'] },
     done:    { x: 480, y: 150, l: ['agency', 'finished'] },
     raw:     { x: 690, y: 150, l: ['RAW', 'loaded'] },
-    ready:   { x: 900, y: 150, l: ['ingest', 'recorded'] },
-    marts:   { x: 795, y: 330, l: ['marts built', '+ tested'] },
-    built:   { x: 585, y: 330, l: ['dbt', 'recorded'] },
+    marts:   { x: 585, y: 330, l: ['marts built', '+ tested'] },
     serving: { x: 375, y: 330, l: ['Neon', 'serving'] },
-    runs:    { x: 742, y: 246, l: ['PIPELINE_', 'RUNS'], lp: 'right', r: 22 },
   };
   const TR = {
     request: { x: 165, y: 150, in: { queue: 1, slots: 1 }, out: ['dl'], l: ['request', 'download'] },
     land:    { x: 375, y: 150, in: { dl: 1 }, out: ['done', 'slots'], l: ['download', 'lands'] },
     load:    { x: 585, y: 150, in: { done: 20 }, out: ['raw'], l: ['load_to_', 'snowflake'] },
-    rec1:    { x: 795, y: 150, in: { raw: 1 }, out: ['ready', 'runs'], l: ['record_', 'ingest'] },
-    dbt:     { x: 900, y: 330, in: { ready: 1 }, out: ['marts'], l: ['dbt deps', '+ build'] },
-    rec2:    { x: 690, y: 330, in: { marts: 1 }, out: ['built', 'runs'], l: ['record_', 'dbt'] },
-    sync:    { x: 480, y: 330, in: { built: 1 }, out: ['serving'], l: ['sync_marts', '_to_neon'] },
+    dbt:     { x: 690, y: 330, in: { raw: 1 }, out: ['marts'], l: ['dbt deps', '+ build'] },
+    sync:    { x: 480, y: 330, in: { marts: 1 }, out: ['serving'], l: ['sync_marts', '_to_neon'] },
   };
   const HW = 8, HH = 26;
 
@@ -523,9 +469,9 @@ a { color: var(--data); }
 
   el('rect', { class: 'f-frame', x: 4, y: 4, width: 972, height: 392, rx: 3 }, svg);
   el('path', { class: 'f-tag', d: 'M4 4 H 270 V 22 L 258 34 H 4 Z' }, svg);
-  text(svg, 14, 24, 'pn [DAG] sunlight_awards', 'f-tagtext', 'start');
+  text(svg, 14, 24, 'pn [CI] refresh-data.yml', 'f-tagtext', 'start');
   el('rect', { class: 'pn-group', x: 24, y: 40, width: 712, height: 168, rx: 4 }, svg);
-  text(svg, 726, 56, 'task ingest_usaspending = bash pipelines/refresh.sh', 'pn-label', 'end');
+  text(svg, 726, 56, 'step: bash pipelines/refresh.sh', 'pn-label', 'end');
 
   const edgePt = (node, isPlace, tx, ty) => {
     const dx = tx - node.x, dy = ty - node.y, len = Math.hypot(dx, dy) || 1;
@@ -618,10 +564,8 @@ a { color: var(--data); }
       log(`load --replace: ${ok} agencies replaced${kept.length ? ', ' + kept.join(', ') + ' kept' : ''} (one transaction)`, kept.length > 0);
       return { raw: [{ k: 'data', id: `award data · ${ok}/20 fresh` }] };
     },
-    rec1(c) { log('record_run("usaspending_awards", "success")'); return { ready: c.raw, runs: [{ k: 'run', id: 'usaspending_awards ✓' }] }; },
-    dbt(c) { log('dbt deps + dbt build: models built, tests pass'); return { marts: c.ready }; },
-    rec2(c) { log('record_run("dbt_models", "success")'); return { built: c.marts, runs: [{ k: 'run', id: 'dbt_models ✓' }] }; },
-    sync(c) { log('sync_marts_to_neon: 3 marts swapped together, award table reloaded'); return { serving: c.built }; },
+    dbt(c) { log('dbt deps + dbt build: models built, tests pass'); return { marts: c.raw }; },
+    sync(c) { log('sync_marts_to_neon: 3 marts swapped together, award table reloaded'); return { serving: c.marts }; },
   };
 
   function fire(tid) {
@@ -712,38 +656,17 @@ a { color: var(--data); }
   const LN = document.getElementById('lineage');
   const NODES = [
     ['score_weights', 0, -1, 'seed', 'seed · csv', 'score_weights', '39 log-odds weights written by pipelines/fit_scores.py and committed to the repo. Loaded by dbt seed.', '39 rows'],
-    ['raw', 0, 0, 'src', 'source · RAW', 'AWARD_TRANSACTIONS', 'One row per award from the USASpending award-summary download. 20 agencies × 12 NAICS, contracts only.', '484,242 rows'],
-    ['s_sub', 0, 2, 'src', 'source · RAW_ENRICHMENT', 'USASPENDING_SUBAWARDS', 'Append-only JSON snapshots (payload + observed_at) written by load_enrichment.py.'],
-    ['s_gsa', 0, 3, 'src', 'source · RAW_ENRICHMENT', 'GSA_VEHICLES', 'Append-only JSON snapshots from explicit GSA eLibrary contract-number lookups.'],
-    ['s_ven', 0, 4, 'src', 'source · RAW_ENRICHMENT', 'VENDOR_ENTITIES', 'Append-only JSON snapshots of public SAM.gov entity registrations.'],
-    ['s_sam', 0, 5, 'src', 'source · RAW_ENRICHMENT', 'SAM_OPPORTUNITIES', 'Append-only JSON snapshots of SAM.gov notices. The API pilot shown in this inventory was replaced by public nightly bulk files in November.'],
-    ['target', 0, 6, 'seed', 'seed · csv', 'target_sam_agencies', 'Maps SAM department names to the 20 portfolio agencies.', '20 rows'],
-    ['s_fc', 0, 7, 'src', 'source · RAW_ENRICHMENT', 'PROCUREMENT_FORECASTS', 'Append-only JSON snapshots of the DHS APFS forecast feed. The feed was retired on 30 Oct 2026; its last snapshot is frozen.'],
-    ['stg', 1, 0, 'stg', 'stg_usaspending · view', 'award_transactions', 'Renames and types the raw columns. dbt tests award_unique_key unique. Copied to Neon as the award table behind the contract pages.', null, true],
-    ['g_sub', 1, 2, 'stg', 'stg_enrichment · view', 'subawards', 'Unpacks the JSON payload and keeps the newest snapshot per record_id (qualify row_number() = 1).'],
-    ['g_gsa', 1, 3, 'stg', 'stg_enrichment · view', 'gsa_vehicles', 'Unpacks the JSON payload and keeps the newest snapshot per record_id.'],
-    ['g_ven', 1, 4, 'stg', 'stg_enrichment · view', 'vendor_entities', 'Unpacks the JSON payload and keeps the newest snapshot per record_id.'],
-    ['g_sam', 1, 5, 'stg', 'stg_enrichment · view', 'sam_opportunities', 'Unpacks the JSON payload and keeps the newest snapshot per record_id.'],
-    ['g_fc', 1, 7, 'stg', 'stg_enrichment · view', 'forecasts', 'Unpacks the JSON payload and keeps the newest snapshot per record_id. Statuses include NEW, REC and NLR, so not every row is active.'],
-    ['awards', 2, 0, 'mart', 'mart · table', 'mart_awards', 'Award grain. Feeds every scoring and vendor model. In Neon it is a view over the copied award table.', '484,242 rows', true],
-    ['links', 2, 2, 'enr', 'mart_enrichment · view', 'subaward_links', 'Each reported subaward, flagged by whether its exact prime-award key matches an award here.'],
-    ['vctx', 2, 3.5, 'enr', 'mart_enrichment · view', 'vendor_context', 'Award recipients joined by exact UEI to SAM registrations and GSA vehicle counts. No fuzzy name matching.', '54,881 rows'],
-    ['opp', 2, 5.5, 'enr', 'mart_enrichment · view', 'opportunity_signals', 'SAM notices limited to the 20 agencies through target_sam_agencies, labeled by procurement stage.'],
+    ['raw', 0, 0.5, 'src', 'source · RAW', 'AWARD_TRANSACTIONS', 'One row per award from the USASpending award-summary download. 20 agencies × 12 NAICS, contracts only.', '484,242 rows'],
+    ['stg', 1, 0.5, 'stg', 'stg_usaspending · view', 'award_transactions', 'Renames and types the raw columns. dbt tests award_unique_key unique. Copied to Neon as the award table behind the contract pages.', null, true],
+    ['awards', 2, 0.5, 'mart', 'mart · table', 'mart_awards', 'Award grain. Feeds every scoring and vendor model. In Neon it is a view over the copied award table.', '484,242 rows', true],
     ['bt', 3, -1, 'int', 'intermediate · table', 'int_score_backtest', 'Ended awards over $250K with an inferred follow-on (same office + PSC, start within −180…+365 days). Training data for fit_scores.py.', '94,048 rows'],
-    ['vend', 3, 0, 'mart', 'mart · table', 'mart_vendors', 'One row per vendor UEI. Copied to Neon.', '54,881 rows', true],
-    ['rc', 3, 1, 'mart', 'mart · table', 'mart_recompete_candidates', 'Live contracts ending between 3 months ago and 36 months out, joined to score_weights. The core product table. Copied to Neon.', '28,595 rows', true],
-    ['port', 3, 6.5, 'enr', 'mart_enrichment · view', 'portfolio_signals', 'Forecasts and SAM notices in one table. Deliberately not linked to awards yet.'],
-    ['agsum', 4, 0, 'mart', 'mart · table', 'mart_agency_summary', 'Agency-level rollup of awards and candidates. Copied to Neon.', '128 rows', true],
-    ['sctx', 4, 2, 'enr', 'mart_enrichment · view', 'candidate_supplier_context', 'Recompete candidates plus counts of reported subawards and subcontractors. Same grain as candidates.', '28,595 rows'],
-    ['dsig', 4, 6.5, 'enr', 'mart_enrichment · view', 'discovery_signals', 'portfolio_signals without DHS, so the one forecast feed doesn\'t dominate. Copied to Neon by sync_discovery_to_neon.py --apply.', null, true],
-    ['dcand', 5, 2, 'enr', 'mart_enrichment · view', 'discovery_candidates', 'Candidates without DHS, tagged by customer sector. This is the 9.3% drop from 28,595.', '25,944 rows'],
+    ['vend', 3, 0.5, 'mart', 'mart · table', 'mart_vendors', 'One row per vendor UEI. Copied to Neon.', '54,881 rows', true],
+    ['rc', 3, 2, 'mart', 'mart · table', 'mart_recompete_candidates', 'Live contracts ending between 3 months ago and 36 months out, joined to score_weights. The core product table. Copied to Neon.', '28,595 rows', true],
+    ['agsum', 4, 1.25, 'mart', 'mart · table', 'mart_agency_summary', 'Agency-level rollup of awards and candidates. Copied to Neon.', '128 rows', true],
   ];
   const EDGES = [
     ['raw','stg'],['stg','awards'],['awards','bt'],['awards','vend'],['awards','rc'],['score_weights','rc'],
-    ['awards','agsum'],['rc','agsum'],['rc','sctx'],['g_sub','sctx'],['sctx','dcand'],
-    ['s_sub','g_sub'],['s_gsa','g_gsa'],['s_ven','g_ven'],['s_sam','g_sam'],['s_fc','g_fc'],
-    ['g_sub','links'],['raw','links'],['g_gsa','vctx'],['g_ven','vctx'],['raw','vctx'],
-    ['g_sam','opp'],['target','opp'],['opp','port'],['g_fc','port'],['port','dsig'],
+    ['awards','agsum'],['rc','agsum'],
     ['bt','score_weights','offline'],
   ];
   const NW = 192, NH = 46, CX = 222, X0 = 20, Y0 = 40, RY = 60;
@@ -756,7 +679,7 @@ a { color: var(--data); }
   const ldefs = el('defs', {}, LN);
   const m2 = el('marker', { id: 'ah4', viewBox: '0 0 10 10', refX: 9, refY: 5, markerWidth: 6, markerHeight: 6, orient: 'auto-start-reverse' }, ldefs);
   el('path', { class: 'ahead', d: 'M0,0 L10,5 L0,10 z' }, m2);
-  el('rect', { class: 'f-frame', x: 4, y: 4, width: 1332, height: 592, rx: 3 }, LN);
+  el('rect', { class: 'f-frame', x: 4, y: 4, width: 1132, height: 262, rx: 3 }, LN);
   el('path', { class: 'f-tag', d: 'M4 4 H 262 V 22 L 250 34 H 4 Z' }, LN);
   text(LN, 14, 24, 'pkg [dbt] SUNLIGHT_DB models', 'f-tagtext', 'start');
 
