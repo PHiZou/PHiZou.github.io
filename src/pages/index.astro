@@ -1,11 +1,12 @@
 ---
-// Homepage. One message: Peter builds data products from messy public data,
-// and Recompete Radar is the main one. Everything else is secondary.
+// Homepage, five sections: hero, Recompete Radar proof, how it's built,
+// about, contact. One message: Peter takes messy real-world data, tests it,
+// and turns it into explainable reporting and tools. Recompete Radar is the proof.
 // Story text is copied from the stories' own headlines and findings.
 import BaseLayout from "../layouts/BaseLayout.astro";
-import HireBridge from "../components/HireBridge.astro";
 import StoryCard from "../components/StoryCard.astro";
 import ReportCard from "../components/ReportCard.astro";
+import HowItsBuilt from "../components/HowItsBuilt.astro";
 
 const latestStory = {
   href: "/stories/contracts-coming-due/",
@@ -18,34 +19,20 @@ const latestStory = {
   imageAlt: "Monthly contract dollars, with the largest bar in September.",
 };
 
-const products = [
-  {
-    kind: "Analytical brief",
-    title: "Four traps in public contract data",
-    desc: "What went wrong in the source data, how I caught it, and what changed after the fixes.",
-    image: "/images/recompete-radar/brief-preview.webp",
-    imageAlt: "An excerpt from the brief showing the date-parser fix and the restored dates.",
-    imageClass: "brief-image",
-    cta: "Read the brief",
-    href: "/projects/sunlight-recompete-radar#brief",
-    external: false,
-  },
-  {
-    kind: "Live app",
-    title: "Explore the contract data",
-    desc: "Filter contracts by agency or vendor and see the factors behind their rankings.",
-    image: "/images/recompete-radar/app-preview.webp",
-    imageAlt: "The live app, with contract filters and a ranked table of results.",
-    imageClass: "app-image",
-    cta: "Open the app",
-    href: "https://recompete-radar.vercel.app/",
-    external: true,
-  },
-];
+const secondStory = {
+  href: "/stories/hhs-contracting/",
+  title: "Medicare’s machinery runs on contractors",
+  finding:
+    "CMS takes 44% of HHS contract dollars from just 6% of its awards, and spreads that work across more than 900 vendors.",
+  asOfLabel: "Nov. 4, 2026",
+  asOf: "2026-11-04",
+  image: "/stories/hhs-contracting/og-image.jpg",
+  imageAlt: "Contract spending by HHS division, with CMS receiving the largest share.",
+};
 ---
 
 <BaseLayout>
-  <!-- HERO -->
+  <!-- 1 · HERO -->
   <section class="hero-mesh hero">
     <div class="wrap hero-grid">
       <div class="hero-copy">
@@ -53,19 +40,19 @@ const products = [
         <span class="hero-badge hero-badge-teal">Northern Virginia · DMV</span>
         <span class="hero-badge hero-badge-amber">Open to full-time roles</span>
       </div>
-      <h1 class="hero-title">I build data products from messy public data.</h1>
+      <h1 class="hero-title">I build data products that turn messy public data into decisions.</h1>
       <p class="hero-lede">
-        I turn difficult source data into tested datasets, clear analysis and tools people can
-        use. My main project, <strong>Recompete Radar</strong>, brings that work together through
-        federal contracting data.
+        I take messy real-world data, test it, find where it breaks, and turn it into reporting
+        and tools people can explain. I did that with 114K+ member records at the National
+        Association of Home Builders, and I do it end to end in <strong>Recompete Radar</strong>,
+        my Snowflake and dbt project.
       </p>
       <div class="hero-cta">
-        <a href="/recompete-radar" class="btn-primary btn-amber">Explore Recompete Radar</a>
-        <a href="/resume" class="btn-outline">View resume</a>
-        <a href="mailto:Peter.H.Hagen@gmail.com" class="hero-contact">Contact Peter →</a>
+        <a href="#work" class="btn-primary btn-amber">See the work</a>
+        <a href="/resume" class="hero-resume">Resume →</a>
       </div>
       <p class="hero-roles">
-        Data engineering · Analytics · Implementation &amp; technical operations
+        Data analysis · BI and reporting · Data quality · Analytics engineering
       </p>
       </div>
       <div class="hero-story">
@@ -74,79 +61,94 @@ const products = [
     </div>
   </section>
 
-  <!-- WHAT RADAR PRODUCES -->
-  <section id="radar" class="section amber-mesh anchor-target">
+  <!-- 2 · RECOMPETE RADAR: THE PROOF -->
+  <section id="work" class="section amber-mesh anchor-target">
     <div class="wrap">
       <div class="eyebrow">Recompete Radar</div>
       <div class="section-heading">
         <div>
-          <h2 class="sec-title">Explore the project</h2>
-          <p class="section-intro">The analysis behind the stories, and the tool built from the same data.</p>
+          <h2 class="sec-title">One project, built end to end.</h2>
+          <p class="section-intro">
+            Recompete Radar shows which federal contracts are ending, who holds them, and why
+            each one ranks where it does. Federal contracting is the subject matter. The work is
+            the transferable part.
+          </p>
+          <p class="scope">
+            Scope today: 484,242 prime contract awards at 20 civilian agencies, FY2008 onward. No DoD.
+          </p>
         </div>
-        <a href="/recompete-radar#stories" class="text-link">All data stories →</a>
+        <a href="/recompete-radar" class="text-link">Everything from Recompete Radar →</a>
       </div>
 
       <div class="products">
-        {products.map((p) => (
-          <a
-            href={p.href}
-            class:list={["product", "reveal", { "slow-demo-link": p.external }]}
-            {...(p.external ? { target: "_blank", rel: "noopener noreferrer" } : {})}
-          >
-            <div class:list={["product-art", p.imageClass]}>
-              <img src={p.image} alt={p.imageAlt} width="1280" height="720" loading="lazy" decoding="async" />
-            </div>
-            <div class="product-copy">
-            <span class="product-kind">{p.kind}</span>
-            <h3 class="product-title">{p.title}</h3>
-            <span class="product-desc">{p.desc}</span>
-            <span class="product-go">{p.cta} {p.external ? "↗" : "→"}</span>
-            </div>
-          </a>
-        ))}
+        <div class="reveal"><StoryCard {...secondStory} /></div>
+        <a href="/projects/sunlight-recompete-radar#brief" class="product reveal">
+          <div class="product-art brief-image">
+            <img src="/images/recompete-radar/brief-preview.webp" alt="An excerpt from the brief showing the date-parser fix and the restored dates." width="1280" height="720" loading="lazy" decoding="async" />
+          </div>
+          <div class="product-copy">
+            <span class="product-kind">Analytical brief</span>
+            <h3 class="product-title">Four traps in public contract data</h3>
+            <span class="product-desc">What went wrong in the source data, how I caught it, and what changed after the fixes.</span>
+            <span class="product-go">Read the brief →</span>
+          </div>
+        </a>
       </div>
 
       <div class="report-slot">
         <ReportCard />
       </div>
 
-      <div class="technical">
-        <a href="/recompete-radar/architecture/" class="technical-image" aria-label="Explore the system schematics">
-          <img src="/recompete-radar/architecture/og-image.png" alt="A block diagram tracing public data through the warehouse to the web app." width="1200" height="630" loading="lazy" />
-        </a>
-        <div>
-          <h3>Want to see how it works?</h3>
-          <p>I built the pipeline, data checks and scoring behind these outputs, working with 484,242 public contract records.</p>
-          <div class="technical-links">
-            <a href="/projects/sunlight-recompete-radar" class="text-link">Case study &amp; limits →</a>
-            <a href="/recompete-radar/architecture/" class="text-link">Interactive schematics →</a>
-          </div>
-        </div>
-      </div>
+      <p class="app-note">
+        There is also a working app. It can take a few seconds to load:
+        <a href="https://recompete-radar.vercel.app/" target="_blank" rel="noopener noreferrer" class="slow-demo-link">open the live app ↗</a>
+      </p>
     </div>
   </section>
 
-  <!-- BACKGROUND -->
-  <section class="section bg-alt">
+  <!-- 3 · HOW IT'S BUILT -->
+  <section id="built" class="section bg-alt anchor-target">
+    <div class="wrap">
+      <div class="built-head">
+        <div>
+          <div class="eyebrow">How it's built</div>
+          <h2 class="sec-title">From a public download to a web app.</h2>
+        </div>
+        <a href="/recompete-radar/architecture/" class="technical-image" aria-label="Explore the system schematics">
+          <img src="/recompete-radar/architecture/og-image.png" alt="A block diagram tracing public data through the warehouse to the web app." width="1200" height="630" loading="lazy" />
+        </a>
+      </div>
+      <HowItsBuilt compact />
+    </div>
+  </section>
+
+  <!-- 4 · ABOUT -->
+  <section id="about" class="section anchor-target">
     <div class="wrap bg-grid">
       <div>
-        <div class="eyebrow" style="margin-bottom: 8px;">Background</div>
-        <h2 class="sec-title" style="margin-top: 0;">Data work inside organizations.</h2>
+        <div class="eyebrow" style="margin-bottom: 8px;">About</div>
+        <h2 class="sec-title" style="margin-top: 0;">I'm Peter Hagen, an analyst who builds.</h2>
+        <p class="about-intro">
+          I trained as a systems engineer, and I like finding out where data breaks before
+          someone makes a decision with it.
+        </p>
+        <div class="about-links">
+          <a href="/resume" class="btn-outline">Resume</a>
+          <a href="/projects" class="btn-outline">Supporting projects</a>
+        </div>
       </div>
       <div class="bg-items">
         <div>
           <div class="org">National Association of Home Builders</div>
           <p>
-            Senior Data Analyst, previously Director, Membership Data. Reporting, segmentation and
-            data-quality work on <strong>114K+ member records</strong> for a national organization.
+            Senior Data Analyst (Jul 2024 to Jul 2025), after serving as Director, Membership
+            Data (Feb 2023 to Jul 2024). Reporting, segmentation and data-quality work on
+            <strong>114K+ member records</strong> across 500+ local associations.
           </p>
         </div>
         <div>
-          <div class="org">DGCI · Defense logistics &amp; procurement</div>
-          <p>
-            Supported DLA fuel contract bidding with procurement-facing analysis and
-            executive-ready pricing recommendations.
-          </p>
+          <div class="org">Defense Government Contracting International (DGCI)</div>
+          <p>Business Analyst. DoD / DLA fuel-bid analysis.</p>
         </div>
         <p class="edu">
           M.S. Systems Engineering, George Mason University · B.S. Industrial &amp; Systems
@@ -156,18 +158,21 @@ const products = [
     </div>
   </section>
 
-  <!-- OTHER WORK -->
-  <section class="section">
-    <div class="wrap other">
+  <!-- 5 · CONTACT -->
+  <section id="contact" class="section bg-alt anchor-target contact">
+    <div class="wrap contact-inner">
       <div>
-        <div class="eyebrow" style="margin-bottom: 6px;">Other work</div>
-        <p>An archive of earlier projects, visual essays and experiments, collected over time.</p>
+        <div class="eyebrow" style="margin-bottom: 8px;">Contact</div>
+        <h2 class="sec-title" style="margin-top: 0;">Hiring for a data or analytics role?</h2>
+        <p class="about-intro">Email is the fastest way to reach me. I'm in Northern Virginia and open to full-time roles.</p>
       </div>
-      <a href="/projects" class="btn-outline">Browse the project archive →</a>
+      <div class="contact-links">
+        <a href="mailto:Peter.H.Hagen@gmail.com" class="btn-primary">Peter.H.Hagen@gmail.com</a>
+        <a href="https://www.linkedin.com/in/peterhagen123" target="_blank" rel="noopener noreferrer" class="btn-outline">LinkedIn ↗</a>
+        <a href="https://github.com/PHiZou" target="_blank" rel="noopener noreferrer" class="btn-outline">GitHub ↗</a>
+      </div>
     </div>
   </section>
-
-  <HireBridge />
 </BaseLayout>
 
 <style>
@@ -190,7 +195,8 @@ const products = [
   .hero-lede { margin-top: 18px; font-size: 1.0625rem; line-height: 1.7; color: var(--ink-2); max-width: 640px; }
   .hero-lede strong { color: var(--ink); }
   .hero-cta { margin-top: 26px; display: flex; gap: 10px; flex-wrap: wrap; }
-  .hero-contact { padding: 8px 0; font-size: .8125rem; font-weight: 600; color: var(--teal-text); text-decoration: none; }
+  .hero-cta { align-items: center; gap: 22px; }
+  .hero-resume { padding: 8px 0; font-size: .9375rem; font-weight: 600; color: var(--teal-text); text-decoration: none; }
   .hero-roles { margin-top: 22px; font-size: 0.75rem; color: var(--ink-3); }
 
   .sec-title {
@@ -205,7 +211,7 @@ const products = [
   .section-heading { display: flex; justify-content: space-between; align-items: end; flex-wrap: wrap; gap: 20px; }
   .section-intro { margin-top: 10px; font-size: .9375rem; line-height: 1.65; color: var(--ink-2); max-width: 560px; }
   .text-link { font-size: .8125rem; font-weight: 600; color: var(--teal-text); text-decoration: none; }
-  .text-link:hover, .hero-contact:hover { text-decoration: underline; text-underline-offset: 4px; }
+  .text-link:hover, .hero-resume:hover { text-decoration: underline; text-underline-offset: 4px; }
   .products { margin-top: 28px; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 28px; }
   .product { min-width: 0; display: flex; flex-direction: column; border-radius: 12px; background: var(--bg-card); box-shadow: 0 0 0 1px var(--border); overflow: hidden; text-decoration: none; transition: box-shadow .3s cubic-bezier(.16,1,.3,1); }
   .product:hover { box-shadow: 0 0 0 1px var(--border-strong), 0 12px 36px oklch(.42 .03 200 / .07); }
@@ -219,13 +225,20 @@ const products = [
   .product-desc { font-size: .9375rem; line-height: 1.65; color: var(--ink-2); }
   .product-go { margin-top: auto; padding-top: 10px; font-size: 0.8125rem; font-weight: 600; color: var(--teal-text); }
   .report-slot { margin-top: 28px; }
+  .scope { margin-top: 10px; font-size: .8125rem; line-height: 1.6; color: var(--ink-3); max-width: 560px; }
+  .app-note { margin-top: 24px; font-size: .8125rem; color: var(--ink-3); }
+  .app-note a { font-weight: 600; color: var(--teal-text); text-decoration: none; }
+  .app-note a:hover { text-decoration: underline; text-underline-offset: 4px; }
+  .built-head { display: flex; justify-content: space-between; align-items: center; gap: 28px; }
+  .built-head .technical-image { flex: 0 0 200px; }
+  .about-intro { margin-top: 12px; font-size: .9375rem; line-height: 1.7; color: var(--ink-2); max-width: 420px; }
+  .about-links { margin-top: 18px; display: flex; gap: 10px; flex-wrap: wrap; }
+  .contact { border-bottom: 0; }
+  .contact-inner { display: flex; justify-content: space-between; align-items: center; gap: 28px; flex-wrap: wrap; }
+  .contact-links { display: flex; gap: 10px; flex-wrap: wrap; }
 
-  .technical { display: grid; grid-template-columns: 220px minmax(0, 1fr); align-items: center; gap: 28px; margin-top: 36px; padding-top: 28px; border-top: 1px solid var(--border); }
   .technical-image img { width: 100%; height: auto; border-radius: 5px; display: block; }
-  .technical h3 { font-size: 1.25rem; font-weight: 600; color: var(--ink); }
-  .technical p { margin-top: 6px; max-width: 600px; font-size: .875rem; line-height: 1.65; color: var(--ink-2); }
-  .technical-links { display: flex; flex-wrap: wrap; gap: 10px 24px; margin-top: 12px; }
-  .product:focus-visible, .technical-image:focus-visible, .text-link:focus-visible, .hero-contact:focus-visible { outline: 2px solid var(--teal-text); outline-offset: 5px; }
+  .product:focus-visible, .technical-image:focus-visible, .text-link:focus-visible, .hero-resume:focus-visible { outline: 2px solid var(--teal-text); outline-offset: 5px; }
 
   .bg-grid { display: grid; grid-template-columns: 1fr 1.4fr; gap: 40px; align-items: start; }
   .bg-items { display: flex; flex-direction: column; gap: 18px; }
@@ -234,8 +247,6 @@ const products = [
   .bg-items strong { color: var(--ink); }
   .bg-items p.edu { font-size: 0.75rem; color: var(--ink-3); }
 
-  .other { display: flex; justify-content: space-between; align-items: center; gap: 20px; flex-wrap: wrap; }
-  .other p { font-size: 0.875rem; color: var(--ink-2); }
 
   @media (max-width: 860px) {
     .hero-grid { grid-template-columns: 1fr; gap: 32px; }
@@ -247,9 +258,8 @@ const products = [
     .hero { padding: 48px 18px 44px; }
     .section { padding-left: 18px; padding-right: 18px; }
     .products { grid-template-columns: 1fr; gap: 24px; }
-    .technical { grid-template-columns: 1fr; gap: 18px; }
-    .technical-image { max-width: 300px; }
-    .hero-title { font-size: clamp(2.2rem, 8vw, 3.2rem); }
+    .built-head .technical-image { display: none; }
+      .hero-title { font-size: clamp(2.2rem, 8vw, 3.2rem); }
     .product-copy { padding: 22px; }
   }
 </style>

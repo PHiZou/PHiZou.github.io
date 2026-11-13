@@ -1,0 +1,123 @@
+---
+// "How it's built" for Recompete Radar. Every fact here traces to the
+// recompete-radar repo's main branch (README.md, sql/analysis.sql,
+// .github/workflows/refresh-data.yml, dbt/models) or to the case study page.
+// Only tools on main are named. Check the repo before changing a number.
+interface Props {
+  compact?: boolean;
+}
+const { compact = false } = Astro.props;
+
+const flow = [
+  { name: "USAspending", note: "Public award downloads, one per agency" },
+  { name: "Python", note: "Ingestion with retry and backoff" },
+  { name: "Snowflake", note: "Stage, then COPY INTO. Raw files stay unchanged" },
+  { name: "dbt", note: "Staging, a score backtest, then 4 tested marts" },
+  { name: "Neon Postgres", note: "Only the 4 served marts are synced" },
+  { name: "FastAPI", note: "Read-only API over the marts" },
+  { name: "Next.js on Vercel", note: "The web app people use" },
+];
+
+const growth = [
+  { stage: "First", text: "One agency (DHS) on Postgres." },
+  { stage: "Then", text: "Six agencies, same Postgres setup." },
+  { stage: "Now", text: "Snowflake and dbt. 20 civilian agencies and 12 service categories, FY2008 onward: 484,242 prime contract awards." },
+];
+---
+
+<div class="built">
+  <ol class="flow" aria-label="Data flow from source to web app">
+    {flow.map((f, i) => (
+      <li class="flow-step">
+        <span class="flow-num mono">{String(i + 1).padStart(2, "0")}</span>
+        <span class="flow-name">{f.name}</span>
+        <span class="flow-note">{f.note}</span>
+      </li>
+    ))}
+  </ol>
+  <p class="flow-foot">A GitHub Actions workflow refreshes the data every Monday.</p>
+
+  <div class:list={["built-grid", { "built-grid-compact": compact }]}>
+    <div class="built-block">
+      <h3>The score was rebuilt after it failed a test</h3>
+      <p>
+        My first score added up hand-set points. When I tested it, 54% of candidate contracts
+        were tied at its maximum, and it scored 0.56 at predicting whether the incumbent kept
+        the work (0.5 is a coin flip).
+      </p>
+      <p>
+        I replaced it with two transparent logistic scorecards, fitted on awards that ended
+        before 2021 and tested on later ones, 94K ended awards in all. Retention now scores
+        0.84 and follow-on 0.62. A placebo check on the retention model still reaches 0.80, so
+        much of that signal comes from how follow-on awards are matched. The scores are a
+        ranking for deciding what to research first. They are not win probabilities.
+      </p>
+      {!compact && (
+        <p class="built-links">
+          <a href="/projects/sunlight-recompete-radar#brief">Read the brief: four traps in public contract data →</a>
+        </p>
+      )}
+    </div>
+
+    {!compact && (
+      <div class="built-block">
+        <h3>It grew in three steps</h3>
+        <ul class="growth">
+          {growth.map((g) => (
+            <li><span class="growth-stage mono">{g.stage}</span><span>{g.text}</span></li>
+          ))}
+        </ul>
+        <h3 class="built-h3-gap">What testing the data turned up</h3>
+        <ul class="finds">
+          <li>A date format quietly erased every option end date. The fix restored 445,864 of them.</li>
+          <li>Subcontract reports double-count. Adding every report gives $107.8B. Keeping the latest valid report per subcontract gives $50.7B.</li>
+          <li>Two orders can share a contract number, so identity is checked on the ID and its parent ID together.</li>
+          <li>7,943 contract descriptions turned out to be accounting tags and nothing else.</li>
+        </ul>
+      </div>
+    )}
+  </div>
+
+  {compact && (
+    <p class="built-links">
+      <a href="/projects/sunlight-recompete-radar#brief">Read the brief →</a>
+      <a href="/recompete-radar/architecture/">Interactive schematics →</a>
+      <a href="/recompete-radar#built">More on how it's built →</a>
+    </p>
+  )}
+  <p class="built-note">A project I designed and built myself, not production work for an employer.</p>
+</div>
+
+<style>
+  .flow { list-style: none; margin: 24px 0 0; padding: 0; display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 18px; }
+  .flow-step { position: relative; min-width: 0; display: flex; flex-direction: column; gap: 6px; padding: 14px 12px; background: var(--bg-card); border-radius: 8px; box-shadow: 0 0 0 1px var(--border); }
+  .flow-step:not(:last-child)::after { content: "→"; position: absolute; right: -15px; top: 50%; transform: translateY(-50%); font-size: .8125rem; color: var(--ink-4); }
+  .flow-num { font-size: .625rem; color: var(--amber); }
+  .flow-name { font-size: .875rem; font-weight: 700; line-height: 1.25; color: var(--ink); }
+  .flow-note { font-size: .75rem; line-height: 1.5; color: var(--ink-3); }
+  .flow-foot { margin-top: 12px; font-size: .8125rem; color: var(--ink-3); }
+
+  .built-grid { margin-top: 32px; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 40px; }
+  .built-grid-compact { grid-template-columns: minmax(0, 1fr); max-width: 720px; }
+  .built-block h3 { font-size: 1.125rem; font-weight: 600; line-height: 1.3; color: var(--ink); }
+  .built-h3-gap { margin-top: 28px; }
+  .built-block p { margin-top: 10px; font-size: .9375rem; line-height: 1.7; color: var(--ink-2); }
+  .growth, .finds { list-style: none; margin: 12px 0 0; padding: 0; display: flex; flex-direction: column; gap: 10px; }
+  .growth li { display: grid; grid-template-columns: 52px minmax(0, 1fr); gap: 10px; font-size: .9375rem; line-height: 1.6; color: var(--ink-2); }
+  .growth-stage { padding-top: 3px; font-size: .6875rem; color: var(--teal-text); }
+  .finds li { padding-left: 16px; position: relative; font-size: .9375rem; line-height: 1.6; color: var(--ink-2); }
+  .finds li::before { content: ""; position: absolute; left: 0; top: .65em; width: 6px; height: 6px; border-radius: 50%; background: var(--amber); }
+  .built-links { margin-top: 18px; display: flex; flex-wrap: wrap; gap: 10px 24px; }
+  .built-links a { font-size: .8125rem; font-weight: 600; color: var(--teal-text); text-decoration: none; }
+  .built-links a:hover { text-decoration: underline; text-underline-offset: 4px; }
+  .built-links a:focus-visible { outline: 2px solid var(--teal-text); outline-offset: 5px; }
+  .built-note { margin-top: 18px; font-size: .75rem; color: var(--ink-3); }
+
+  @media (max-width: 980px) {
+    .flow { grid-template-columns: 1fr; gap: 20px; max-width: 460px; }
+    .flow-step { display: grid; grid-template-columns: 26px minmax(0, 1fr); gap: 2px 8px; }
+    .flow-num { grid-row: span 2; padding-top: 3px; }
+    .flow-step:not(:last-child)::after { content: "↓"; right: auto; left: 18px; top: auto; bottom: -19px; transform: none; }
+    .built-grid { grid-template-columns: 1fr; gap: 28px; }
+  }
+</style>
