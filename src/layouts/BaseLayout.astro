@@ -7,17 +7,18 @@ interface Props {
 }
 
 const {
-  title = "Peter Hagen – Data Engineering & Analytics",
-  description = "NOVA/DMV-based data and analytics professional who turns messy data into tested pipelines, reporting layers, and analysis people can act on. Flagship project: Recompete Radar.",
+  title = "Peter Hagen – Data & Analytics",
+  description = "Peter Hagen takes messy real-world data, tests it, and turns it into explainable reporting and tools. Main project: Recompete Radar, built end to end on Snowflake and dbt.",
 } = Astro.props as Props;
 
 const NAV_ITEMS = [
-  { id: "home", label: "Home", href: "/" },
   { id: "recompete-radar", label: "Recompete Radar", href: "/recompete-radar" },
-  { id: "projects", label: "Other work", href: "/projects" },
+  { id: "projects", label: "Projects", href: "/projects" },
+  { id: "about", label: "About", href: "/#about" },
   { id: "resume", label: "Resume", href: "/resume" },
-  { id: "contact", label: "Contact", href: "mailto:Peter.H.Hagen@gmail.com" },
+  { id: "contact", label: "Contact", href: "/#contact" },
 ];
+// The site name links home. About and Contact are sections of the homepage.
 // The old Data Products page redirects to /recompete-radar.
 // Consulting and Defense & Intel were removed to keep the site focused.
 
@@ -107,7 +108,7 @@ const isActive = (href: string) =>
           <div>
             <div class="footer-name">Peter Hagen</div>
             <div class="footer-tagline">
-              Data & Analytics Engineer · NOVA/DMV · Open to full-time roles
+              Data & Analytics · NOVA/DMV · Open to full-time roles
             </div>
           </div>
           <div class="footer-links">
