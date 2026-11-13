@@ -36,8 +36,8 @@ const growth = [
     ))}
   </ol>
   <p class="flow-foot">
-    Airflow schedules the weekly refresh, a nightly load of SAM.gov contract notices and a daily
-    freshness check. A GitHub Actions workflow is kept as a manual fallback.
+    Airflow DAGs are built and tested for the weekly refresh, nightly SAM.gov notice loads and
+    daily freshness checks, alongside a GitHub Actions refresh workflow.
   </p>
 
   <div class:list={["built-grid", { "built-grid-compact": compact }]}>

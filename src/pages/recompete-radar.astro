@@ -18,6 +18,7 @@ const stories = [
       "11,794 contracts at 20 civilian agencies reach the end of their final period by November 2027, and a quarter of the money ends in a single month: September.",
     asOf: "2026-11-08",
     asOfLabel: "Nov. 8, 2026",
+    question: "Which contracts end next?",
     image: "/stories/contracts-coming-due/og-image.jpg",
     imageAlt: "A monthly breakdown of contract dollars, showing the September concentration.",
   },
@@ -28,6 +29,7 @@ const stories = [
       "CMS takes 44% of HHS contract dollars from just 6% of its awards, and spreads that work across more than 900 vendors.",
     asOf: "2026-11-04",
     asOfLabel: "Nov. 4, 2026",
+    question: "Who does the work at HHS?",
     image: "/stories/hhs-contracting/og-image.jpg",
     imageAlt: "Contract spending by HHS division, with CMS receiving the largest share.",
   },
@@ -52,9 +54,9 @@ const stories = [
         My work: data collection, cleaning and testing, analysis, and everything below.
       </p>
       <nav class="rr-jump" aria-label="On this page">
-        <a href="#stories">Data stories</a>
-        <a href="#report">Visual report</a>
-        <a href="#brief">Brief &amp; case study</a>
+        <a href="#stories">Market questions</a>
+        <a href="#report">Agency comparison</a>
+        <a href="#brief">Four data traps</a>
         <a href="#built">How it's built</a>
       </nav>
     </div>
@@ -63,11 +65,11 @@ const stories = [
   <!-- STORIES -->
   <section id="stories" class="section anchor">
     <div class="wrap">
-      <h2 class="rr-h2">Data stories</h2>
-      <p class="rr-sub">Start with a question. Explore the answer through the charts.</p>
+      <h2 class="rr-h2">Questions the data answers</h2>
+      <p class="rr-sub">Each one starts with a question a contractor or an agency would ask, and answers it with charts you can explore.</p>
       <div class="rr-list">
         {stories.map((s, i) => (
-          <StoryCard {...s} label={i === 0 ? "Latest story" : "Data story"} eager={i === 0} />
+          <StoryCard href={s.href} title={s.title} finding={s.finding} asOf={s.asOf} asOfLabel={s.asOfLabel} image={s.image} imageAlt={s.imageAlt} label={s.question} eager={i === 0} />
         ))}
       </div>
       <div id="report" class="rr-report anchor">
@@ -80,15 +82,16 @@ const stories = [
   <section id="brief" class="section bg-alt anchor">
     <div class="wrap rr-split">
       <div>
-        <h2 class="rr-h2">Brief &amp; case study</h2>
+        <h2 class="rr-h2">Four traps in public contract data</h2>
         <p class="rr-sub">
-          <strong>Four traps in public contract data.</strong> Dates that disappeared, dollars
-          counted twice, misleading bid counts and a score that needed rebuilding. See how I
-          found each problem, tested a fix, and documented what the data can support.
+          445,864 option dates vanished without an error. Subcontract re-filings doubled the
+          dollar total ($107.8B against $50.7B). Bid counts turned out to be placeholders. My
+          first score tied 54% of candidate contracts at its maximum. See how I caught each one,
+          tested a fix, and wrote down what the data can and cannot support.
         </p>
       </div>
       <div class="rr-actions">
-        <a href="/projects/sunlight-recompete-radar#brief" class="btn-primary btn-amber">Read the brief</a>
+        <a href="/projects/sunlight-recompete-radar#brief" class="btn-primary btn-amber">See the four fixes</a>
         <a href="/projects/sunlight-recompete-radar#pipeline" class="btn-outline">How it's built</a>
       </div>
     </div>

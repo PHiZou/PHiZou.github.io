@@ -72,7 +72,7 @@ const pipeline = [
   { step: "Store", tool: "Snowflake", text: "Raw files staged and loaded unchanged, under a key-pair service user rather than a personal login." },
   { step: "Model & test", tool: "dbt", text: "Staging, award, vendor and candidate models, with tests that fail the build when a rule breaks." },
   { step: "Score", tool: "SQL + Python", text: "Two small logistic scorecards. Weights are fitted on past outcomes, stored as a reviewed file, and applied in SQL." },
-  { step: "Schedule", tool: "Airflow", text: "A weekly award refresh, a nightly load of SAM.gov notices and a daily freshness check, each as its own DAG." },
+  { step: "Schedule", tool: "Airflow", text: "DAGs for a weekly award refresh, nightly SAM.gov notice loads and a daily freshness check. Built and tested locally, not yet running on a schedule." },
   { step: "Serve", tool: "Postgres · FastAPI · Next.js", text: "Only the finished tables are copied to a small serving database behind an API and web app." },
 ];
 
@@ -103,7 +103,7 @@ const decisions = [
 const status = [
   { where: "Public code repository", what: "Warehouse move, 20-agency scope, backtested scorecards, weekly refresh workflow.", state: "Public", cls: "badge-live" },
   { where: "Live web app", what: "The ranked view runs on the 20-agency data. Its Insights page still shows an August 2026 analysis of five agencies.", state: "Public", cls: "badge-live" },
-  { where: "Warehouse and local branch", what: "Option-date fix and backfill, subcontract de-duplication, description cleanup, enrichment jobs, and Airflow scheduling for the weekly refresh.", state: "Not yet released", cls: "badge-saas" },
+  { where: "Warehouse and local branch", what: "Option-date fix and backfill, subcontract de-duplication, description cleanup, enrichment jobs and Airflow DAGs (written and tested, not yet scheduled).", state: "Not yet released", cls: "badge-saas" },
   { where: "Additional sources", what: "SAM.gov notices and vendor registrations support the open-notice counts and small-business shares in the contracts-coming-due story. Source terms reviewed; publication cleared.", state: "Public", cls: "badge-live" },
 ];
 

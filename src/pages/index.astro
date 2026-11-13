@@ -19,6 +19,26 @@ const latestStory = {
   imageAlt: "Monthly contract dollars, with the largest bar in September.",
 };
 
+// Each pillar pairs organizational work at NAHB with Recompete Radar.
+// Tools named here (Tableau, Power BI, Snowflake, dbt) are on the resume PDF.
+const pillars = [
+  {
+    title: "Messy source data, made into tables people trust",
+    text: "I catch silent parser drops, duplicate filings and broken keys before they reach an executive report.",
+    proof: "114K+ member records at NAHB · 484,242 award records in Snowflake and dbt",
+  },
+  {
+    title: "Models people can interrogate",
+    text: "KPIs and backtested scorecards where every driver is visible, tested on data the model has not seen instead of shipped as a black box.",
+    proof: "KPI definitions at NAHB · two backtested scorecards in Recompete Radar",
+  },
+  {
+    title: "Reporting that is ready for a decision",
+    text: "Warehouse tables turned into clear visual stories, Tableau and Power BI dashboards, and plain-language takeaways for leadership and operators.",
+    proof: "Executive dashboards at NAHB · data stories and a visual report below",
+  },
+];
+
 const secondStory = {
   href: "/stories/hhs-contracting/",
   title: "Medicare’s machinery runs on contractors",
@@ -56,7 +76,24 @@ const secondStory = {
       </p>
       </div>
       <div class="hero-story">
-        <StoryCard {...latestStory} label="Latest from Recompete Radar" headingLevel="h2" eager />
+        <StoryCard {...latestStory} label="Which contracts end next?" headingLevel="h2" eager />
+      </div>
+    </div>
+  </section>
+
+  <!-- WHAT I BRING -->
+  <section class="section pillars-section" aria-labelledby="pillars-title">
+    <div class="wrap">
+      <h2 id="pillars-title" class="eyebrow">What I bring to a data team</h2>
+      <div class="pillars">
+        {pillars.map((p, i) => (
+          <div class="pillar">
+            <span class="pillar-num mono">{String(i + 1).padStart(2, "0")}</span>
+            <h3>{p.title}</h3>
+            <p>{p.text}</p>
+            <p class="pillar-proof">{p.proof}</p>
+          </div>
+        ))}
       </div>
     </div>
   </section>
@@ -81,16 +118,20 @@ const secondStory = {
       </div>
 
       <div class="products">
-        <div class="reveal"><StoryCard {...secondStory} /></div>
+        <div class="reveal"><StoryCard {...secondStory} label="Who does the work at HHS?" /></div>
         <a href="/projects/sunlight-recompete-radar#brief" class="product reveal">
           <div class="product-art brief-image">
             <img src="/images/recompete-radar/brief-preview.webp" alt="An excerpt from the brief showing the date-parser fix and the restored dates." width="1280" height="720" loading="lazy" decoding="async" />
           </div>
           <div class="product-copy">
-            <span class="product-kind">Analytical brief</span>
+            <span class="product-kind">What broke, and how I caught it</span>
             <h3 class="product-title">Four traps in public contract data</h3>
-            <span class="product-desc">What went wrong in the source data, how I caught it, and what changed after the fixes.</span>
-            <span class="product-go">Read the brief →</span>
+            <span class="product-desc">
+              445,864 option dates vanished without an error. Subcontract re-filings doubled the
+              dollar total ($107.8B against $50.7B). My first score tied 54% of candidate contracts
+              at its maximum. See how each was caught and fixed.
+            </span>
+            <span class="product-go">See the four fixes →</span>
           </div>
         </a>
       </div>
@@ -225,6 +266,13 @@ const secondStory = {
   .product-desc { font-size: .9375rem; line-height: 1.65; color: var(--ink-2); }
   .product-go { margin-top: auto; padding-top: 10px; font-size: 0.8125rem; font-weight: 600; color: var(--teal-text); }
   .report-slot { margin-top: 28px; }
+  .pillars-section { padding-top: 40px; padding-bottom: 44px; }
+  .pillars { margin-top: 18px; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 32px; }
+  .pillar { min-width: 0; padding-top: 16px; border-top: 2px solid var(--border-strong); }
+  .pillar-num { font-size: .6875rem; color: var(--amber); }
+  .pillar h3 { margin-top: 6px; font-family: var(--font-serif); font-size: 1.2rem; font-weight: 600; line-height: 1.25; color: var(--ink); text-wrap: balance; }
+  .pillar p { margin-top: 10px; font-size: .9375rem; line-height: 1.65; color: var(--ink-2); }
+  .pillar p.pillar-proof { font-size: .75rem; line-height: 1.55; color: var(--ink-3); }
   .scope { margin-top: 10px; font-size: .8125rem; line-height: 1.6; color: var(--ink-3); max-width: 560px; }
   .app-note { margin-top: 24px; font-size: .8125rem; color: var(--ink-3); }
   .app-note a { font-weight: 600; color: var(--teal-text); text-decoration: none; }
@@ -258,6 +306,7 @@ const secondStory = {
     .hero { padding: 48px 18px 44px; }
     .section { padding-left: 18px; padding-right: 18px; }
     .products { grid-template-columns: 1fr; gap: 24px; }
+    .pillars { grid-template-columns: 1fr; gap: 22px; }
     .built-head .technical-image { display: none; }
       .hero-title { font-size: clamp(2.2rem, 8vw, 3.2rem); }
     .product-copy { padding: 22px; }
