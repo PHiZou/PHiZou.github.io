@@ -1,6 +1,6 @@
 ---
 title: Poem Short Generator — System Specification
-type: D3 Visualization
+type: Technical Spec
 template: d3-visualization
 summary: Technical system specification document for an automated poetry generation pipeline. Details the architecture, data flows, processing stages, and component interactions of an AI-augmented creative content system.
 tags: ["System Design", "Documentation", "AI Pipeline", "Architecture", "Technical Spec"]

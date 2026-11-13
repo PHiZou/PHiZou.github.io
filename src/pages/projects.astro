@@ -1,109 +1,103 @@
 ---
 import BaseLayout from "../layouts/BaseLayout.astro";
 import HireBridge from "../components/HireBridge.astro";
-import { getCollection } from "astro:content";
 
-const allProjects = await getCollection("projects");
-
+// Explicit editorial lists. A project not named here keeps its page but is
+// not listed. Live links were checked on 2026-11-13.
 const groups = [
   {
-    persona: "Selected earlier work",
+    persona: "Supporting projects",
     color: "var(--teal-text)",
     projects: [
       {
-        title: "Obsidian RAG Chat",
-        desc: "Citation-grounded RAG: semantic chunking, embeddings, vector retrieval.",
-        status: "Live",
-        url: "https://obsidian-rag-7fzsf7xqbrkgxqw3c7xh2g.streamlit.app/",
-        caseStudy: "/projects/obsidian-rag-chat",
-      },
-      {
-        title: "Federal Procurement Intelligence Dashboard",
-        desc: "Live USASpending API → full BI stack in one app.",
-        status: "Live",
-        url: "https://govcon-analytics-dashboard.vercel.app",
-        caseStudy: "/projects/govcon-procurement-dashboard",
-      },
-      {
-        title: "NOVA Data Center Energy",
-        desc: "D3 scrollytelling on Northern Virginia infrastructure data.",
-        status: "Live",
-        url: "https://nova-data-center-energy.vercel.app",
-        caseStudy: "/projects/nova-data-center-energy",
-      },
-    ],
-  },
-  {
-    persona: "Research & analysis",
-    color: "var(--amber)",
-    projects: [
-      {
-        title: "DMV Company Research Vault",
-        desc: "Knowledge graph of 20+ NOVA/DMV tech & GovCon companies.",
-        status: "Live",
-        url: "https://phizou.github.io/DMV-Company-Research-Vault/",
+        title: "Mortgage Risk Observatory",
+        desc: "A loan-performance pipeline over the Freddie Mac loan-level dataset: validated ingestion, tested dbt marts, quality gates and a dashboard.",
+        status: "Code",
+        url: "https://github.com/PHiZou/loan-performance-pipeline",
         caseStudy: null,
       },
       {
-        title: "FY27 Defense Strategic Acquisition",
-        desc: "Budget, pathways, and positioning analysis for FY2027.",
+        title: "NOVA Data Center Energy",
+        desc: "Utility filings and infrastructure data turned into a scrolling visual story about Northern Virginia's data centers.",
+        status: "Live",
+        url: "https://nova-data-center-v3.vercel.app",
+        caseStudy: "/projects/nova-data-center-energy",
+      },
+      {
+        title: "AI pipeline observability",
+        desc: "Ingests pipeline run logs, flags failures and runtime spikes, and reports pipeline health.",
         status: "Case study",
-        url: "https://fy27-defense-acquisition.vercel.app",
-        caseStudy: "/projects/fy27-defense-acquisition",
+        url: null,
+        caseStudy: "/projects/ai-pipeline-observability",
       },
-    ],
-  },
-  {
-    persona: "Search & data applications",
-    color: "var(--purple-text)",
-    projects: [
       {
         title: "Obsidian RAG Chat",
-        desc: "RAG pipeline with grounded citations.",
+        desc: "Question answering over a notes vault, with every answer citing the notes it came from.",
         status: "Live",
         url: "https://obsidian-rag-7fzsf7xqbrkgxqw3c7xh2g.streamlit.app/",
         caseStudy: "/projects/obsidian-rag-chat",
       },
       {
-        title: "AI Job Market Intelligence",
-        desc: "Aggregated posting data → skill demand and role velocity.",
+        title: "The Yield Curve: An Interactive History",
+        desc: "34 years of US Treasury yield curves, explorable through recessions and expansions.",
         status: "Live",
-        url: "https://ai-job-market-dashboard.vercel.app/projects/job-market-dashboard",
-        caseStudy: null,
+        url: "https://yield-curve-history.vercel.app",
+        caseStudy: "/projects/yield-curve-history",
+      },
+      {
+        title: "Fraud Risk Analyzer",
+        desc: "A Bayesian network that scores transaction fraud risk and shows which factors moved the score.",
+        status: "Live",
+        url: "https://fraud-bayesian-analyzer.vercel.app",
+        caseStudy: "/projects/fraud-bayesian-analyzer",
+      },
+      {
+        title: "FlowState: Supply Chain Resilience Simulator",
+        desc: "An eight-stage supply chain simulator for testing disruptions and finding bottlenecks.",
+        status: "Live",
+        url: "https://supply-chain-petri-net-phizou.vercel.app",
+        caseStudy: "/projects/supply-chain-petri-net",
       },
     ],
   },
   {
-    persona: "Dashboards & visualizations",
-    color: "var(--red-text)",
+    persona: "Earlier work",
+    color: "var(--ink-4)",
     projects: [
       {
         title: "Federal Procurement Intelligence Dashboard",
-        desc: "Agency spend, contractor leaderboards, acquisition trends.",
-        status: "Live",
+        desc: "An earlier dashboard prototype that led to Recompete Radar. It runs on sample data.",
+        status: "Sample data",
         url: "https://govcon-analytics-dashboard.vercel.app",
         caseStudy: "/projects/govcon-procurement-dashboard",
       },
       {
-        title: "NOVA Data Center Energy",
-        desc: "Public infrastructure data made legible via scrollytelling.",
+        title: "Macro System Dynamics",
+        desc: "A causal loop diagram of the US economy with scenario shocks.",
         status: "Live",
-        url: "https://nova-data-center-energy.vercel.app",
-        caseStudy: "/projects/nova-data-center-energy",
+        url: "https://macro-system-dynamics-phizou.vercel.app",
+        caseStudy: "/projects/macro-system-dynamics",
       },
       {
-        title: "Iran Conflict Operational Intelligence Dashboard",
-        desc: "Multi-view OSINT dashboard: escalation index, scenarios.",
-        status: "Prototype",
-        url: "https://iran-conflict-portfolio.vercel.app",
-        caseStudy: "/projects/iran-conflict-dashboard",
+        title: "Quant model for risk-aware forecasting",
+        desc: "Forecasting and scenario analysis focused on uncertainty and downside risk.",
+        status: "Case study",
+        url: null,
+        caseStudy: "/projects/quant-model-risk-forecasting",
       },
       {
-        title: "Iran–US Conflict Map",
-        desc: "D3 geographic conflict tracking, day-by-day timeline.",
-        status: "Prototype",
-        url: "https://iran-us-conflict-map2.vercel.app/",
-        caseStudy: "/projects/iran-us-conflict-map",
+        title: "Earlier D3 and Shiny visualizations",
+        desc: "Demographics, regional patterns and sports data, including the Futbol League Explorer.",
+        status: "Case study",
+        url: null,
+        caseStudy: "/projects/d3-visualizations-portfolio",
+      },
+      {
+        title: "Daily AI News Poem Generator",
+        desc: "A pipeline that turned daily news into short narrated poem videos. Ran in December 2025, now archived.",
+        status: "Archived",
+        url: null,
+        caseStudy: "/projects/poem-generator",
       },
     ],
   },
@@ -111,46 +105,28 @@ const groups = [
 
 const statusClass: Record<string, string> = {
   Live: "badge-live",
+  Code: "badge-saas",
   "Case study": "badge-saas",
-  Prototype: "badge-premium",
+  "Sample data": "badge-premium",
+  Archived: "badge-premium",
 };
-
-// Each project appears once in the archive, even when it spans several topics.
-const seenProjects = new Set<string>();
-const archiveGroups = groups.map((group) => ({
-  ...group,
-  projects: group.projects.filter((project) => {
-    const key = project.caseStudy ?? project.url;
-    if (seenProjects.has(key)) return false;
-    seenProjects.add(key);
-    return true;
-  }),
-})).filter((group) => group.projects.length > 0);
-
-// Everything else in the content collection, so no case study becomes unreachable
-const curatedSlugs = new Set(
-  groups.flatMap((g) => g.projects.map((p) => p.caseStudy)).filter(Boolean)
-    .map((path) => path!.replace("/projects/", ""))
-);
-const moreProjects = allProjects
-  .filter((p) => !curatedSlugs.has(p.slug) && p.slug !== "sunlight-recompete-radar")
-  .sort((a, b) => a.data.title.localeCompare(b.data.title));
 ---
 
 <BaseLayout
-  title="Project archive – Peter Hagen"
-  description="Earlier projects, visual essays and experiments by Peter Hagen. Browse applications, research and data visualizations; explore Recompete Radar for the main project."
+  title="Supporting projects – Peter Hagen"
+  description="Supporting projects by Peter Hagen: data pipelines, analysis tools and visualizations. Recompete Radar is the main project."
 >
   <section class="archive-hero">
     <div class="wrap">
-      <div class="eyebrow" style="margin-bottom: 10px;">Other work</div>
-      <h1>Project archive</h1>
+      <div class="eyebrow" style="margin-bottom: 10px;">Projects</div>
+      <h1>Supporting projects</h1>
       <p class="archive-intro">
-        Earlier applications, visual essays and experiments, kept here to explore and reference.
-        Project titles open the case study; demo links open the project itself.
+        Smaller projects that show the same habits as Recompete Radar: test the data, explain
+        the result, ship something people can use. Titles open the write-up. Launch links open
+        the project itself.
       </p>
       <a href="/recompete-radar" class="card radar-banner">
-        <span><strong>Start with Recompete Radar</strong> for the main project: data stories, the analytical brief and a working app.</span>
+        <span><strong>Start with Recompete Radar</strong>, the main project: data stories, an analytical brief and the pipeline behind them.</span>
         <span class="radar-banner-go">Go to Recompete Radar →</span>
       </a>
     </div>
@@ -158,7 +134,7 @@ const moreProjects = allProjects
 
   <section style="padding: 32px 24px;">
     <div class="wrap" style="display: flex; flex-direction: column; gap: 32px;">
-      {archiveGroups.map((group) => (
+      {groups.map((group) => (
         <div>
           <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 12px;">
             <div style={`width: 3px; height: 14px; background: ${group.color}; border-radius: 2px;`}></div>
@@ -189,27 +165,6 @@ const moreProjects = allProjects
         </div>
       ))}
 
-      {moreProjects.length > 0 && (
-        <div>
-          <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 12px;">
-            <div style="width: 3px; height: 14px; background: var(--ink-4); border-radius: 2px;"></div>
-            <div class="mono group-label">More from the archive</div>
-          </div>
-          <div style="display: flex; flex-direction: column;">
-            {moreProjects.map((p) => (
-              <div class="catalog-row reveal">
-                <div style="flex: 1;">
-                  <a href={`/projects/${p.slug}`} class="catalog-title">{p.data.title}</a>
-                  <span class="catalog-desc">{p.data.type}</span>
-                </div>
-                {p.data.liveUrl && (
-                  <a href={p.data.liveUrl} target="_blank" rel="noopener noreferrer" class="catalog-launch slow-demo-link">Launch ↗</a>
-                )}
-              </div>
-            ))}
-          </div>
-        </div>
-      )}
     </div>
   </section>
 

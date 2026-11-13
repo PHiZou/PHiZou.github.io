@@ -1,6 +1,6 @@
 ---
 title: Futbol League Explorer application
-type: GovCon Analytics Dashboard
+type: Interactive App
 template: govcon-analytics
 summary: Interactive Shiny application for exploring and analyzing futbol league data with filtering, visualization, and statistical insights.
 tags: ["Shiny", "R", "Data Visualization", "Sports Analytics"]

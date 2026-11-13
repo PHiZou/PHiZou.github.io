@@ -11,6 +11,8 @@ const projects = defineCollection({
       "GovCon Analytics Dashboard",
       "D3 Visualization",
       "Game",
+      "Interactive App",
+      "Technical Spec",
     ]),
     template: z.enum([
       "ai-pipeline",

@@ -1,6 +1,6 @@
 ---
 title: Golden Hour
-type: D3 Visualization
+type: Interactive App
 template: d3-visualization
 summary: A sunset-themed web app that radiates good energy. Generates gentle 3-line poems and suggests guitar chords with mood descriptions—complete with ambient chord playback.
 tags: ["Creative", "Web Audio", "Interactive", "Sunset Aesthetic"]
