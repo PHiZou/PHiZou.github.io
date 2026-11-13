@@ -45,7 +45,7 @@ Do not position the site as GovCon-only or DHS-centered.
 
 - One product: federal contracts. Scope is 20 civilian agencies, no DoD, prime contracts, FY2008 onward, 484,242 awards.
 - No Grants or Defense products exist. Federal grants may be mentioned once under "Up next".
-- "How it's built" lives in `src/components/HowItsBuilt.astro`. Every fact there must trace to the `main` branch of the recompete-radar repo. Name only tools that are on `main`.
+- "How it's built" lives in `src/components/HowItsBuilt.astro`. Describe the project as it stands on Peter's local working branch of the recompete-radar repo, which is ahead of the public `main`. Every fact must trace to that branch.
 - Scores are a ranking for prioritizing research, not win probabilities. Never say "no ML".
 - Present it as a project Peter built, not production work at an employer.
 

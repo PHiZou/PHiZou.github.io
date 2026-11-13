@@ -306,18 +306,18 @@ a { color: var(--data); }
     <line x1="20" y1="446" x2="1220" y2="446" stroke="var(--line)" stroke-dasharray="2 4"/>
     <text class="lane" x="30" y="474">SCHEDULERS · CONTROL</text>
     <rect class="box-ctl" x="350" y="490" width="260" height="84" rx="3"/>
-    <text class="t-title" x="362" y="510">GitHub Actions</text><text class="t-sub" x="362" y="526">configured: Mon 08:00 UTC</text>
+    <text class="t-title" x="362" y="510">GitHub Actions</text><text class="t-sub" x="362" y="526">manual fallback only</text>
     <text class="t-lab" x="362" y="546">refresh.sh → dbt build</text>
     <text class="t-lab" x="362" y="560">→ sync_marts_to_neon</text>
     <rect class="box-ctl" x="630" y="490" width="330" height="84" rx="3"/>
     <text class="t-title" x="642" y="510">Airflow · local Mac</text>
-    <text class="t-lab" x="642" y="530">sunlight_awards      manual (schedule=None)</text>
-    <text class="t-lab" x="642" y="545">sunlight_enrichment  daily 06:00 ET*</text>
-    <text class="t-lab" x="642" y="560">sunlight_freshness   daily 09:00 ET*</text>
+    <text class="t-lab" x="642" y="530">sunlight_awards      weekly Sun 02:00 ET</text>
+    <text class="t-lab" x="642" y="545">sunlight_enrichment  daily 06:00 ET</text>
+    <text class="t-lab" x="642" y="560">sunlight_freshness   daily 09:00 ET</text>
     <path class="wire ctl" d="M440 490 L 440 392" marker-end="url(#ah1)"/>
-    <text class="t-lab" x="448" y="430">weekly award refresh</text>
+    <text class="t-lab" x="448" y="430">manual fallback</text>
     <path class="wire ctl" d="M680 490 L 680 392" marker-end="url(#ah1)"/>
-    <text class="t-lab" x="688" y="420">enrichment + audit</text>
+    <text class="t-lab" x="688" y="420">refresh, enrichment,</text>
     <text class="t-lab" x="688" y="432">rows in PIPELINE_RUNS</text>
   </svg>
   </div>
@@ -327,8 +327,8 @@ a { color: var(--data); }
       <p>Snowflake holds everything: about 484k raw award rows plus every dbt model. Neon's free tier is 0.5 GB, so it only gets the tables the API reads. The award table goes over once, and <code>mart_awards</code> is recreated in Neon as a view over it so the same rows aren't stored twice.</p>
     </div>
     <div class="notes">
-      <h3>Why two schedulers</h3>
-      <p>The repository configures GitHub Actions for weekly award refreshes. The Airflow awards DAG is manual to avoid two schedulers running <code>refresh.sh --replace</code> against the same tables at once. *Airflow is configured for daily enrichment and freshness checks, plus monthly entity registrations. These are configured schedules; successful automatic runs and current pause states have not been verified here. The DHS APFS feed was retired on 30 Oct 2026, so its last snapshot is frozen.</p>
+      <h3>Why Airflow, with a manual fallback</h3>
+      <p>Airflow on an always-on Mac schedules everything: the weekly award refresh, nightly SAM.gov notices, monthly entity registrations and a daily freshness check. The refresh used to run on a GitHub Actions schedule. That workflow is now a manual fallback, and the two never run together, because both would run <code>refresh.sh --replace</code> against the same tables. These are the configured schedules; this page does not report whether recent runs succeeded. The DHS APFS feed was retired on 30 Oct 2026, so its last snapshot is frozen.</p>
     </div>
   </div>
 </section>

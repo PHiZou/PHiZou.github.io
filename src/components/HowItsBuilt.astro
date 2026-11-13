@@ -1,8 +1,8 @@
 ---
 // "How it's built" for Recompete Radar. Every fact here traces to the
-// recompete-radar repo's main branch (README.md, sql/analysis.sql,
-// .github/workflows/refresh-data.yml, dbt/models) or to the case study page.
-// Only tools on main are named. Check the repo before changing a number.
+// recompete-radar repo's working branch (README.md, sql/analysis.sql,
+// airflow/dags, dbt/models) or to the case study page.
+// Check the repo before changing a number or naming a tool.
 interface Props {
   compact?: boolean;
 }
@@ -12,8 +12,8 @@ const flow = [
   { name: "USAspending", note: "Public award downloads, one per agency" },
   { name: "Python", note: "Ingestion with retry and backoff" },
   { name: "Snowflake", note: "Stage, then COPY INTO. Raw files stay unchanged" },
-  { name: "dbt", note: "Staging, a score backtest, then 4 tested marts" },
-  { name: "Neon Postgres", note: "Only the 4 served marts are synced" },
+  { name: "dbt", note: "Staging, a score backtest, then tested marts" },
+  { name: "Neon Postgres", note: "Only the tables the app reads are synced" },
   { name: "FastAPI", note: "Read-only API over the marts" },
   { name: "Next.js on Vercel", note: "The web app people use" },
 ];
@@ -35,7 +35,10 @@ const growth = [
       </li>
     ))}
   </ol>
-  <p class="flow-foot">A GitHub Actions workflow refreshes the data every Monday.</p>
+  <p class="flow-foot">
+    Airflow schedules the weekly refresh, a nightly load of SAM.gov contract notices and a daily
+    freshness check. A GitHub Actions workflow is kept as a manual fallback.
+  </p>
 
   <div class:list={["built-grid", { "built-grid-compact": compact }]}>
     <div class="built-block">
